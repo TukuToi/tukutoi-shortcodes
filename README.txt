@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.1.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,12 @@ Basically the entire WordPress API has been "ShortCode-ified" in this Plugin. Yo
 
 The ShortCodes can be nested inside each other, where it makes sense, the ShortCodes can be used both as enclosed or not encosing ShortCodes and take ShortCodes as attributes as well.
 
-One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else/elseif" statements directly in your favourite WordPress Text Editor.
+One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else/elseif" statements directly in your favourite WordPress Text Editor like so:
+```
+[tkt_scs_conditional left="The past is WP" right="The Future is CP" operator="eqv" else="The Compared values where not true!"]
+  The Compared values where true!
+[/tkt_scs_conditional]
+```
 
 You can easily register your own ShortCodes as well, and even pass new Attributes to existing ShortCodes. 
 
@@ -35,6 +40,7 @@ Post Terms Info [tkt_scs_post_termsinfo]
 User Meta Data [tkt_scs_usermeta key="first_name"]
 Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
 Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
+Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
 
 All ShortCodes take exactly the same arguments as the functions.
 
@@ -53,20 +59,17 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 
 == Changelog ==
 
-= 1.0 =
-* A change since the previous version.
-* Another change.
+= 1.3.0 =
+* [Added] Added Conditional ShortCode
 
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+= 1.2.0 =
+* [Added] Added Inner and Nested ShortCodes
 
-== Upgrade Notice ==
+= 1.1.0 =
+* [Added] Added Post, User and Term plus respective meta ShortCodes
 
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
+= 1.0.0 =
+* Initial Commit
 
 == Arbitrary section ==
 
