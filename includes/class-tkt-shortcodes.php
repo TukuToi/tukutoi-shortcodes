@@ -183,25 +183,34 @@ class Tkt_Shortcodes {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Tkt_Shortcodes_Public( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
+		if ( ! is_admin()
+			&& ! is_customize_preview()
+			|| ( is_admin()
+				&& wp_doing_ajax()
+				&& ! is_customize_preview()
+			)
+		) {
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+			$plugin_public = new Tkt_Shortcodes_Public( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
 
-		$shortcodes = array(
-			'bloginfo'          => 'Website Information',
-			'postinfo'          => 'Post Data',
-			'userinfo'          => 'User Data',
-			'terminfo'          => 'Term Data',
-			'post_termsinfo'    => 'Post Term Data',
-			'usermeta'          => 'User Meta Data',
-			'termmeta'          => 'Term Meta Data',
-			'postmeta'          => 'Post Meta Data',
-		);
+			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		foreach ( $shortcodes as $shortcode => $name ) {
-			$callback = $shortcode;
-			$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $plugin_public, $callback );
+			$shortcodes = array(
+				'bloginfo'          => 'Website Information',
+				'postinfo'          => 'Post Data',
+				'userinfo'          => 'User Data',
+				'terminfo'          => 'Term Data',
+				'post_termsinfo'    => 'Post Term Data',
+				'usermeta'          => 'User Meta Data',
+				'termmeta'          => 'Term Meta Data',
+				'postmeta'          => 'Post Meta Data',
+			);
+
+			foreach ( $shortcodes as $shortcode => $name ) {
+				$callback = $shortcode;
+				$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $plugin_public, $callback );
+			}
 		}
 
 	}

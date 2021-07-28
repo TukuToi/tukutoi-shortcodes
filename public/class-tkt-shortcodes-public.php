@@ -59,13 +59,22 @@ class Tkt_Shortcodes_Public {
 	private $meta_type;
 
 	/**
-	 * Wether debug is enabled.
+	 * Wether simple debug is enabled.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $debug    boolean wether the Debug mode is active.
+	 * @var      string    $debug    boolean wether the Simple Debug mode is active (visible on front end).
 	 */
 	private $debug;
+
+	/**
+	 * Wether backtrace debug is enabled.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $debug    boolean wether the Debug Log of backrace is enabled.
+	 */
+	private $log_debug;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -82,6 +91,7 @@ class Tkt_Shortcodes_Public {
 		$this->version          = $version;
 		$this->meta_type        = 'post';
 		$this->debug            = false;
+		$this->log_debug        = false;
 
 	}
 
@@ -184,7 +194,7 @@ class Tkt_Shortcodes_Public {
 
 		// Validate our data.
 		if ( $this->has_errors( $out ) ) {
-			$out = $this->get_errors( $out, $location, debug_backtrace() );
+			$out = $this->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
 			$out = $this->get_validated_object_property( $out, $atts['show'] );
 		}
@@ -242,7 +252,7 @@ class Tkt_Shortcodes_Public {
 		$out = get_user_by( $atts['field'], $value );
 
 		if ( $this->has_errors( $out ) ) {
-			$out = $this->get_errors( $out, $location, debug_backtrace() );
+			$out = $this->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
 			$out = $this->get_validated_object_property( $out->data, $atts['show'] );
 		}
@@ -292,7 +302,7 @@ class Tkt_Shortcodes_Public {
 		$out = get_term( $atts['item'], $atts['taxonomy'], OBJECT, $atts['filter'] );
 
 		if ( $this->has_errors( $out ) ) {
-			$out = $this->get_errors( $out, $location, debug_backtrace() );
+			$out = $this->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
 			$out = $this->get_validated_object_property( $out, $atts['show'] );
 		}
@@ -345,7 +355,7 @@ class Tkt_Shortcodes_Public {
 		$out = get_the_terms( $atts['item'], $atts['taxonomy'] );
 
 		if ( $this->has_errors( $out ) ) {
-			$out = $this->get_errors( $out, $location, debug_backtrace() );
+			$out = $this->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
 			$out = join( $atts['delimiter'], wp_list_pluck( $out, $atts['show'] ) );
 		}
@@ -408,7 +418,7 @@ class Tkt_Shortcodes_Public {
 		}
 
 		if ( $this->has_errors( $out ) ) {
-			$out = $this->get_errors( $out, $location, debug_backtrace() );
+			$out = $this->get_errors( $out, __METHOD__, debug_backtrace() );
 		} elseif ( ! is_array( $out ) ) {
 			$out = $this->sanitize( 'meta', $out, $atts['key'], 'post', '' );
 		} else {
@@ -641,31 +651,38 @@ class Tkt_Shortcodes_Public {
 	 *
 	 * @since 1.0.0
 	 * @param mixed  $result The value to get error of.
+	 * @param string $location The method where the error happened.
 	 * @param string $backtrace The Debug backtrace to the error.
 	 * @return mixed $out validated property value (NOT Sanitized).
 	 */
-	private function get_errors( $result, $backtrace ) {
+	private function get_errors( $result, $location, $backtrace ) {
 
 		$errors = array();
-		$backtrace_string = ' on line ' . $backtrace['line'] . ' in the file' . $backtrace['file'] . ', function used: ' . $backtrace['function'];
+
 		if ( is_null( $result ) ) {
 			$errors['return'] = '';
-			$errors['debug']  = 'The response was null' . $backtrace_string;
+			$errors['debug']  = 'The response was null in ' . $location;
 		} elseif ( is_wp_error( $result ) ) {
 			$errors['return'] = '';
-			$errors['debug']  = 'The response was an instance of wp_error: ' . $result->get_error_message() . $backtrace_string;
+			$errors['debug']  = 'The response was an instance of wp_error: ' . $result->get_error_message() . ' in ' . $location;
 		} elseif ( false === $result ) {
 			$errors['return'] = '';
-			$errors['debug']  = 'There was a failure in response' . $backtrace_string;
+			$errors['debug']  = 'There was a failure in response in ' . $location;
 		} else {
-			$errors = 'Unknown type of error occurred in' . $backtrace_string;
+			$errors = 'Unknown type of error occurred in' . $location;
 		}
 
 		if ( true === $this->debug ) {
+			if ( true === $this->log_debug ) {
+				error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
+			}
 			return $errors['debug'];
-		} else {
-			return $errors['return'];
 		}
+		if ( true === $this->log_debug ) {
+			error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
+		}
+
+		return $errors['return'];
 
 	}
 
