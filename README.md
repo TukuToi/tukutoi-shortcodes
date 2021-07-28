@@ -6,7 +6,12 @@ Basically the entire WordPress API has been "ShortCode-ified" in this Plugin. Yo
 
 The ShortCodes can be nested inside each other, where it makes sense, the ShortCodes can be used both as enclosed or not encosing ShortCodes and take ShortCodes as attributes as well.
 
-One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else/elseif" statements directly in your favourite WordPress Text Editor.
+One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else/elseif" statements directly in your favourite WordPress Text Editor like so:
+```
+[tkt_scs_conditional left="The past is WP" right="The Future is CP" operator="eqv" else="The Compared values where not true!"]
+  The Compared values where true!
+[/tkt_scs_conditional]
+```
 
 You can easily register your own ShortCodes as well, and even pass new Attributes to existing ShortCodes. 
 
@@ -22,7 +27,8 @@ User Info [tkt_scs_userinfo]
 Term Info [tkt_scs_terminfo]
 Post Terms Info [tkt_scs_post_termsinfo]
 User Meta Data [tkt_scs_usermeta key="first_name"]
-Term Meta Data [tkt_scs_termmeta item="3" key="my-key"]
-Post Meta Data [tkt_scs_postmeta key="my-key"]
+Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
+Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
+Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
 
 All ShortCodes take exactly the same arguments as the functions.
