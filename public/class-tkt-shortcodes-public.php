@@ -150,8 +150,7 @@ class Tkt_Shortcodes_Public {
 
 		// Sanitize our data.
 		$out = $this->sanitize( $atts['sanitize'], $out );
-
-		// Return our data.
+		// Return our data.	
 		return $out;
 
 	}
