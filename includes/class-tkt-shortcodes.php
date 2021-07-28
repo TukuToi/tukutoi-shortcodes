@@ -199,13 +199,14 @@ class Tkt_Shortcodes {
 			$plugin_public = new Tkt_Shortcodes_Public( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
 			$shortcodes = new Tkt_Shortcodes_Processor( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
 
-			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 			$this->loader->add_filter( 'the_content', $shortcodes, 'pre_process_shortcodes', 5 );
+			$this->loader->add_filter( $this->plugin_prefix . 'pre_process_shortcodes', $shortcodes, 'pre_process_shortcodes', 5 );
 
 			foreach ( $shortcodes->register_shortcodes() as $shortcode => $label ) {
+
 				$callback = $shortcode;
 				$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $plugin_public, $callback );
+
 			}
 		}
 

@@ -96,28 +96,6 @@ class Tkt_Shortcodes_Public {
 	}
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tkt-shortcodes-public.css', array(), $this->version, 'all' );
-
-	}
-
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-public.js', array( 'jquery' ), $this->version, true );
-
-	}
-
-	/**
 	 * Bloginfo ShortCode.
 	 *
 	 * Return all properties of the get_bloginfo() function.
@@ -150,7 +128,7 @@ class Tkt_Shortcodes_Public {
 
 		// Sanitize our data.
 		$out = $this->sanitize( $atts['sanitize'], $out );
-		// Return our data.	
+		// Return our data.
 		return $out;
 
 	}
@@ -160,7 +138,7 @@ class Tkt_Shortcodes_Public {
 	 *
 	 * Return all properties of the get_post() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_post/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -209,9 +187,9 @@ class Tkt_Shortcodes_Public {
 	/**
 	 * User Data ShortCode.
 	 *
-	 * Return all properties of the get_post() function.
+	 * Return all properties of the get_user() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_user/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -268,7 +246,7 @@ class Tkt_Shortcodes_Public {
 	 *
 	 * Return all properties of the get_term() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_term/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -319,7 +297,7 @@ class Tkt_Shortcodes_Public {
 	 *
 	 * Return all properties of the get_the_terms() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_the_terms/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -372,7 +350,7 @@ class Tkt_Shortcodes_Public {
 	 *
 	 * Return all properties of the get_post_meta() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_post_meta/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -435,9 +413,9 @@ class Tkt_Shortcodes_Public {
 	/**
 	 * Term Meta Data ShortCode.
 	 *
-	 * Return all properties of the get_post_meta() function.
+	 * Return all properties of the get_term_meta() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_term_meta/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -468,9 +446,9 @@ class Tkt_Shortcodes_Public {
 	/**
 	 * User Meta Data ShortCode.
 	 *
-	 * Return all properties of the get_post_meta() function.
+	 * Return all properties of the get_user_meta() function.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -497,6 +475,98 @@ class Tkt_Shortcodes_Public {
 
 		// Return our data.
 		return $out;
+
+	}
+
+	/**
+	 * Conditional ShortCode
+	 *
+	 * Return all contents only if conditions met.
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function conditional( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'left'      => '',
+				'right'     => '',
+				'operator'  => 'eq',
+				'else'      => '',
+			),
+			$atts,
+			$tag
+		);
+
+		foreach ( $atts as $key => $value ) {
+
+			$atts[ $key ] = $this->sanitize( 'text_field', $value );
+
+		}
+
+		$true = false;
+
+		switch ( $atts['operator'] ) {
+			case 'eqv':
+				if ( $atts['left'] == $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'eqvt':
+				if ( $atts['left'] === $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'lt':
+				if ( $atts['left'] < $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'gt':
+				if ( $atts['left'] > $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'gte':
+				if ( $atts['left'] >= $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'lte':
+				if ( $atts['left'] <= $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'nev':
+				if ( $atts['left'] != $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'nevt':
+				if ( $atts['left'] !== $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			default:
+				if ( $atts['left'] == $atts['right'] ) {
+					$true = true;
+				}
+				break;
+		}
+
+		if ( true === $true ) {
+			$content = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $content );
+			$content = do_shortcode( $content, false );
+			$content = $this->sanitize( 'post_kses', $content );
+		} else {
+			$content = $atts['else'];
+		}
+
+		// Return our data.
+		return $content;
 
 	}
 
@@ -548,6 +618,10 @@ class Tkt_Shortcodes_Public {
 
 			case 'text_field':
 				$value = sanitize_text_field( $value );
+				break;
+
+			case 'textarea_field':
+				$value = sanitize_textarea_field( $value );
 				break;
 
 			case 'title':

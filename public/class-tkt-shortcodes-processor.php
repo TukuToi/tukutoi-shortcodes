@@ -89,6 +89,7 @@ class Tkt_Shortcodes_Processor {
 			'usermeta'          => 'User Meta Data',
 			'termmeta'          => 'Term Meta Data',
 			'postmeta'          => 'Post Meta Data',
+			'conditional'       => 'TukuToi Conditional ShortCode',
 		);
 
 		return $shortcodes;
