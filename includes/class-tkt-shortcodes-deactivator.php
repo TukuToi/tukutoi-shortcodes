@@ -38,7 +38,7 @@ class Tkt_Shortcodes_Deactivator {
 	 * @access   private
 	 * @var      string    $plugin    The $_REQUEST['plugin'] value during plugin activation.
 	 */
-	private static $plugin = 'tkt-shortcodes/tkt-shortcodes.php';
+	private static $plugin = 'tukutoi-shortcodes/tkt-shortcodes.php';
 
 	/**
 	 * The $_REQUEST['action'] during plugin activation.

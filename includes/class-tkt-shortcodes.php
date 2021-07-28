@@ -188,8 +188,21 @@ class Tkt_Shortcodes {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		// Shortcode name must be the same as in shortcode_atts() third parameter.
-		$this->loader->add_shortcode( $this->get_plugin_prefix() . 'shortcode', $plugin_public, 'plugin_name_shortcode_func' );
+		$shortcodes = array(
+			'bloginfo'          => 'Website Information',
+			'postinfo'          => 'Post Data',
+			'userinfo'          => 'User Data',
+			'terminfo'          => 'Term Data',
+			'post_termsinfo'    => 'Post Term Data',
+			'usermeta'          => 'User Meta Data',
+			'termmeta'          => 'Term Meta Data',
+			'postmeta'          => 'Post Meta Data',
+		);
+
+		foreach ( $shortcodes as $shortcode => $name ) {
+			$callback = $shortcode;
+			$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $plugin_public, $callback );
+		}
 
 	}
 
