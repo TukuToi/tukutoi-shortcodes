@@ -2,3 +2,36 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+[aria-describedby="tkt-shortcodes-dialog"],
+[aria-describedby="tkt-shortcode-form"] {
+    z-index: 999999;
+}
+
+form.tkt-shortcode-form fieldset{
+    padding:  5px;
+    margin-bottom: 15px;
+}
+form.tkt-shortcode-form label{
+    width:  16%;
+}
+form.tkt-shortcode-form input,
+form.tkt-shortcode-form select{
+    width:  84%;
+    float: right;
+}
+form.tkt-shortcode-form small.tkt-shortcode-option-explanation{
+    width:  100%;
+}
+form.tkt-shortcode-form small.tkt-shortcode-option-explanation em{
+    float:  right;
+}
+.ui-dialog .ui-dialog-buttonpane button:last-of-type{
+    float: right;
+}
+#tkt-shortcodes-dialog.ui-dialog-content.ui-widget-content .tkt-shortcode-buttons{
+    margin:  5px;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    width: 100%;
+}

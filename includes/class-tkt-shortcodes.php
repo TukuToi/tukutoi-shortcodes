@@ -172,10 +172,19 @@ class Tkt_Shortcodes {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Tkt_Shortcodes_Admin( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
+		if ( is_admin()
+			&& ! is_customize_preview()
+		) {
+			$plugin_admin = new Tkt_Shortcodes_Admin( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+			$this->loader->add_action( 'media_buttons', $plugin_admin, 'insert_shortcodes_menu' );
+
+			$this->loader->add_action( 'wp_ajax_tkt_scs_get_shortcode_form', $plugin_admin, 'tkt_scs_get_shortcode_form' );
+
+		}
 
 	}
 
