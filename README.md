@@ -1,6 +1,14 @@
 # tukutoi-shortcodes
  Indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
 
+== Description ==
+
+This plugin is currently under development.
+Known issues.
+- in Excerpts the ShortCodes do not work, thus on archives they do not render.
+- When inserting ShortCodes with the GUI without closing the GUI Window after each inserting of a shortcode, the next shortcode gets inserted with the previous shortcode attributes, along with the new ones (ups)
+- User Info ShortCode needs better UI handling since the core WP User object is a _true mess_
+
 TukuToi ShortCodes provides you with a bunch of ShortCodes useful for dynamic webdevelopment.
 Basically the entire WordPress API has been "ShortCode-ified" in this Plugin. You can display any kind of site, post, user, taxonomy or else Information dynamically.
 
@@ -32,3 +40,4 @@ Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
 Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
 
 All ShortCodes take exactly the same arguments as the functions.
+All ShortCodes can be inserted in the Post Editors using a Dymamic GUI that lets you compose the ShortCode attributes, with custom values or where appropriate with existing "object properties".

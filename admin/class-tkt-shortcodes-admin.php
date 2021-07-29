@@ -62,6 +62,7 @@ class Tkt_Shortcodes_Admin {
 		$this->plugin_name   = $plugin_name;
 		$this->plugin_prefix = $plugin_prefix;
 		$this->version = $version;
+		$this->shortcodes = new Tkt_Shortcodes_Processor( $this->plugin_name, $this->plugin_prefix, $this->version );
 
 	}
 
@@ -73,6 +74,8 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function enqueue_styles( $hook_suffix ) {
 
+		wp_enqueue_style( $this->plugin_name . 'jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . 'jquery-ui-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tkt-shortcodes-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -85,8 +88,88 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function enqueue_scripts( $hook_suffix ) {
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'jquery-ui-dialog' );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-admin.js', array( 'jquery-ui-dialog', 'jquery-ui-selectmenu' ), $this->version, true );
+		wp_localize_script(
+			$this->plugin_name,
+			$this->plugin_prefix . 'ajax_object',
+			array(
+				'ajax_url'  => admin_url( 'admin-ajax.php' ),
+				'security'  => wp_create_nonce( $this->plugin_name . '-security-nonce' ),
+			)
+		);
 
+	}
+
+	/**
+	 * AJAX Callback to get the ShortCode form to insert.
+	 *
+	 * @since    1.0.0
+	 */
+	public function tkt_scs_get_shortcode_form() {
+
+		if ( ! check_ajax_referer( $this->plugin_name . '-security-nonce', 'security', false ) ) {
+
+			wp_send_json_error( 'Invalid security token sent.' );
+			wp_die();
+
+		}
+
+		if ( ! isset( $_GET['shortcode'] ) ) {
+
+			wp_send_json_error( 'No ShortCode chosen.' );
+			wp_die();
+
+		}
+
+		$shortcode = sanitize_title( wp_unslash( $_GET['shortcode'] ) );
+		$file = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/tkt-shortcodes-' . $shortcode . '-form.php';
+
+		ob_start();
+		require_once( $file );
+		$form = ob_get_contents();
+		ob_end_clean();
+
+		$response = array(
+			'form' => $form,
+			'file' => $file,
+		);
+
+		wp_send_json( $response );
+
+		wp_die();
+
+	}
+
+	/**
+	 * Add a Insert ShortCodes menu.
+	 *
+	 * @since    1.0.0
+	 * @param int $editor_id The Editor ID.
+	 */
+	public function insert_shortcodes_menu( $editor_id ) {
+
+		printf( '<button id="tkt-shortcodes-dialog-trigger" class="button">' . esc_html__( 'TukuToi ShortCodes', 'textdomain' ) . '</button>' );
+		$this->shortcodes_dialog();
+
+	}
+
+	/**
+	 * The dialog to show all available ShortCodes.
+	 *
+	 * @since    1.0.0
+	 */
+	private function shortcodes_dialog() {
+		?>
+		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
+			<?php
+			foreach ( $this->shortcodes->register_shortcodes() as $shortcode => $label ) {
+				echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $label ) . '" class="button tkt-shortcode-buttons">' . esc_html( $label ) . '</a>';
+			}
+			?>
+		</div>
+		<div id="tkt-shortcode-form"></div>
+		<?php
 	}
 
 }

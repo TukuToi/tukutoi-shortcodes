@@ -14,3 +14,6 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
+
+<h1>THis is the content</h1>
+<p>Someshit there</p>
