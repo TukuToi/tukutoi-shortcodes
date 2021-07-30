@@ -11,16 +11,9 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'item', 'Item', '', 'Show Post Terms Informations of this Post (Defaults to current post)' );
-generic_fieldset( 'taxonomy', 'Taxonomy', '', 'Show Post Terms Information of this Taxonomy' );
-termshow_fieldset();
-generic_fieldset( 'delimiter', 'Delimiter', '', 'Separator between the values' );
-sanitize_fieldset();
+$this->text_fieldset( 'item', 'Item', '', 'Show Post Terms Information of this Post (Defaults to current post)' );
+$this->select_fieldset( 'taxonomy', 'Taxonomy', null, 'taxonomy_options' );
+$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use between the values' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
 ?>
 </form>

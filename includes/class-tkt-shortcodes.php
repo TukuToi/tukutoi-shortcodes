@@ -103,6 +103,8 @@ class Tkt_Shortcodes {
 	 *
 	 * - Tkt_Shortcodes_Loader. Orchestrates the hooks of the plugin.
 	 * - Tkt_Shortcodes_i18n. Defines internationalization functionality.
+	 * - Tkt_Shortcodes_Declarations. Declares all ShortCode and Data names => labels.
+	 * - Tkt_Shortcodes_Sanitizer. Maintains all Sanitization, Validation and Error handling.
 	 * - Tkt_Shortcodes_Admin. Defines all hooks for the admin area.
 	 * - Tkt_Shortcodes_Public. Defines all hooks for the public side of the site.
 	 *
@@ -127,20 +129,25 @@ class Tkt_Shortcodes {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tkt-shortcodes-i18n.php';
 
 		/**
+		 * The class responsible for declaring all ShortCodes.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tkt-shortcodes-declarations.php';
+
+		/**
+		 * The class responsible for Sanitizing and Validating inputs.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tkt-shortcodes-sanitizer.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tkt-shortcodes-admin.php';
 
 		/**
-		 * The class responsible for defining all actions that occur in the public-facing
+		 * The class responsible for registering all ShortCode definitions.
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-public.php';
-
-		/**
-		 * The class responsible for processing ShortCodes in ShortCodes or attributes.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-processor.php';
 
 		$this->loader = new Tkt_Shortcodes_Loader();
 
@@ -173,9 +180,18 @@ class Tkt_Shortcodes {
 	private function define_admin_hooks() {
 
 		if ( is_admin()
+			&& ( current_user_can( 'manage_options' )
+				|| current_user_can( 'manage_network_options' )
+			)
 			&& ! is_customize_preview()
 		) {
-			$plugin_admin = new Tkt_Shortcodes_Admin( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
+
+			/**
+			 * The class responsible for creating the ShortCodes GUI.
+			 */
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tkt-shortcodes-gui.php';
+
+			$plugin_admin = new Tkt_Shortcodes_Admin( $this->plugin_name, $this->plugin_prefix, $this->version );
 
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -205,16 +221,28 @@ class Tkt_Shortcodes {
 			)
 		) {
 
-			$plugin_public = new Tkt_Shortcodes_Public( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
-			$shortcodes = new Tkt_Shortcodes_Processor( $this->get_plugin_name(), $this->get_plugin_prefix(), $this->get_version() );
+			/**
+			 * The class responsible for processing ShortCodes in ShortCodes or attributes.
+			 */
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-processor.php';
 
-			$this->loader->add_filter( 'the_content', $shortcodes, 'pre_process_shortcodes', 5 );
-			$this->loader->add_filter( $this->plugin_prefix . 'pre_process_shortcodes', $shortcodes, 'pre_process_shortcodes', 5 );
+			/**
+			 * The class responsible for processing ShortCodes in ShortCodes or attributes.
+			 */
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-shortcodes.php';
 
-			foreach ( $shortcodes->register_shortcodes() as $shortcode => $label ) {
+			$plugin_public = new Tkt_Shortcodes_Public( $this->plugin_name, $this->plugin_prefix, $this->version );
+			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version );
+			$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version );
+
+			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
+			$this->loader->add_filter( '{$this->plugin_prefix}pre_process_shortcodes', $processor, 'pre_process_shortcodes', 5 );
+
+			foreach ( $declarations->shortcodes as $shortcode => $label ) {
 
 				$callback = $shortcode;
-				$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $plugin_public, $callback );
+				$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $shortcodes, $callback );
 
 			}
 		}

@@ -15,7 +15,7 @@
  * Plugin Name:       TKT ShortCodes
  * Plugin URI:        https://www.tukutoi.com/program/tukutoi-shortcodes
  * Description:       A library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
- * Version:           1.4.0
+ * Version:           1.5.0
  * Author:            bedas
  * Author URI:        https://www.tukutoi.com//
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'TKT_SHORTCODES_VERSION', '1.4.0' );
+define( 'TKT_SHORTCODES_VERSION', '1.5.0' );
 
 /**
  * The code that runs during plugin activation.
@@ -42,7 +42,7 @@ define( 'TKT_SHORTCODES_VERSION', '1.4.0' );
  * This action is documented in includes/class-tkt-shortcodes-activator.php
  * Full security checks are performed inside the class.
  */
-function plugin_name_activate() {
+function tkt_shortcodes_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-tkt-shortcodes-activator.php';
 	Tkt_Shortcodes_Activator::activate();
 }
@@ -53,13 +53,13 @@ function plugin_name_activate() {
  * This action is documented in includes/class-tkt-shortcodes-deactivator.php
  * Full security checks are performed inside the class.
  */
-function plugin_name_deactivate() {
+function tkt_shortcodes_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-tkt-shortcodes-deactivator.php';
 	Tkt_Shortcodes_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'plugin_name_activate' );
-register_deactivation_hook( __FILE__, 'plugin_name_deactivate' );
+register_activation_hook( __FILE__, 'tkt_shortcodes_activate' );
+register_deactivation_hook( __FILE__, 'tkt_shortcodes_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -79,10 +79,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-tkt-shortcodes.php';
  *
  * @since    1.0.0
  */
-function plugin_name_run() {
+function tkt_shortcodes_run() {
 
 	$plugin = new Tkt_Shortcodes();
 	$plugin->run();
 
 }
-plugin_name_run();
+add_action( 'plugins_loaded', 'tkt_shortcodes_run' );

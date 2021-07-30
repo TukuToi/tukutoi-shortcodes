@@ -11,15 +11,8 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'item', 'Item', '', 'Show Post Information of this Post (Defaults to current post)' );
-postshow_fieldset();
-generic_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
-sanitize_fieldset();
-?>
-</form>
+$this->text_fieldset( 'item', 'Item', '', 'Show Post Information of this Post (Defaults to current post)' );
+$this->select_fieldset( 'show', 'Show', 'post_name', 'postshow_options' );
+$this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
+

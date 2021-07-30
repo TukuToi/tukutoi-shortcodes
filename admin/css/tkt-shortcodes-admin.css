@@ -20,8 +20,12 @@ form.tkt-shortcode-form select{
     width:  84%;
     float: right;
 }
+form.tkt-shortcode-form input[type=checkbox]{
+    width:  unset;
+}
 form.tkt-shortcode-form small.tkt-shortcode-option-explanation{
     width:  100%;
+    float: right;
 }
 form.tkt-shortcode-form small.tkt-shortcode-option-explanation em{
     float:  right;

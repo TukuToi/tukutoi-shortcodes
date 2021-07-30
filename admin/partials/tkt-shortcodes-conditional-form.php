@@ -11,15 +11,7 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'left', 'Left', '', 'Compare this value...' );
-generic_fieldset( 'right', 'Right', '', 'Compare with this value...' );
-generic_fieldset( 'operator', 'Operator', 'eq', 'How to compare the values' );
-generic_fieldset( 'else', 'Else', '', 'What to output if the evaluation is false' );
-?>
-</form>
+$this->text_fieldset( 'left', 'Left', '', 'Compare this value...' );
+$this->text_fieldset( 'right', 'Right', '', 'Compare with this value...' );
+$this->text_fieldset( 'operator', 'Operator', 'eq', 'How to compare the values' );
+$this->text_fieldset( 'else', 'Else', '', 'What to output if the evaluation is false' );

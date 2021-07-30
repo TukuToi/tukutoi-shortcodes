@@ -11,16 +11,8 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'item', 'Item', '', 'Show User Information of this User (Defaults to current User). Use ID if Field is ID, or else value for that field' );
-generic_fieldset( 'field', 'Field', 'ID', 'What field to retrieve user by (defaults to ID)' );
-generic_fieldset( 'value', 'value', '', 'The value of the field to retriever the user by, if other than ID' );
-usershow_fieldset();
-sanitize_fieldset();
-?>
-</form>
+$this->text_fieldset( 'item', 'Item', '', 'Show User Information of this User (Defaults to current User). Takes an User ID, works only if "Get User By" is set to ID. Else pass "Field Value" for the "Get User By"' );
+$this->select_fieldset( 'field', 'Get User By', 'id', 'usergetby_options' );
+$this->text_fieldset( 'value', 'Field Value', '', 'The value of the field to retriever the user by, if other than ID' );
+$this->select_fieldset( 'show', 'Show', 'display_name', 'usershow_options' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );

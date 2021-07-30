@@ -1,9 +1,12 @@
 <?php
 /**
- * The file that defines some Helper Methods of this plugin
+ * The file that defines the ShortCode processor.
  *
- * Defines a magic to resolve inner ShortCodes and allow custom shortcodes
+ * Defines logic to resolve inner ShortCodes and allow custom shortcodes
  * to be used in HTML attributes, or ShortCode attributes.
+ *
+ * [Toolset Views](https://toolset.com/) by [OTGS](https://onthegosystems.com/)
+ * was used as a loose inspiration for some of the code in this class.
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
@@ -13,14 +16,18 @@
  */
 
 /**
- * The ShortCode Helper Class.
+ * The ShortCode Resolver Class.
  *
- * This is used to make shortcodes nested in ShortCode attributes, or HTML attributes work
+ * This is used to make shortcodes nested in ShortCode attributes,
+ * or HTML attributes work.
+ * WordPress 4.2.3 (thus also CP) breaks all ShortCodes in ShortCode attributes,
+ * or ShortCodes in HTML attributes.
  *
- * It also defines an error array for ShortCode render failure
- * and a validation method for objects used in ShortCodes.
+ * @see https://wptavern.com/plugin-developers-demand-a-better-security-release-process-after-wordpress-4-2-3-breaks-thousands-of-websites
  *
- * @since      1.0.0
+ * This class attempts to fix that.
+ *
+ * @since      1.3.0
  * @package    Tkt_Shortcodes
  * @subpackage Tkt_Shortcodes/public
  * @author     Your Name <hello@tukutoi.com>
@@ -55,51 +62,32 @@ class Tkt_Shortcodes_Processor {
 	private $version;
 
 	/**
-	 * Initialize the class and set its properties.
+	 * The ShortCodes of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @param      string $plugin_name      The name of the plugin.
-	 * @param      string $plugin_prefix          The unique prefix of this plugin.
-	 * @param      string $version          The version of this plugin.
+	 * @access   private
+	 * @var      array    $shortcodes    All ShortCodes of this plugin.
 	 */
-	public function __construct( $plugin_name, $plugin_prefix, $version ) {
+	private $shortcodes;
 
-		$this->plugin_name      = $plugin_name;
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    1.3.0
+	 * @param    string $plugin_prefix    The unique prefix of this plugin.
+	 * @param    string $version          The version of this plugin.
+	 */
+	public function __construct( $plugin_prefix, $version ) {
+
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 
 	}
 
 	/**
-	 * Register an array of Shortcodes of this plugin
-	 *
-	 * Key is ShortCode name and method name, Value is label/name of shortcode
-	 *
-	 * @since 1.0.0
-	 * @return array @shortcodes The ShortCodes array.
-	 */
-	public function register_shortcodes() {
-
-		$shortcodes = array(
-			'bloginfo'          => 'Website Information',
-			'postinfo'          => 'Post Data',
-			'userinfo'          => 'User Data',
-			'terminfo'          => 'Term Data',
-			'post_termsinfo'    => 'Post Term Data',
-			'usermeta'          => 'User Meta Data',
-			'termmeta'          => 'Term Meta Data',
-			'postmeta'          => 'Post Meta Data',
-			'conditional'       => 'TukuToi Conditional ShortCode',
-		);
-
-		return $shortcodes;
-
-	}
-
-	/**
 	 * Public facing filter callback on the_content.
 	 *
-	 * @since    1.0.0
+	 * @since    1.3.0
 	 * @param    string $content  The Post Content.
 	 */
 	public function pre_process_shortcodes( $content ) {
@@ -116,9 +104,9 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
-	 * Provate facing callback on the_content pre_process_shortcodes filter.
+	 * Resolvers passed to the pre_process_shortcodes callback.
 	 *
-	 * @since    1.0.0
+	 * @since    1.3.0
 	 * @param    string $content  The Post Content.
 	 */
 	private function apply_resolver( $content ) {
@@ -133,9 +121,9 @@ class Tkt_Shortcodes_Processor {
 	/**
 	 * Resolve internal shortcodes.
 	 *
+	 * @since 1.3.0
 	 * @param string $content The Post Content.
 	 * @return string
-	 * @since 3.3.0
 	 */
 	private function resolve_shortcodes( $content ) {
 
@@ -181,10 +169,10 @@ class Tkt_Shortcodes_Processor {
 	 * Find shortcodes that contain other shortcodes as attribute values,
 	 * and populate a list of their opening tag, to process those internal shortcodes.
 	 *
+	 * @since 1.3.0
 	 * @param string $content The content to check.
 	 * @param array  $matches List of shortcodes: full shortcode without brackets.
 	 * @return int Number of top level shortcodes found.
-	 * @since 3.3.0
 	 */
 	private function find_outer_brackets( $content, &$matches ) {
 		$count = 0;
@@ -228,7 +216,7 @@ class Tkt_Shortcodes_Processor {
 	 *
 	 * Also get a list of custom registered ShortCodes.
 	 *
-	 * @since 1.0.0
+	 * @since 1.3.0
 	 * @return array $inner_expressions An array of nested shortcodes.
 	 */
 	private function get_inner_expressions() {
@@ -252,14 +240,15 @@ class Tkt_Shortcodes_Processor {
 	/**
 	 * Get a list of regex compatible expressions to catch.
 	 *
+	 * @since 1.3.0
 	 * @return array
-	 * @since 3.3.0
 	 */
 	public function get_inner_shortcodes_regex() {
 
 		$regex = '';
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
-		foreach ( $this->register_shortcodes() as $shortcode => $name ) {
+		foreach ( $declarations->shortcodes as $shortcode => $name ) {
 			$regex .= $shortcode . '|';
 		}
 
@@ -273,7 +262,7 @@ class Tkt_Shortcodes_Processor {
 	 * - Can not start with a bracket for another inner shortcode.
 	 * - Must start with a valid shortcode tag.
 	 *
-	 * @since 1.0.0
+	 * @since 1.3.0
 	 * @param string $unbracketed_shortcode The content to check.
 	 * @return bool
 	 */
@@ -302,6 +291,7 @@ class Tkt_Shortcodes_Processor {
 	 * Make sure that a content which presumes to be a shortcode without brackets
 	 * does contain an inner shortcode.
 	 *
+	 * @since 1.3.0
 	 * @param string $unbracketed_shortcode The content to check.
 	 * @return bool
 	 */
@@ -314,8 +304,8 @@ class Tkt_Shortcodes_Processor {
 	/**
 	 * Get the list of registered shortcodes to be used inside other shortcodes.
 	 *
+	 * @since 1.3.0
 	 * @return array
-	 * @since 3.3.0
 	 */
 	public function get_custom_shortcodes() {
 		$custom_shortcodes = array();
@@ -325,7 +315,7 @@ class Tkt_Shortcodes_Processor {
 		 *
 		 * @param array $custom_shortcodes List of shortcodes.
 		 * @return array
-		 * @since 1.0.0
+		 * @since 1.3.0
 		 */
 		$custom_shortcodes = apply_filters( $this->plugin_prefix . 'custom_shortcodes', $custom_shortcodes );
 

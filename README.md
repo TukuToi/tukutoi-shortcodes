@@ -6,8 +6,7 @@
 This plugin is currently under development.
 Known issues.
 - in Excerpts the ShortCodes do not work, thus on archives they do not render.
-- When inserting ShortCodes with the GUI without closing the GUI Window after each inserting of a shortcode, the next shortcode gets inserted with the previous shortcode attributes, along with the new ones (ups)
-- User Info ShortCode needs better UI handling since the core WP User object is a _true mess_
+- some sanitization options do not yet default to a safe sanitize, it is up to the user to choose one.
 
 TukuToi ShortCodes provides you with a bunch of ShortCodes useful for dynamic webdevelopment.
 Basically the entire WordPress API has been "ShortCode-ified" in this Plugin. You can display any kind of site, post, user, taxonomy or else Information dynamically.

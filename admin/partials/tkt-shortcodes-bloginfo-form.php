@@ -11,14 +11,7 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'show', 'Show', 'name', 'What Website Information to show' );
-generic_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
-sanitize_fieldset();
-?>
-</form>
+$this->select_fieldset( 'show', 'Show', 'name', 'siteshow_options' );
+$this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
+
