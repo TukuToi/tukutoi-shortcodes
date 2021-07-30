@@ -61,7 +61,7 @@ class Tkt_Shortcodes_Declarations {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
-		$this->shortcodes 		= $this->declare_shortcodes();
+		$this->shortcodes       = $this->declare_shortcodes();
 
 	}
 

@@ -11,15 +11,9 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-
-<form class="tkt-shortcode-form">
-<?php
 $this->text_fieldset( 'item', 'Item', '', 'Show Post Meta Information of this Post (Defaults to current Post)' );
-$this->text_fieldset( 'key', 'Key', '', 'What Post Meta to use' );
+$this->text_fieldset( 'key', 'Key', '', 'What Post Meta Key to use' );
 $this->checkbox_fieldset( 'single', 'Single', 'true' );
-$this->text_fieldset( 'separator', 'Separator', '', 'Separator to use when single is false' );
-$this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to use' );
+$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
+$this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
 $this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
-?>
-</form>

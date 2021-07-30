@@ -11,8 +11,8 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-$this->text_fieldset( 'item', 'Item', '', 'Show Terms Meta Data  of this Term (Defaults to current Term)' );
-$this->text_fieldset( 'key', 'Meta Key', '', 'What Term Meta to use' );
-$this->text_fieldset( 'single', 'Single', '', 'Wether to return a single value or array' );
+$this->text_fieldset( 'item', 'Item', '', 'Show Term Meta Data of this Term (Defaults to current Term)' );
+$this->text_fieldset( 'key', 'Meta Key', '', 'What Term Meta Key to use' );
+$this->checkbox_fieldset( 'single', 'Single', 'true' );
 $this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
 $this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );

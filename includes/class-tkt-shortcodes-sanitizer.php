@@ -21,19 +21,10 @@
  *
  * @since      1.0.0
  * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/public
+ * @subpackage Tkt_Shortcodes/includes
  * @author     Your Name <hello@tukutoi.com>
  */
 class Tkt_Shortcodes_Sanitizer {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
 
 	/**
 	 * The unique prefix of this plugin.
@@ -57,10 +48,28 @@ class Tkt_Shortcodes_Sanitizer {
 	 * The version of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   private
+	 * @access   public
 	 * @var      array    $sanitization_options    All the sanitization options of the plugin.
 	 */
 	public $sanitization_options;
+
+	/**
+	 * Debug mode.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      bool    $debug    Wether Debug is enabled or not.
+	 */
+	private $debug;
+
+	/**
+	 * Debug log mode.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $debug_log    Debug logging mode.
+	 */
+	private $debug_log;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -89,82 +98,82 @@ class Tkt_Shortcodes_Sanitizer {
 
 		$sanitization_options = array(
 			'none' => array(
-				'label'     => __( 'No Sanitization', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'No Sanitization', 'tkt-shortcodes' ),
 			),
 			'email' => array(
-				'label'     => __( 'Sanitize Email', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Sanitize Email', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_email',
 			),
 			'file_name' => array(
-				'label'     => __( 'File Name', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'File Name', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_file_name',
 			),
 			'html_class' => array(
-				'label'     => __( 'HTML Class', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'HTML Class', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_html_class',
 			),
 			'key' => array(
-				'label'     => __( 'Key', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Key', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_key',
 			),
 			'meta' => array(
-				'label'     => __( 'Meta', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Meta', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_meta',
 			),
 			'mime_type' => array(
-				'label'     => __( 'Mime Type', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Mime Type', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_mime_type',
 			),
 			'option' => array(
-				'label'     => __( 'Option', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Option', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_option',
 			),
 			'sql_orderby' => array(
-				'label'     => __( 'SQL Orderby', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'SQL Orderby', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_sql_orderby',
 			),
 			'text_field' => array(
-				'label'     => __( 'Text Field', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Text Field', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_text_field',
 			),
 			'textarea_field' => array(
-				'label'     => __( 'Text Area', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Text Area', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_textarea_field',
 			),
 			'title' => array(
-				'label'     => __( 'Title', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Title', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_title',
 			),
 			'title_for_query' => array(
-				'label'     => __( 'Title for Query', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Title for Query', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_title_for_query',
 			),
 			'title_with_dashes' => array(
-				'label'     => __( 'Title with Dashes', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Title with Dashes', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_title_with_dashes',
 			),
 			'user' => array(
-				'label'     => __( 'User', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'User', 'tkt-shortcodes' ),
 				'callback'  => 'sanitize_user',
 			),
 			'url_raw' => array(
-				'label'     => __( 'URL Raw', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'URL Raw', 'tkt-shortcodes' ),
 				'callback'  => 'esc_url_raw',
 			),
 			'post_kses' => array(
-				'label'     => __( 'Post KSES', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Post KSES', 'tkt-shortcodes' ),
 				'callback'  => 'wp_filter_post_kses',
 			),
 			'nohtml_kses' => array(
-				'label'     => __( 'NoHTML KSES', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'NoHTML KSES', 'tkt-shortcodes' ),
 				'callback'  => 'wp_filter_nohtml_kses',
 			),
 			'intval' => array(
-				'label'     => __( 'Integer', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Integer', 'tkt-shortcodes' ),
 				'callback'  => 'intval',
 			),
 			'is_bool' => array(
-				'label'     => __( 'Boolean', 'tkt-shortcodes' ),
+				'label'     => esc_html__( 'Boolean', 'tkt-shortcodes' ),
 				'callback'  => 'is_bool',
 			),
 		);
@@ -229,7 +238,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 *
 	 * @since 1.0.0
 	 * @param mixed $value The value to validate.
-	 * @return mixed $value validated object (Sanitized).
+	 * @return mixed $value | wp_error validated object (NOT Sanitized) or wp_error on failure.
 	 */
 	private function handle_object_validation( $value ) {
 
@@ -237,7 +246,7 @@ class Tkt_Shortcodes_Sanitizer {
 			|| is_null( $value )
 		) {
 
-			return new WP_Error( 'no_object', __( 'This is not an object', 'tkt-shortcodes' ) );
+			return new WP_Error( 'no_object', esc_html__( 'This is not an object', 'tkt-shortcodes' ) );
 
 		} elseif ( is_object( $value ) ) {
 
@@ -245,7 +254,7 @@ class Tkt_Shortcodes_Sanitizer {
 
 		} else {
 
-			return new WP_Error( 'no_object', __( 'Something else went wrong', 'tkt-shortcodes' ) );
+			return new WP_Error( 'no_object', esc_html__( 'Something else went wrong', 'tkt-shortcodes' ) );
 
 		}
 
@@ -257,7 +266,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 * @since 1.0.0
 	 * @param mixed  $value The value to validate.
 	 * @param string $prop The property to validate and return.
-	 * @return mixed $value->$prop validated property value (NOT Sanitized).
+	 * @return mixed $value->$prop | wp_error validated property value (NOT Sanitized) or wp_error on failure.
 	 */
 	private function handle_object_prop_validation( $value, $prop ) {
 
@@ -265,7 +274,7 @@ class Tkt_Shortcodes_Sanitizer {
 			&& ! property_exists( $value, $prop )
 		) {
 
-			return new WP_Error( 'no_property', __( 'This property does not exist', 'tkt-shortcodes' ) );
+			return new WP_Error( 'no_property', esc_html__( 'This property does not exist', 'tkt-shortcodes' ) );
 
 		} elseif ( ! is_wp_error( $this->handle_object_validation( $value ) )
 			&& property_exists( $value, $prop )
@@ -275,7 +284,7 @@ class Tkt_Shortcodes_Sanitizer {
 
 		} else {
 
-			return new WP_Error( 'no_property', __( 'Something else went wrong', 'tkt-shortcodes' ) );
+			return new WP_Error( 'no_property', esc_html__( 'Something else went wrong', 'tkt-shortcodes' ) );
 
 		}
 

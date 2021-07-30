@@ -193,7 +193,7 @@ class Tkt_Shortcodes_Gui {
 
 		foreach ( $sanitizer->sanitization_options as $sanitization_option => $array ) {
 			$selected = 'text_field' === $sanitization_option ? 'selected' : '';
-			printf( '<option value="' . esc_attr( '%s' ) . '">' . esc_html( '%s' ) . '</option>', $sanitization_option, $array['label'] );
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $sanitization_option, $array['label'] );
 		}
 
 		add_filter(
@@ -205,7 +205,7 @@ class Tkt_Shortcodes_Gui {
 
 	}
 
-	/**
+	/**<option value=​"text_field">​Text Field​</option>​
 	 * Create a Select Field set for the ShortCodes Forms Post Display Options.
 	 *
 	 * @since 1.4.0
@@ -343,7 +343,7 @@ class Tkt_Shortcodes_Gui {
 	 */
 	private function siteshow_options() {
 
-		$declarations = new Tkt_Shortcodes_Declarations( $plugin_prefix, $version );
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 		$site_infos = $declarations->data_map( 'site_infos' );
 
 		foreach ( $site_infos as $site_info => $label ) {

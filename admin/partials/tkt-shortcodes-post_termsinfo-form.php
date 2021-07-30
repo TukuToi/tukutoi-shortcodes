@@ -11,13 +11,9 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-
-<form class="tkt-shortcode-form">
-<?php
-$this->text_fieldset( 'item', 'Item', '', 'Show Post Terms Informations of this Post (Defaults to current post)' );
+$this->text_fieldset( 'item', 'Item', '', 'Show Post Terms Information of this Post (Defaults to current post)' );
 $this->select_fieldset( 'taxonomy', 'Taxonomy', null, 'taxonomy_options' );
-$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Separator between the values' );
+$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use between the values' );
 $this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
 ?>
 </form>
