@@ -55,44 +55,25 @@ class Tkt_Shortcodes_Processor {
 	private $version;
 
 	/**
+	 * The ShortCodes of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $shortcodes    All ShortCodes of this plugin.
+	 */
+	private $shortcodes;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string $plugin_name      The name of the plugin.
-	 * @param      string $plugin_prefix          The unique prefix of this plugin.
-	 * @param      string $version          The version of this plugin.
+	 * @param    string $plugin_prefix    The unique prefix of this plugin.
+	 * @param    string $version          The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $plugin_prefix, $version ) {
+	public function __construct( $plugin_prefix, $version ) {
 
-		$this->plugin_name      = $plugin_name;
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
-
-	}
-
-	/**
-	 * Register an array of Shortcodes of this plugin
-	 *
-	 * Key is ShortCode name and method name, Value is label/name of shortcode
-	 *
-	 * @since 1.0.0
-	 * @return array @shortcodes The ShortCodes array.
-	 */
-	public function register_shortcodes() {
-
-		$shortcodes = array(
-			'bloginfo'          => 'Website Information',
-			'postinfo'          => 'Post Data',
-			'userinfo'          => 'User Data',
-			'terminfo'          => 'Term Data',
-			'post_termsinfo'    => 'Post Term Data',
-			'usermeta'          => 'User Meta Data',
-			'termmeta'          => 'Term Meta Data',
-			'postmeta'          => 'Post Meta Data',
-			'conditional'       => 'TukuToi Conditional ShortCode',
-		);
-
-		return $shortcodes;
 
 	}
 
@@ -258,8 +239,9 @@ class Tkt_Shortcodes_Processor {
 	public function get_inner_shortcodes_regex() {
 
 		$regex = '';
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
-		foreach ( $this->register_shortcodes() as $shortcode => $name ) {
+		foreach ( $declarations->shortcodes as $shortcode => $name ) {
 			$regex .= $shortcode . '|';
 		}
 

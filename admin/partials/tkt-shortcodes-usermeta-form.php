@@ -12,15 +12,13 @@
  */
 
 ?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
+
 <form class="tkt-shortcode-form">
 <?php
-generic_fieldset( 'item', 'Item', '', 'Show User Meta Data of this User (Defaults to current Term)' );
-generic_fieldset( 'key', 'Meta Key', '', 'What Meta Key to use' );
-generic_fieldset( 'single', 'Single', '', 'Wether to return a single value or an array' );
-generic_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
-sanitize_fieldset( 'How to sanitize the data' );
+$this->text_fieldset( 'item', 'Item', '', 'Show User Meta Data of this User (Defaults to current Term)' );
+$this->text_fieldset( 'key', 'Meta Key', '', 'What Meta Key to use' );
+$this->checkbox_fieldset( 'single', 'Single', 'true' );
+$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
 ?>
 </form>

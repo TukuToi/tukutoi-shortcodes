@@ -11,16 +11,8 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-?>
-<?php
-require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'tkt-shortcodes-gui-api.php' );
-?>
-<form class="tkt-shortcode-form">
-<?php
-generic_fieldset( 'item', 'Item', '', 'Show Terms Meta Data  of this Term (Defaults to current Term)' );
-generic_fieldset( 'key', 'Meta Key', '', 'What Term Meta to use' );
-generic_fieldset( 'single', 'Single', '', 'Wether to return a single value or array' );
-generic_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
-sanitize_fieldset();
-?>
-</form>
+$this->text_fieldset( 'item', 'Item', '', 'Show Terms Meta Data  of this Term (Defaults to current Term)' );
+$this->text_fieldset( 'key', 'Meta Key', '', 'What Term Meta to use' );
+$this->text_fieldset( 'single', 'Single', '', 'Wether to return a single value or array' );
+$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
+$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );

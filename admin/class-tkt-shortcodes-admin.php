@@ -50,6 +50,24 @@ class Tkt_Shortcodes_Admin {
 	private $version;
 
 	/**
+	 * The ShortCodes of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $shortcodes    All ShortCodes of this plugin.
+	 */
+	private $shortcodes;
+
+	/**
+	 * The Sanitizer class.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $sanitizer    object The Sanitizer Class responsible for providing sanitization and validaton.
+	 */
+	private $sanitizer;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -62,7 +80,6 @@ class Tkt_Shortcodes_Admin {
 		$this->plugin_name   = $plugin_name;
 		$this->plugin_prefix = $plugin_prefix;
 		$this->version = $version;
-		$this->shortcodes = new Tkt_Shortcodes_Processor( $this->plugin_name, $this->plugin_prefix, $this->version );
 
 	}
 
@@ -123,16 +140,11 @@ class Tkt_Shortcodes_Admin {
 		}
 
 		$shortcode = sanitize_title( wp_unslash( $_GET['shortcode'] ) );
-		$file = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/tkt-shortcodes-' . $shortcode . '-form.php';
 
-		ob_start();
-		require_once( $file );
-		$form = ob_get_contents();
-		ob_end_clean();
+		$form = new Tkt_Shortcodes_Gui( $this->plugin_prefix, $this->version, $shortcode );
 
 		$response = array(
-			'form' => $form,
-			'file' => $file,
+			'form' => $form->get_shortcode_gui(),
 		);
 
 		wp_send_json( $response );
@@ -160,10 +172,13 @@ class Tkt_Shortcodes_Admin {
 	 * @since    1.0.0
 	 */
 	private function shortcodes_dialog() {
+
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+
 		?>
 		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
 			<?php
-			foreach ( $this->shortcodes->register_shortcodes() as $shortcode => $label ) {
+			foreach ( $declarations->shortcodes as $shortcode => $label ) {
 				echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $label ) . '" class="button tkt-shortcode-buttons">' . esc_html( $label ) . '</a>';
 			}
 			?>
