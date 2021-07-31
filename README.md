@@ -1,18 +1,58 @@
-# tukutoi-shortcodes
- Indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
+# tukutoi-shortcodesA library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
 
-== Description ==
+== Known Issues ==
 
 This plugin is currently under development.
 Known issues.
 - in Excerpts the ShortCodes do not work, thus on archives they do not render.
 - shortcodes do not insert at mouse position, instead, append to text, when we edit in text mode
 - Conditional shortcode does not automatically autoclose when inserting, we need to manually add `[/tkt_scs_conditional]`
+- was not tested with PHP 8.x or lower than 7.4 yet
+- was not tested on NGINX yet
+- was not tested for conflicts with other themes or plugins (specially important because of jQuery UI)
+
+== Description == 
 
 TukuToi ShortCodes provides you with a bunch of ShortCodes useful for dynamic webdevelopment.
-Basically the entire WordPress API has been "ShortCode-ified" in this Plugin. You can display any kind of site, post, user, taxonomy or else Information dynamically.
+Basically a bunch of WordPress methods and objects have been "ShortCode-ified" in this Plugin. 
+You can display any kind of site, post, post term, user, taxonomy, usermeta, postmeta and termmeta information.
 
-Have a look at *some* of the possible Output...
+By nesting shortcodes inside each other you can have powerful dynamic output, such as this example"
+`[tkt_scs_post_termsinfo item="[tkt_scs_postinfo item="" show="ID" filter="raw" sanitize="text_field"]" taxonomy="category" show="term_id" delimiter=", " sanitize="text_field"]`
+Above would output all the Term IDs of the Post, where you inserted the shortcode.
+It gets the current Post ID with the Shortcode nested inside the Post Term Information ID attribute.
+
+This is not possible in WordPress anymore since 4.2.3 https://wptavern.com/plugin-developers-demand-a-better-security-release-process-after-wordpress-4-2-3-breaks-thousands-of-websites but thanks to the crafty developers at Toolset, I was able to build a ShortCode Processor using their code as reference which allows just that.
+
+The Plugin comes with a Backend GUI to insert the ShortCodes (and choose/insert options), look for the `TukuToi ShortCodes` Button on post or page editors.
+
+One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else" statements directly in your favourite WordPress Text Editor like so:
+```
+[tkt_scs_conditional left="The past is WP" right="The Future is CP" operator="eqv" else="The Compared values where not true!"]
+  The Compared values where true!
+[/tkt_scs_conditional]
+```
+Above would return `The Compared values where not true!` as the values are not equal.
+
+And no, it does not use `eval()`. It uses a custom set of expressions, and does not parse user input to PHP directly.
+
+== Current ShortCodes: ==
+
+Blog Info [tkt_scs_bloginfo]
+Post Info [tkt_scs_postinfo]
+User Info [tkt_scs_userinfo]
+Term Info [tkt_scs_terminfo]
+Post Terms Info [tkt_scs_post_termsinfo]
+User Meta Data [tkt_scs_usermeta key="first_name"]
+Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
+Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
+Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
+
+All ShortCodes take pretty much the same arguments as the corresponding WP/CP functions and the display attributes generally follow the WP/CP naming of object props or array keys.
+
+As said, all ShortCodes can be inserted in the Post Editors using a Dymamic GUI that lets you compose the ShortCode attributes, with custom values or where appropriate with existing "object properties".
+
+Have a look at just *some* of the possible Output...
 
 ```
 [tkt_scs_bloginfo show="language" filter="raw" sanitize="text_field"]</br>
@@ -128,32 +168,45 @@ Have a look at *some* of the possible Output...
 [tkt_scs_conditional left="[tkt_scs_postinfo item="" show="ID" filter="raw" sanitize="text_field"]" right="1" operator="eq" else="no true!"][tkt_scs_postinfo item="" show="post_name" filter="raw" sanitize="text_field"][/tkt_scs_conditional]
 ```
 
-The ShortCodes can be nested inside each other, where it makes sense, the ShortCodes can be used both as enclosed or not encosing ShortCodes and take ShortCodes as attributes as well.
+== Installation ==
 
-One of the most powerful features in the Plugin is a "conditional" ShortCode allowing you to write "if/else/elseif" statements directly in your favourite WordPress Text Editor like so:
-```
-[tkt_scs_conditional left="The past is WP" right="The Future is CP" operator="eqv" else="The Compared values where not true!"]
-  The Compared values where true!
-[/tkt_scs_conditional]
-```
+Just like any other Plugin. 
 
-You can easily register your own ShortCodes as well, and even pass new Attributes to existing ShortCodes. 
+== Changelog ==
 
-Documentation lives direclty inside the ShortCodes, as with a special parameter passed to any of the ShortCodes, each attribute will be shown on the site with its expected content type.
+= 1.6.0 =
+* [Fixed] All Shortcode are now producing healthy and useful output
+* [Fixed] Added warnings when inserting Post Content Shortcode in a current post
+* [Fixed] Full handling of User Object now possible
+* [Fixed] All ShortCodes in GUI now have explanation where applicable 
+* [Fixed] In Text mode now shortcodes append to content instead of replacing content
+* [Fixed] Now text_direction (even if retardedly handled by WP/CP) uses is_rtl properly
+* [Changed] Added more meaningful debug logs
+* [Changed] Added custom jQuery UI Theme
+ 
 
-This is like a Page builder, just that you will use HTML to build your layouts and then make them dynamic with ShortCodes.
+= 1.5.0 =
+* [Added] Full class management for all GUI elements
+* [Fixed] Issue where shortcodes inserted with memorized attributes
+* [Changed] full class management for validation,sanitization,error handling, declarations
+* [Changed] Version number and readme
+* [Changed] Also did a full test round and refactor/code style polish.
 
-ShortCodes available so far:
+= 1.4.0 =
+* [Added] Added ShortCodeGUI
 
-Blog Info [tkt_scs_bloginfo]
-Post Info [tkt_scs_postinfo]
-User Info [tkt_scs_userinfo]
-Term Info [tkt_scs_terminfo]
-Post Terms Info [tkt_scs_post_termsinfo]
-User Meta Data [tkt_scs_usermeta key="first_name"]
-Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
-Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
-Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
+= 1.3.0 =
+* [Added] Added Conditional ShortCode
 
-All ShortCodes take exactly the same arguments as the functions.
-All ShortCodes can be inserted in the Post Editors using a Dymamic GUI that lets you compose the ShortCode attributes, with custom values or where appropriate with existing "object properties".
+= 1.2.0 =
+* [Added] Added Inner and Nested ShortCodes
+
+= 1.1.0 =
+* [Added] Added Post, User and Term plus respective meta ShortCodes
+
+= 1.0.0 =
+* Initial Commit
+
+== Bug repots ==
+
+Open a ticket in this Git Repo.
