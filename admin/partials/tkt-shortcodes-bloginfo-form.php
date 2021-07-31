@@ -14,4 +14,3 @@
 $this->select_fieldset( 'show', 'Show', 'name', 'siteshow_options' );
 $this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
 $this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
-

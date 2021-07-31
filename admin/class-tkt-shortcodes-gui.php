@@ -167,14 +167,14 @@ class Tkt_Shortcodes_Gui {
 	 * @param string $callback    The user Callback to generate the select options.
 	 */
 	private function select_fieldset( $attribute, $label, $value, $callback ) {
-
-		$explanation = apply_filters( 'tkt_scs_shortcodes_fieldset_explanation', '' );
+		
 		?>
 		<fieldset>
 			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
 			  <select name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" class="tkt-select">
 				<?php
 				call_user_func( array( $this, $callback ) );
+				$explanation = apply_filters( 'tkt_scs_shortcodes_fieldset_explanation', 'This option has no description' );
 				?>
 			  </select>
 			  <small class="tkt-shortcode-option-explanation"><em><?php printf( esc_html__( '%s', 'tkt-shortcodes' ), $explanation ); ?></em></small>
@@ -195,17 +195,18 @@ class Tkt_Shortcodes_Gui {
 			$selected = 'text_field' === $sanitization_option ? 'selected' : '';
 			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $sanitization_option, $array['label'] );
 		}
-
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
+
 				return 'How to sanitize the data';
+
 			}
 		);
 
 	}
 
-	/**<option value=​"text_field">​Text Field​</option>​
+	/**
 	 * Create a Select Field set for the ShortCodes Forms Post Display Options.
 	 *
 	 * @since 1.4.0
@@ -225,7 +226,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				return 'What Post Information to show';
+				return 'What Post Information to show. <strong>Careful, when inserting the Post Content in a Post, always make sure to pass an OTHER ID than the current!</strong>';
 			}
 		);
 
@@ -355,6 +356,7 @@ class Tkt_Shortcodes_Gui {
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
 				return 'What Site Information to show';
+
 			}
 		);
 

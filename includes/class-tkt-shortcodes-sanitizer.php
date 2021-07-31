@@ -199,7 +199,6 @@ class Tkt_Shortcodes_Sanitizer {
 			&& 'none' !== $type
 			&& ! empty( $args )
 		) {
-
 			// Sanitization should happen, and exist.
 			$value = call_user_func_array( $this->sanitization_options[ $type ]['callback'], $args );
 
@@ -274,7 +273,7 @@ class Tkt_Shortcodes_Sanitizer {
 			&& ! property_exists( $value, $prop )
 		) {
 
-			return new WP_Error( 'no_property', esc_html__( 'This property does not exist', 'tkt-shortcodes' ) );
+			return new WP_Error( 'no_property', sprintf( esc_html__( 'The property "%s" does not exist in the Object', 'tkt-shortcodes' ), $prop ) );
 
 		} elseif ( ! is_wp_error( $this->handle_object_validation( $value ) )
 			&& property_exists( $value, $prop )
@@ -285,6 +284,27 @@ class Tkt_Shortcodes_Sanitizer {
 		} else {
 
 			return new WP_Error( 'no_property', esc_html__( 'Something else went wrong', 'tkt-shortcodes' ) );
+
+		}
+
+	}
+
+	/**
+	 * Validate Array.
+	 *
+	 * @since 1.0.0
+	 * @param mixed $value The value to validate.
+	 * @return mixed $value | wp_error validated property value (NOT Sanitized) or wp_error on failure.
+	 */
+	private function handle_array_validation( $value ) {
+
+		if ( is_array( $value ) ) {
+
+			return $value;
+
+		} else {
+
+			return new WP_Error( 'no_array', esc_html__( 'This is not an array', 'tkt-shortcodes' ) );
 
 		}
 
@@ -336,6 +356,13 @@ class Tkt_Shortcodes_Sanitizer {
 		) {
 
 			$value = $this->handle_object_prop_validation( $value, $prop );
+
+		} elseif ( 'array' === $type
+			&& ! empty( $value )
+			&& is_null( $prop )
+		) {
+
+			$value = $this->handle_array_validation( $value );
 
 		} else {
 

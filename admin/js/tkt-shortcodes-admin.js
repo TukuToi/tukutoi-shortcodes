@@ -1,7 +1,7 @@
 (function( $ ) {
 	'use strict';
 	
-	var shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, shortcode_atts = [];
+	var texteditor, shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, shortcode_atts = [];
 	var dialog_width = 625;
 	var dialog_height = dialog_width/1.6;
 
@@ -45,7 +45,8 @@
 
 					generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
 
-			        $( '#wp-content-editor-container' ).find( 'textarea' ).val( generated_shortcode );
+					texteditor = $( '#wp-content-editor-container' ).find( 'textarea' );
+					text_append( texteditor, generated_shortcode );
 			        if( typeof(tinyMCE.activeEditor) !== null ){
 			         	tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, generated_shortcode );
 				    }
@@ -107,4 +108,8 @@ function show_spinner(){
 function hide_spinner(){
 	$('html').css('cursor','default');
 	$('a').css('cursor','default');
+}
+
+function text_append( instance, text ){
+    $( instance ).val( $( instance ).val() + text );
 }

@@ -12,6 +12,6 @@
  */
 
 $this->text_fieldset( 'left', 'Left', '', 'Compare this value...' );
-$this->text_fieldset( 'right', 'Right', '', 'Compare with this value...' );
+$this->text_fieldset( 'right', 'Right', '', '... with this value' );
 $this->text_fieldset( 'operator', 'Operator', 'eq', 'How to compare the values' );
 $this->text_fieldset( 'else', 'Else', '', 'What to output if the evaluation is false' );

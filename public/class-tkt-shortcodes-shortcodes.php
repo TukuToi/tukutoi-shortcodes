@@ -111,10 +111,26 @@ class Tkt_Shortcodes_Shortcodes {
 		}
 
 		// Get our data.
-		$out = get_bloginfo( $atts['show'], $atts['filter'] );
+		if ( 'is_rtl' === $atts['show'] ) {
+
+			/**
+			 * Coding with WordPress is like untangling a ball of wool after a 3 years old had it in hands.
+			 *
+			 * @since 1.5.0
+			 * @see https://docs.classicpress.net/reference/functions/get_bloginfo/
+			 * @see https://docs.classicpress.net/reference/functions/is_rtl/
+			 */
+			$out = is_rtl() ? 'rtl' : 'ltr';
+
+		} else {
+
+			$out = get_bloginfo( $atts['show'], $atts['filter'] );
+
+		}
 
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
 		// Return our data.
 		return $out;
 
@@ -136,7 +152,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_the_ID(),
+				'item'      => '',
 				'show'      => 'post_title',
 				'filter'    => 'raw',
 				'sanitize'  => 'text_field',
@@ -144,6 +160,10 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_the_ID();
+		}
 
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
@@ -163,9 +183,22 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = $this->sanitizer->validate( 'object', $out, $atts['show'] );
 		}
 
+		// Get our data.
+		if ( 'post_content' === $atts['show'] ) {
+
+			/**
+			 * We need to run the content thru ShortCodes Processor, otherwise ShortCodes are not expanded.
+			 *
+			 * @since 1.5.0
+			 */
+			$out = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $out );
+			$out = do_shortcode( $out, false );
+
+		}
+
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
-		
+
 		// Return our data.
 		return $out;
 
@@ -187,15 +220,23 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_current_user_id(),
+				'item'      => '',
 				'field'     => 'ID',
 				'value'     => '',
-				'show'      => 'display_name', // Note: ONLY If called with the "id" or "name" parameter, the constructor queries the wp_users table. If successful, the additional row data become properties of the object: user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam (multisite only), deleted (multisite only).
+				'show'      => 'display_name',
 				'sanitize'  => 'text_field',
 			),
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) &&
+			( 'ID' === $atts['field']
+			|| 'id' === $atts['field']
+			)
+		) {
+			$atts['item'] = get_current_user_id();
+		}
 
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
@@ -218,8 +259,29 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
-			$out = $this->sanitizer->validate( 'object', $out->data, $atts['show'] );
+			/**
+			 * The user object is a huge mess. Try to fix this as effectively as possible.
+			 */
+			// An array of nested User Values (object "data" inside object "wpUser").
+			$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+			if ( in_array( $atts['show'], $declarations->data_map( 'user_data' ) ) ) {
+				// This is the nested data object.
+				$out = $this->sanitizer->validate( 'object', $out->data, $atts['show'] );
+			} elseif ( 'caps' === $atts['show'] ) {
+				// This is an array of [cap] => (bool) true or false.
+				$out = implode( ', ', array_keys( $this->sanitizer->validate( 'array', $out->caps ), 1 ) );
+			} elseif ( 'roles' === $atts['show'] ) {
+				// This is an array of [key] => (string) role.
+				$out = implode( ', ', $this->sanitizer->validate( 'array', $out->roles ) );
+			} elseif ( 'allcaps' === $atts['show'] ) {
+				// This is an array of [allcaps] => (bool) true or false.
+				$out = implode( ', ', array_keys( $this->sanitizer->validate( 'array', $out->allcaps ), 1 ) );
+			} else {
+				// Else, it is a string property of object.
+				$out = $out->{'$atts["show"]'};
+			}
 		}
+
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
 
@@ -244,7 +306,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_queried_object_id(),
+				'item'      => '',
 				'taxonomy'  => '',
 				'show'      => 'name',
 				'filter'    => 'raw',
@@ -253,6 +315,16 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) &&
+			is_tax()
+			|| is_tag()
+			|| is_category()
+		) {
+			$atts['item'] = get_queried_object_id();
+		} elseif ( empty( $atts['item'] ) ) {
+			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
+		}
 
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
@@ -270,6 +342,7 @@ class Tkt_Shortcodes_Shortcodes {
 		} else {
 			$out = $this->sanitizer->validate( 'object', $out, $atts['show'] );
 		}
+
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
 
@@ -294,7 +367,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_the_ID(),
+				'item'      => '',
 				'taxonomy'  => 'category',
 				'show'      => 'term_id',
 				'delimiter' => ', ',
@@ -303,6 +376,10 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_the_ID();
+		}
 
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
@@ -347,7 +424,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_the_ID(),
+				'item'      => '',
 				'key'       => '',
 				'single'    => true,
 				'delimiter' => '',
@@ -356,6 +433,10 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_the_ID();
+		}
 
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
@@ -383,9 +464,9 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} elseif ( ! is_array( $out ) ) {
-			$out = $this->sanitizer->sanitize( 'meta', $out, $atts['key'], 'post', '' );
+			$out = $this->sanitizer->sanitize( 'meta', $atts['key'], $out, $this->meta_type );
 		} else {
-			$out = $this->sanitizer->sanitize( 'meta', implode( $atts['delimiter'], $out ), $atts['key'], 'post', '' );
+			$out = $this->sanitizer->sanitize( 'meta', $atts['key'], implode( $atts['delimiter'], $out ), $this->meta_type );
 		}
 
 		// Sanitize our data.
@@ -412,7 +493,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_queried_object_id(),
+				'item'      => '',
 				'key'       => '',
 				'single'    => true,
 				'delimiter' => '',
@@ -422,9 +503,20 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		if ( empty( $atts['item'] ) &&
+			is_tax()
+			|| is_tag()
+			|| is_category()
+		) {
+			$atts['item'] = get_queried_object_id();
+		} elseif ( empty( $atts['item'] ) ) {
+			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
+		}
+
 		$this->meta_type = 'term';
 		$out = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
+
 		return $out;
 
 	}
@@ -445,7 +537,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => get_current_user_id(),
+				'item'      => '',
 				'key'       => '',
 				'single'    => true,
 				'delimiter' => '',
@@ -454,6 +546,10 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts,
 			$tag
 		);
+
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_current_user_id();
+		}
 
 		$this->meta_type = 'user';
 		$out = $this->postmeta( $atts, $content = null, $tag );
