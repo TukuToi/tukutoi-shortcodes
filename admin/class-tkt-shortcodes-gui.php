@@ -338,6 +338,30 @@ class Tkt_Shortcodes_Gui {
 	}
 
 	/**
+	 * Create a Select Field set for the ShortCodes Forms Math Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function math_options() {
+
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+		$valid_operators = $declarations->data_map( 'valid_operators' );
+
+		foreach ( $valid_operators as $valid_operator => $label ) {
+			$selected = '+' === $valid_operator ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $valid_operator, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'What operator to use';
+			}
+		);
+
+	}
+
+	/**
 	 * Create a Select Field set for the ShortCodes Forms SiteInfo Display Options.
 	 *
 	 * @since 1.4.0

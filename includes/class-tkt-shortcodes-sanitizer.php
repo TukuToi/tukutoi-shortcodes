@@ -172,6 +172,10 @@ class Tkt_Shortcodes_Sanitizer {
 				'label'     => esc_html__( 'Integer', 'tkt-shortcodes' ),
 				'callback'  => 'intval',
 			),
+			'floatval' => array(
+				'label'     => esc_html__( 'Float', 'tkt-shortcodes' ),
+				'callback'  => 'floatval',
+			),
 			'is_bool' => array(
 				'label'     => esc_html__( 'Boolean', 'tkt-shortcodes' ),
 				'callback'  => 'is_bool',
@@ -311,6 +315,30 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
+	 * Validate Operators.
+	 *
+	 * @since 1.0.0
+	 * @param mixed $value The value to validate.
+	 * @return mixed $value | wp_error validated property value (NOT Sanitized) or wp_error on failure.
+	 */
+	private function handle_operator_validation( $value ) {
+
+		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+		$valid_operators = array_flip( $declarations->data_map( 'valid_operators' ) );
+
+		if ( in_array( $value, $valid_operators ) ) {
+
+			return $value;
+
+		} else {
+
+			return new WP_Error( 'invalid_opeartor', esc_html__( 'This is not a valid Operator', 'tkt-shortcodes' ) );
+
+		}
+
+	}
+
+	/**
 	 * All Sanitization Callabacks.
 	 *
 	 * @since 1.0.0
@@ -363,6 +391,10 @@ class Tkt_Shortcodes_Sanitizer {
 		) {
 
 			$value = $this->handle_array_validation( $value );
+
+		} elseif ( 'operation' == $type ) {
+
+			$value = $this->handle_operator_validation( $value );
 
 		} else {
 

@@ -652,4 +652,83 @@ class Tkt_Shortcodes_Shortcodes {
 
 	}
 
+	/**
+	 * Calculation ShortCode
+	 *
+	 * Return mathematically calculated contents.
+	 *
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function math( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'operand_one'   => '',
+				'operand_two'   => '',
+				'operator'      => '',
+				'sanitize'      => 'intval',
+			),
+			$atts,
+			$tag
+		);
+
+		// Sanitize the attributes.
+		foreach ( $atts as $key => $value ) {
+			if ( 'operator' === $key ) {
+				$atts['operator'] = $this->sanitizer->sanitize( 'text_field', $value );
+			} else {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'intval', $value );
+			}
+		}
+
+		// Validate the operator.
+		$operator = $this->sanitizer->validate( 'operation', $atts['operator'] );
+
+		// Calculate our result.
+		if ( ! $this->sanitizer->invalid_or_error( $operator ) ) {
+			switch ( $operator ) {
+				case '+':
+					$out = $atts['operand_one'] + $atts['operand_two'];
+					break;
+				case '-':
+					$out = $atts['operand_one'] - $atts['operand_two'];
+					break;
+				case '/':
+					$out = $atts['operand_one'] / $atts['operand_two'];
+					break;
+				case '*':
+					$out = $atts['operand_one'] * $atts['operand_two'];
+					break;
+				case '**':
+					$out = $atts['operand_one'] ** $atts['operand_two'];
+					break;
+				case 'mod':
+					$out = $atts['operand_one'] % $atts['operand_two'];
+					break;
+				case 'sqrt':
+					$out = pow( $atts['operand_one'], ( 1 / $atts['operand_two'] ) );
+					break;
+				case '%':
+					$out = ( $atts['operand_two'] / 100 ) * $atts['operand_one'];
+					break;
+				case '‰':
+					$out = ( $atts['operand_two'] / 1000 ) * $atts['operand_one'];
+					break;
+			}
+		} else {
+			$out = '0'; // Invalid operands give 0.
+		}
+
+		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
+		// Return our data.
+		return $out;
+
+	}
+
 }

@@ -85,6 +85,7 @@ class Tkt_Shortcodes_Declarations {
 			'termmeta'          => 'Term Meta Data',
 			'postmeta'          => 'Post Meta Data',
 			'conditional'       => 'TukuToi Conditional ShortCode',
+			'math'              => 'Mathematical Operation',
 		);
 
 		return $shortcodes;
@@ -136,6 +137,27 @@ class Tkt_Shortcodes_Declarations {
 			'user_activation_key',
 			'user_status',
 			'display_name',
+		);
+
+		/**
+		 * Valid Math Operators.
+		 *
+		 * Note, we consciously choose % for percentage, even if the actual code will use % for modulo.
+		 *
+		 * @see https://en.wikipedia.org/wiki/Modulo_operation
+		 * @see https://en.wikipedia.org/wiki/Percentage
+		 * @see https://www.php.net/manual/en/language.operators.arithmetic.php
+		 */
+		$valid_operators = array(
+			'+'     => 'Plus',
+			'-'     => 'Minus',
+			'*'     => 'Times',
+			'/'     => 'Divided',
+			'**'    => 'Exponentiation',
+			'mod'   => 'Modulo (weirdest stuff ever)',
+			'sqrt'  => '√ (nth Root',
+			'%'     => '% (Percent)',
+			'‰'     => '‰ (Permille)',
 		);
 
 		return $$map;

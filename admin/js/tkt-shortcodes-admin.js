@@ -43,11 +43,16 @@
 
 					}); 
 
-					generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
+					if ( 'conditional' === shortcode ){
+						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + '][/tkt_scs_conditional]';
+					} else{
+						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
+					}
 
 					texteditor = $( '#wp-content-editor-container' ).find( 'textarea' );
 					text_append( texteditor, generated_shortcode );
-			        if( typeof(tinyMCE.activeEditor) !== null ){
+
+			        if( null != tinyMCE.activeEditor && null != tinyMCE.activeEditor ){
 			         	tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, generated_shortcode );
 				    }
 

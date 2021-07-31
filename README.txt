@@ -44,6 +44,9 @@ Above would return `The Compared values where not true!` as the values are not e
 
 And no, it does not use `eval()`. It uses a custom set of expressions, and does not parse user input to PHP directly.
 
+Duh, did I mention you can do math with the plugin too?
+All valid Mathematical operations are possible. Even the weirdest Modulo.
+
 == Current ShortCodes: ==
 
 Blog Info [tkt_scs_bloginfo]
@@ -55,6 +58,7 @@ User Meta Data [tkt_scs_usermeta key="first_name"]
 Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
 Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
 Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
+Math [tkt_scs_math operand_one="2" operand_two="3" operator="+" sanitize="intval"]
 
 All ShortCodes take pretty much the same arguments as the corresponding WP/CP functions and the display attributes generally follow the WP/CP naming of object props or array keys.
 
@@ -174,6 +178,8 @@ Have a look at just *some* of the possible Output...
 [tkt_scs_postmeta item="" key="testing_the_field" single="true" delimiter="" filter="raw" sanitize="text_field"]
 
 [tkt_scs_conditional left="[tkt_scs_postinfo item="" show="ID" filter="raw" sanitize="text_field"]" right="1" operator="eq" else="no true!"][tkt_scs_postinfo item="" show="post_name" filter="raw" sanitize="text_field"][/tkt_scs_conditional]
+
+[tkt_scs_math operand_one="2" operand_two="3" operator="+" sanitize="intval"]
 ```
 
 == Installation ==
@@ -181,6 +187,11 @@ Have a look at just *some* of the possible Output...
 Just like any other Plugin. 
 
 == Changelog ==
+
+= 1.7.1 =
+* [Added] Math ShortCode. Yep.
+* [Fixed] Console error when inserting in Text mode
+* [Fixed] Conditional ShortCode is now autoclosing on insertion
 
 = 1.6.0 =
 * [Fixed] All Shortcode are now producing healthy and useful output
