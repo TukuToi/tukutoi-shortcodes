@@ -64,21 +64,32 @@ class Tkt_Shortcodes_Shortcodes {
 	private $log_debug;
 
 	/**
+	 * The Configuration object.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $declarations    All configurations and declarations of this plugin.
+	 */
+	private $declarations;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
 	 * @param      string $plugin_prefix          The unique prefix of this plugin.
 	 * @param      string $version          The version of this plugin.
+	 * @param      string $declarations    The Configuration object.
 	 */
-	public function __construct( $plugin_prefix, $version ) {
+	public function __construct( $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 		$this->meta_type        = 'post';
 		$this->debug            = false;
 		$this->log_debug        = false;
+		$this->declarations     = $declarations;
 
-		$this->sanitizer        = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version );
+		$this->sanitizer        = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version, $this->declarations );
 
 	}
 
@@ -106,6 +117,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
 		}
@@ -161,10 +173,12 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to current post if no value passed to item.
 		if ( empty( $atts['item'] ) ) {
 			$atts['item'] = get_the_ID();
 		}
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
 				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
@@ -230,6 +244,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to current User if no value passed to item and other than ID chosen.
 		if ( empty( $atts['item'] ) &&
 			( 'ID' === $atts['field']
 			|| 'id' === $atts['field']
@@ -238,6 +253,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts['item'] = get_current_user_id();
 		}
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
 				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
@@ -245,7 +261,7 @@ class Tkt_Shortcodes_Shortcodes {
 				if ( 'ID' === $value || 'id' === $value ) {
 					$atts['value'] = $this->sanitizer->sanitize( 'intval', $atts['value'] );
 				} elseif ( 'email' === $value ) {
-					$atts['value'] = $this->sanitizer->sanitize( $value, $atts['value'] );
+					$atts['value'] = $this->sanitizer->sanitize( 'email', $atts['value'] );
 				}
 			} else {
 				$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
@@ -263,8 +279,7 @@ class Tkt_Shortcodes_Shortcodes {
 			 * The user object is a huge mess. Try to fix this as effectively as possible.
 			 */
 			// An array of nested User Values (object "data" inside object "wpUser").
-			$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
-			if ( in_array( $atts['show'], $declarations->data_map( 'user_data' ) ) ) {
+			if ( in_array( $atts['show'], $this->declarations->data_map( 'user_data' ) ) ) {
 				// This is the nested data object.
 				$out = $this->sanitizer->validate( 'object', $out->data, $atts['show'] );
 			} elseif ( 'caps' === $atts['show'] ) {
@@ -306,16 +321,18 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => '',
-				'taxonomy'  => '',
-				'show'      => 'name',
-				'filter'    => 'raw',
-				'sanitize'  => 'text_field',
+				'item'          => '',
+				'taxonomy'      => '',
+				'object_type'   => '',
+				'show'          => 'name',
+				'filter'        => 'raw',
+				'sanitize'      => 'text_field',
 			),
 			$atts,
 			$tag
 		);
 
+		// Default to Current Taxonomy Term if no value passed to item, and we are on an archive.
 		if ( empty( $atts['item'] ) &&
 			is_tax()
 			|| is_tag()
@@ -326,6 +343,7 @@ class Tkt_Shortcodes_Shortcodes {
 			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
 		}
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
 				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
@@ -340,7 +358,7 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
-			$out = $this->sanitizer->validate( 'object', $out, $atts['show'] );
+			$out = $this->sanitizer->validate( 'object', $out );
 		}
 
 		// Sanitize our data.
@@ -377,10 +395,12 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to the current post if no value was passed to item.
 		if ( empty( $atts['item'] ) ) {
 			$atts['item'] = get_the_ID();
 		}
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
 				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
@@ -397,7 +417,7 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
-			$out = join( $atts['delimiter'], wp_list_pluck( $out, $atts['show'] ) );
+			$out = join( $atts['delimiter'], wp_list_pluck( $out, 'term_id' ) );
 		}
 
 		// Sanitize our data.
@@ -434,10 +454,12 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to current post if no value was passed to item.
 		if ( empty( $atts['item'] ) ) {
 			$atts['item'] = get_the_ID();
 		}
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'item' === $key ) {
 				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
@@ -503,6 +525,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to current Taxonomy Term if no value was passed to item and we are on an archive.
 		if ( empty( $atts['item'] ) &&
 			is_tax()
 			|| is_tag()
@@ -513,6 +536,7 @@ class Tkt_Shortcodes_Shortcodes {
 			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
 		}
 
+		// Get our data. We sanitize Inputs in postmeta().
 		$this->meta_type = 'term';
 		$out = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
@@ -547,10 +571,12 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		// Default to current user if no value was passed to item.
 		if ( empty( $atts['item'] ) ) {
 			$atts['item'] = get_current_user_id();
 		}
 
+		// Get our data. We sanitize Inputs in postmeta().
 		$this->meta_type = 'user';
 		$out = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
@@ -576,29 +602,59 @@ class Tkt_Shortcodes_Shortcodes {
 			array(
 				'left'      => '',
 				'right'     => '',
-				'operator'  => 'eq',
+				'operator'  => 'eqv',
+				'float'     => '',
+				'epsilon'   => '',
 				'else'      => '',
 			),
 			$atts,
 			$tag
 		);
 
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
-
-			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
-
+			if ( 'epsilon' === $key ) {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'floatval', $value );
+			} else {
+				if ( ! empty( $atts['float'] ) && ( 'left' === $key || 'right' === $key ) ) {
+					$float_value_left = (float) $atts['left'];
+					$atts['left'] = strval( $float_value_left ) == $atts['left'] ? floatval( $atts['left'] ) : $atts['left'];
+					$float_value_right = (float) $atts['right'];
+					$atts['right'] = strval( $float_value_right ) == $atts['right'] ? floatval( $atts['right'] ) : $atts['right'];
+				} else {
+					$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+				}
+			}
 		}
 
 		$true = false;
 
+		// Compare the values according operator.
 		switch ( $atts['operator'] ) {
 			case 'eqv':
-				if ( $atts['left'] == $atts['right'] ) {
-					$true = true;
+				if ( is_float( $atts['left'] ) || is_float( $atts['right'] ) ) {
+
+					if ( abs( $atts['left'] - $atts['right'] ) < $atts['epsilon'] ) {
+						$true = true;
+					}
+				} else {
+					if ( $atts['left'] == $atts['right'] ) {
+						$true = true;
+					}
 				}
 				break;
 			case 'eqvt':
 				if ( $atts['left'] === $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'nev':
+				if ( $atts['left'] != $atts['right'] ) {
+					$true = true;
+				}
+				break;
+			case 'nevt':
+				if ( $atts['left'] !== $atts['right'] ) {
 					$true = true;
 				}
 				break;
@@ -622,16 +678,6 @@ class Tkt_Shortcodes_Shortcodes {
 					$true = true;
 				}
 				break;
-			case 'nev':
-				if ( $atts['left'] != $atts['right'] ) {
-					$true = true;
-				}
-				break;
-			case 'nevt':
-				if ( $atts['left'] !== $atts['right'] ) {
-					$true = true;
-				}
-				break;
 			default:
 				if ( $atts['left'] == $atts['right'] ) {
 					$true = true;
@@ -639,6 +685,8 @@ class Tkt_Shortcodes_Shortcodes {
 				break;
 		}
 
+		// If condition passed, process the wrapped $content.
+		// @todo pass user variable for sanitize option here.
 		if ( true === $true ) {
 			$content = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $content );
 			$content = do_shortcode( $content, false );
@@ -677,7 +725,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
-		// Sanitize the attributes.
+		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
 			if ( 'operator' === $key ) {
 				$atts['operator'] = $this->sanitizer->sanitize( 'text_field', $value );
@@ -727,6 +775,234 @@ class Tkt_Shortcodes_Shortcodes {
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
 
 		// Return our data.
+		return $out;
+
+	}
+
+	/**
+	 * Edit Links ShortCode
+	 *
+	 * Return edit links to backend instances.
+	 *
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function editlinks( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'item'      => '',
+				'type'      => '', // either post type name or taxonomy name.
+				'object'    => '', // the post type for when linking to taxonomy edit screen.
+				'delimiter' => '',
+				'filter'    => '',
+				'sanitize'  => 'esc_url_raw',
+			),
+			$atts,
+			$tag
+		);
+
+		// Default to current post if no value passed to item.
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_the_ID();
+		}
+
+		// Sanitize the User input atts.
+		foreach ( $atts as $key => $value ) {
+			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+		}
+
+		// If several Term IDs are passed ot item (post_termsinfo).
+		if ( strpos( $atts['item'], ',' ) !== false ) {
+			$atts['item'] = explode( ',', $atts['item'] );
+		}
+
+		// Get our data.
+		if ( post_type_exists( $atts['type'] ) ) {
+			$out = get_edit_post_link( $atts['item'], $atts['filter'] );
+		} elseif ( taxonomy_exists( $atts['type'] ) && ! is_array( $atts['item'] ) ) {
+			$out = get_edit_term_link( $atts['item'], $atts['type'], $atts['object'] );
+		} elseif ( is_array( $atts['item'] ) ) {
+			foreach ( $atts['item'] as $term_id ) {
+				$out[] = get_edit_term_link( $term_id, $atts['type'], $atts['object'] );
+			}
+			$out = join( $atts['delimiter'], $out );
+
+		}
+
+		// Sanitize our data.
+		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
+		return $out;
+
+	}
+
+	/**
+	 * Archive Links ShortCode
+	 *
+	 * Return archive links to instances.
+	 *
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function archivelinks( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'item'      => '',
+				'type'      => '', // either post type name or taxonomy name.
+				'object'    => '', // the post type for when linking to taxonomy edit screen.
+				'delimiter' => '',
+				'filter'    => '',
+				'sanitize'  => 'esc_url_raw',
+			),
+			$atts,
+			$tag
+		);
+
+		// Default to current post if no value passed to item.
+		if ( empty( $atts['item'] ) ) {
+			$atts['item'] = get_the_ID();
+		}
+
+		// Sanitize the User input atts.
+		foreach ( $atts as $key => $value ) {
+			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+		}
+
+		// If several Term IDs are passed ot item (post_termsinfo).
+		if ( strpos( $atts['item'], ',' ) !== false ) {
+			$atts['item'] = explode( ',', $atts['item'] );
+		}
+
+		if ( post_type_exists( $atts['type'] ) ) {
+			$out = get_post_type_archive_link( $atts['type'] );
+		} elseif ( taxonomy_exists( $atts['type'] ) && ! is_array( $atts['item'] ) ) {
+			$out = get_term_link( (int) $atts['item'], $atts['type'] );
+		} elseif ( is_array( $atts['item'] ) ) {
+			foreach ( $atts['item'] as $term_id ) {
+				$out[] = get_term_link( (int) $term_id, $atts['type'] );
+			}
+			$out = join( $atts['delimiter'], $out );
+		}
+
+		// Sanitize our data.
+		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
+		return $out;
+
+	}
+
+	/**
+	 * Thumbnail ShortCode
+	 *
+	 * Return archive links to instances.
+	 *
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function attachmentimage( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'item'      => '',
+				'url'       => '',
+				'show'      => '',
+				'width'     => '',
+				'height'    => '',
+				'size'      => '',
+				'icon'      => '',
+				'filter'    => '',
+				'sanitize'  => 'esc_url_raw',
+			),
+			$atts,
+			$tag
+		);
+
+		// Sanitize the User input atts.
+		foreach ( $atts as $key => $value ) {
+			if ( 'url' === $key ) {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'esc_url_raw', $value );
+			} else {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+			}
+		}
+
+		if ( empty( $atts['item'] ) && ! empty( $atts['url'] ) ) {
+			// We want ID from URL.
+			$atts['item'] = attachment_url_to_postid( $atts['url'] );
+		}
+
+		if ( empty( $atts['size'] ) ) {
+			$atts['size'] = array(
+				$atts['width'],
+				$atts['height'],
+			);
+		}
+
+		if ( 'featured_image' === $atts['show'] ) {
+			$out = get_the_post_thumbnail_url( $atts['item'], $atts['size'] );
+		} else {
+			$out = wp_get_attachment_image_url( $atts['item'], $atts['size'], $atts['icon'] );
+		}
+
+		// Sanitize our data.
+		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
+		return $out;
+
+	}
+
+	/**
+	 * Round Floats ShortCode
+	 *
+	 * Return rounded float values.
+	 *
+	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 *
+	 * @since    1.0.0
+	 * @param    array  $atts    ShortCode Attributes.
+	 * @param    mixed  $content ShortCode enclosed content.
+	 * @param    string $tag    The Shortcode tag.
+	 */
+	public function round( $atts, $content = null, $tag ) {
+
+		$atts = shortcode_atts(
+			array(
+				'round'     => '',
+				'dir'       => '',
+				'sanitize'  => '',
+			),
+			$atts,
+			$tag
+		);
+
+		// Sanitize the User input atts.
+		foreach ( $atts as $key => $value ) {
+			$atts[ $key ] = $this->sanitizer->sanitize( 'intval', $value );
+		}
+
+		if ( ! is_numeric( $content ) ) {
+			$out = 'You are trying to round non-numeric values!';
+		} else {
+			$out = round( $content, $atts['round'], $atts['dir'] );
+		}
+
+		// Sanitize our data.
+		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
+
 		return $out;
 
 	}

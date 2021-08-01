@@ -1,7 +1,7 @@
 (function( $ ) {
 	'use strict';
 	
-	var texteditor, shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, shortcode_atts = [];
+	var texteditor, shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, quote, shortcode_atts = [];
 	var dialog_width = 625;
 	var dialog_height = dialog_width/1.6;
 
@@ -36,15 +36,25 @@
 				},
 				"Insert": function() {
 
-					shortcode_atts = []; // Reset the ShortCode atts.
-					$(".tkt-shortcode-form :input").each(function(index){
+					quote = '"'; // Reset the ShortCode atts.
 
-						shortcode_atts.push( this.id + '="' + this.value + '"' );
+					$( '[name="quotes"]' ).each(function(index){
+						if( $(this).prop("checked") ){
+							quote = '\'';
+						}
+					}); 
+
+					shortcode_atts = []; // Reset the ShortCode atts.
+					$(".tkt-shortcode-form :input:not([name='quotes'])").each(function(index){
+						if( this.checked ){
+							this.value = 'true';
+						}
+						shortcode_atts.push( this.id + '=' + quote + this.value + quote );
 
 					}); 
 
-					if ( 'conditional' === shortcode ){
-						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + '][/tkt_scs_conditional]';
+					if ( 'conditional' === shortcode || 'round' === shortcode ){
+						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + '][/tkt_scs_' + shortcode + ']';
 					} else{
 						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
 					}

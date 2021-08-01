@@ -76,17 +76,81 @@ class Tkt_Shortcodes_Declarations {
 	private function declare_shortcodes() {
 
 		$shortcodes = array(
-			'bloginfo'          => 'Website Information',
-			'postinfo'          => 'Post Data',
-			'userinfo'          => 'User Data',
-			'terminfo'          => 'Term Data',
-			'post_termsinfo'    => 'Post Term Data',
-			'usermeta'          => 'User Meta Data',
-			'termmeta'          => 'Term Meta Data',
-			'postmeta'          => 'Post Meta Data',
-			'conditional'       => 'TukuToi Conditional ShortCode',
-			'math'              => 'Mathematical Operation',
+			'bloginfo' => array(
+				'label' => 'Website Information',
+				'type'  => 'informational',
+			),
+			'postinfo' => array(
+				'label' => 'Post Data',
+				'type'  => 'informational',
+			),
+			'userinfo' => array(
+				'label' => 'User Data',
+				'type'  => 'informational',
+			),
+			'terminfo' => array(
+				'label' => 'Term Data',
+				'type'  => 'informational',
+			),
+			'post_termsinfo' => array(
+				'label' => 'Post Term Data',
+				'type'  => 'informational',
+			),
+			'usermeta' => array(
+				'label' => 'User Meta Data',
+				'type'  => 'informational',
+			),
+			'termmeta' => array(
+				'label' => 'Term Meta Data',
+				'type'  => 'informational',
+			),
+			'postmeta' => array(
+				'label' => 'Post Meta Data',
+				'type'  => 'informational',
+			),
+			'conditional' => array(
+				'label' => 'Conditional ShortCode',
+				'type'  => 'operational',
+			),
+			'math' => array(
+				'label' => 'Mathematical Operation',
+				'type'  => 'operational',
+			),
+			'editlinks' => array(
+				'label' => 'Edit Links',
+				'type'  => 'managerial',
+			),
+			'archivelinks' => array(
+				'label' => 'Archive Links',
+				'type'  => 'informational',
+			),
+			'attachmentimage' => array(
+				'label' => 'Images',
+				'type'  => 'informational',
+			),
+			'round' => array(
+				'label' => 'Round Floating Values',
+				'type'  => 'operational',
+			),
 		);
+
+		/**
+		 * Apply filter to allow other ShortCodesto be added.
+		 *
+		 * Other plugins or users can add ShortCodes to the TukuToi ShortCodes GUI.
+		 * They will then be displaying inside the TukuToi ShortCodes GUI Dialogue.
+		 * It is up to the third party to provide valid Forms for those ShortCodes and source code.
+		 *
+		 * @since 1.12.2
+		 *
+		 * @param array $args {
+		 *     Associative Array where $key is  ShortCode method and tagname, $value is an array of ShortCode Name and Type.
+		 *
+		 *     @type string $label The Name of the ShortCode (Button Label). Default ''. Accepts 'string'.
+		 *     @type string $type The type of ShortCode (determines Section in GUI). Default ''. Accepts 'managerial', 'operational', 'informational'.
+		 * }
+		 */
+		$shortcodes = apply_filters( 'tkt_scs_register_shortcode', $shortcodes );
 
 		return $shortcodes;
 
@@ -155,9 +219,33 @@ class Tkt_Shortcodes_Declarations {
 			'/'     => 'Divided',
 			'**'    => 'Exponentiation',
 			'mod'   => 'Modulo (weirdest stuff ever)',
-			'sqrt'  => '√ (nth Root',
+			'sqrt'  => '√ (nth Root)',
 			'%'     => '% (Percent)',
 			'‰'     => '‰ (Permille)',
+		);
+
+		$valid_comparison = array(
+			'eqv'   => 'Equal',
+			'eqvt'  => 'Identical',
+			'nev'   => 'Not equal',
+			'nevt'  => 'Not identical',
+			'lt'    => 'Lesss than',
+			'gt'    => 'Greater than',
+			'gte'   => 'Less than or equal to',
+			'lte'   => 'Greater than or equal to',
+		);
+
+		$valid_round_constants = array(
+			'PHP_ROUND_HALF_UP'     => 'Round half up',
+			'PHP_ROUND_HALF_DOWN'   => 'Round half down',
+			'PHP_ROUND_HALF_EVEN'   => 'Round towards nearest even value',
+			'PHP_ROUND_HALF_ODD'    => 'Round towards nearest odd value',
+		);
+
+		$shortcode_types = array(
+			'informational' => 'Informational',
+			'operational' => 'Operational',
+			'managerial' => 'Managerial',
 		);
 
 		return $$map;

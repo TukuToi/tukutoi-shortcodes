@@ -48,13 +48,13 @@ class Tkt_Shortcodes_Gui {
 	private $version;
 
 	/**
-	 * The version of this plugin.
+	 * The Configuration object.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $sanitization_options    All the sanitization options of the plugin.
+	 * @var      string    $declarations    All configurations and declarations of this plugin.
 	 */
-	private $sanitization_options;
+	private $declarations;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -67,12 +67,14 @@ class Tkt_Shortcodes_Gui {
 	 * @param   string $plugin_prefix   The unique prefix of this plugin.
 	 * @param   string $version         The version of this plugin.
 	 * @param   string $shortcode       The ShortCode requested.
+	 * @param      string $declarations    The Configuration object.
 	 */
-	public function __construct( $plugin_prefix, $version, $shortcode ) {
+	public function __construct( $plugin_prefix, $version, $shortcode, $declarations ) {
 
 		$this->plugin_prefix = $plugin_prefix;
 		$this->plugin_version = $version;
 		$this->shortcode = $shortcode;
+		$this->declarations = $declarations;
 
 	}
 
@@ -86,32 +88,28 @@ class Tkt_Shortcodes_Gui {
 
 		$file = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/tkt-shortcodes-' . $this->shortcode . '-form.php';
 
+		/**
+		 * Apply filter to allow other ShortCodesto be added.
+		 *
+		 * Other plugins or users can add ShortCodes to the TukuToi ShortCodes GUI.
+		 * They will then be displaying inside the TukuToi ShortCodes GUI Dialogue.
+		 * It is up to the third party to provide valid Forms for those ShortCodes and source code.
+		 *
+		 * @since 1.12.2
+		 *
+		 * @param string  $file The path to the ShortCode Form GUI.
+		 * @param string  $shortcode The ShortCode for which we add new GUI.
+		 */
+		$file = apply_filters( "tkt_scs_{$this->shortcode}_shortcode_form_gui", $file, $this->shortcode );
+
 		ob_start();
 		require_once( $file );
 		$form = ob_get_contents();
 		ob_end_clean();
 
-		$gui = $this->fieldset_wrapper( 'pre' );
-		$gui .= $form;
-		$gui .= $this->fieldset_wrapper( 'after' );
+		$gui = $form;
 
 		return $gui;
-
-	}
-
-	/**
-	 * Standard wrapper for the GUI Forms
-	 *
-	 * @since 1.4.0
-	 * @param string $wrap The Requested wrap element.
-	 * @return array $wrapper An array with the wrapper elements.
-	 */
-	private function fieldset_wrapper( $wrap ) {
-
-		$wrapper['pre']     = '<form class="tkt-shortcode-form">';
-		$wrapper['after']   = '</form>';
-
-		return $wrapper[ $wrap ];
 
 	}
 
@@ -145,12 +143,14 @@ class Tkt_Shortcodes_Gui {
 	 * @param string $value      The ShortCode Attribute default value.
 	 * @param string $explanation The ShortCode Attribute explanation.
 	 */
-	private function checkbox_fieldset( $attribute, $label, $value, $explanation = 'Wether to return a single value or an array' ) {
+	private function checkbox_fieldset( $attribute, $label, $value, $explanation = 'Wether to return a single value or an array', $checked = 'checked' ) {
 
 		?>
 		<fieldset>
 			<label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
-			  <input type="checkbox" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="text ui-widget-content ui-corner-all" checked>
+			  <div class="tkt-block-checkbox">
+				  <input type="checkbox" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="checkbox ui-widget-content ui-corner-all" <?php echo esc_attr( $checked ); ?>>
+			  </div>
 			  <small class="tkt-shortcode-option-explanation"><em><?php printf( esc_html__( '%s', 'tkt-shortcodes' ), $explanation ); ?></em></small>
 		</fieldset>
 		<?php
@@ -167,7 +167,7 @@ class Tkt_Shortcodes_Gui {
 	 * @param string $callback    The user Callback to generate the select options.
 	 */
 	private function select_fieldset( $attribute, $label, $value, $callback ) {
-		
+
 		?>
 		<fieldset>
 			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
@@ -189,7 +189,7 @@ class Tkt_Shortcodes_Gui {
 	 */
 	private function sanitize_options() {
 
-		$sanitizer = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version );
+		$sanitizer = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version, $this->declarations );
 
 		foreach ( $sanitizer->sanitization_options as $sanitization_option => $array ) {
 			$selected = 'text_field' === $sanitization_option ? 'selected' : '';
@@ -282,6 +282,30 @@ class Tkt_Shortcodes_Gui {
 	}
 
 	/**
+	 * Create a Select Field set for the ShortCodes Forms Taxonomy Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function posttypes_options() {
+
+		$post_types = get_post_types( array( 'public' => true ), 'objects' );
+
+		foreach ( $post_types as $post_types => $object ) {
+			$label = $object->labels->menu_name;
+			$name  = $object->name;
+			printf( '<option value="' . esc_attr( '%s' ) . '">' . esc_html( '%s' ) . '</option>', $name, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'The Post Type to which to link when Editing Terms';
+			}
+		);
+
+	}
+
+	/**
 	 * Create a Select Field set for the ShortCodes Forms User Display Options.
 	 *
 	 * @since 1.4.0
@@ -344,8 +368,7 @@ class Tkt_Shortcodes_Gui {
 	 */
 	private function math_options() {
 
-		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
-		$valid_operators = $declarations->data_map( 'valid_operators' );
+		$valid_operators = $this->declarations->data_map( 'valid_operators' );
 
 		foreach ( $valid_operators as $valid_operator => $label ) {
 			$selected = '+' === $valid_operator ? 'selected' : '';
@@ -362,14 +385,37 @@ class Tkt_Shortcodes_Gui {
 	}
 
 	/**
+	 * Create a Select Field set for the ShortCodes Forms Conditional Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function conditional_options() {
+
+		$valid_comparisons = $this->declarations->data_map( 'valid_comparison' );
+
+		foreach ( $valid_comparisons as $valid_comparison => $label ) {
+			$selected = '==' === $valid_comparison ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $valid_comparison, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'What Comparison Operator to use';
+			}
+		);
+
+	}
+
+
+	/**
 	 * Create a Select Field set for the ShortCodes Forms SiteInfo Display Options.
 	 *
 	 * @since 1.4.0
 	 */
 	private function siteshow_options() {
 
-		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
-		$site_infos = $declarations->data_map( 'site_infos' );
+		$site_infos = $this->declarations->data_map( 'site_infos' );
 
 		foreach ( $site_infos as $site_info => $label ) {
 			$selected = 'name' === $site_info ? 'selected' : '';
@@ -381,6 +427,105 @@ class Tkt_Shortcodes_Gui {
 			function( $explanation ) {
 				return 'What Site Information to show';
 
+			}
+		);
+
+	}
+
+	/**
+	 * Create a Select Field set for the ShortCodes Forms SiteInfo Display Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function alltypes_options() {
+
+		$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
+		$post_types = get_post_types( array( 'public' => true ), 'objects' );
+		$alltypes = array_merge( $taxonomies, $post_types );
+
+		foreach ( $alltypes as $alltype => $object ) {
+			$label = $object->labels->menu_name;
+			$name  = $object->name;
+			$selected = 'post' === $alltype ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $name, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'The Content Type of which to get the Edit link';
+			}
+		);
+
+	}
+
+	/**
+	 * Create a Select Field set for the ShortCodes Forms Attachment Display Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function attachment_options() {
+
+		$attachment_options = array(
+			'featured_image'    => 'Featured Image',
+			'other'             => 'Other Image',
+		);
+
+		foreach ( $attachment_options as $attachment_option => $label ) {
+			$selected = 'featured_image' === $attachment_option ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $attachment_option, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'Whether Show a Featured Image or any other Image';
+			}
+		);
+
+	}
+
+	/**
+	 * Create a Select Field set for the ShortCodes Forms Attachment Display Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function imagesize_options() {
+
+		$imagesize_options = get_intermediate_image_sizes();
+
+		foreach ( $imagesize_options as $imagesize_option => $label ) {
+			$selected = 'thumbnail' === $imagesize_option ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $imagesize_option, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'What Registered Image size to use';
+			}
+		);
+
+	}
+
+	/**
+	 * Create a Select Field set for the ShortCodes Forms Attachment Display Options.
+	 *
+	 * @since 1.4.0
+	 */
+	private function roundconstants_options() {
+
+		$valid_round_constants = $this->declarations->data_map('valid_round_constants');
+
+		foreach ( $valid_round_constants as $valid_round_constant => $label ) {
+			$selected = 'PHP_ROUND_HALF_UP' === $valid_round_constant ? 'selected' : '';
+			printf( '<option value="' . esc_attr( '%s' ) . '" ' . $selected . '>' . esc_html( '%s' ) . '</option>', $valid_round_constant, $label );
+		}
+
+		add_filter(
+			'tkt_scs_shortcodes_fieldset_explanation',
+			function( $explanation ) {
+				return 'How to round the value';
 			}
 		);
 

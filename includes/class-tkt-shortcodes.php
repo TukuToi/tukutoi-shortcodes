@@ -150,6 +150,7 @@ class Tkt_Shortcodes {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-public.php';
 
 		$this->loader = new Tkt_Shortcodes_Loader();
+		$this->declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
 	}
 
@@ -191,7 +192,7 @@ class Tkt_Shortcodes {
 			 */
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tkt-shortcodes-gui.php';
 
-			$plugin_admin = new Tkt_Shortcodes_Admin( $this->plugin_name, $this->plugin_prefix, $this->version );
+			$plugin_admin = new Tkt_Shortcodes_Admin( $this->plugin_name, $this->plugin_prefix, $this->version, $this->declarations );
 
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -231,19 +232,19 @@ class Tkt_Shortcodes {
 			 */
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-shortcodes.php';
 
-			$plugin_public = new Tkt_Shortcodes_Public( $this->plugin_name, $this->plugin_prefix, $this->version );
-			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version );
-			$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
-			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version );
+			$plugin_public = new Tkt_Shortcodes_Public( $this->plugin_name, $this->plugin_prefix, $this->version, $this->declarations );
+			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
+			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version, $this->declarations );
 
 			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
 			$this->loader->add_filter( '{$this->plugin_prefix}pre_process_shortcodes', $processor, 'pre_process_shortcodes', 5 );
 
-			foreach ( $declarations->shortcodes as $shortcode => $label ) {
+			foreach ( $this->declarations->shortcodes as $shortcode => $label ) {
 
 				$callback = $shortcode;
-				$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $shortcodes, $callback );
-
+				if ( method_exists( $shortcodes, $callback ) ) {
+					$this->loader->add_shortcode( $this->get_plugin_prefix() . $shortcode, $shortcodes, $callback );
+				}
 			}
 		}
 

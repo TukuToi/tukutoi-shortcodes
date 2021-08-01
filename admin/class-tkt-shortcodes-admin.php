@@ -50,22 +50,13 @@ class Tkt_Shortcodes_Admin {
 	private $version;
 
 	/**
-	 * The ShortCodes of this plugin.
+	 * The Configuration object.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $shortcodes    All ShortCodes of this plugin.
+	 * @var      string    $declarations    All configurations and declarations of this plugin.
 	 */
-	private $shortcodes;
-
-	/**
-	 * The Sanitizer class.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $sanitizer    object The Sanitizer Class responsible for providing sanitization and validaton.
-	 */
-	private $sanitizer;
+	private $declarations;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -74,12 +65,14 @@ class Tkt_Shortcodes_Admin {
 	 * @param      string $plugin_name       The name of this plugin.
 	 * @param      string $plugin_prefix    The unique prefix of this plugin.
 	 * @param      string $version    The version of this plugin.
+	 * @param      string $declarations    The Configuration object.
 	 */
-	public function __construct( $plugin_name, $plugin_prefix, $version ) {
+	public function __construct( $plugin_name, $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_name   = $plugin_name;
 		$this->plugin_prefix = $plugin_prefix;
 		$this->version = $version;
+		$this->declarations = $declarations;
 
 	}
 
@@ -141,7 +134,7 @@ class Tkt_Shortcodes_Admin {
 
 		$shortcode = sanitize_title( wp_unslash( $_GET['shortcode'] ) );
 
-		$form = new Tkt_Shortcodes_Gui( $this->plugin_prefix, $this->version, $shortcode );
+		$form = new Tkt_Shortcodes_Gui( $this->plugin_prefix, $this->version, $shortcode, $this->declarations );
 
 		$response = array(
 			'form' => $form->get_shortcode_gui(),
@@ -173,13 +166,26 @@ class Tkt_Shortcodes_Admin {
 	 */
 	private function shortcodes_dialog() {
 
-		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
+		$groups = $this->declarations->data_map( 'shortcode_types' );
 
 		?>
 		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
 			<?php
-			foreach ( $declarations->shortcodes as $shortcode => $label ) {
-				echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $label ) . '" class="button tkt-shortcode-buttons">' . esc_html( $label ) . '</a>';
+			foreach ( $groups as $group => $label ) {
+				?>
+			<div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
+				<h4><?php echo esc_html( $label ); ?></h4>
+				<div class="tkt-sub-section-content">
+					<?php
+					foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
+						if ( $array['type'] === $group ) {
+							echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
+						}
+					}
+					?>
+				</div>
+			</div>
+				<?php
 			}
 			?>
 		</div>

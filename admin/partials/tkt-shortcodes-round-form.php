@@ -14,10 +14,8 @@
 ?>
 <form class="tkt-shortcode-form">
 	<?php
-	$this->text_fieldset( 'item', 'Item', '', 'Show User Meta Data of this User (Defaults to current User)' );
-	$this->text_fieldset( 'key', 'Meta Key', '', 'What Meta Key to use' );
-	$this->checkbox_fieldset( 'single', 'Single', 'true' );
-	$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
+	$this->text_fieldset( 'round', 'Round', '', 'By how many Decimals to round the float value' );
+	$this->select_fieldset( 'dir', 'Direction', 'PHP_ROUND_HALF_UP', 'roundconstants_options' );
 	$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
 	$this->checkbox_fieldset( 'quotes', 'Quotes', '"', 'What Quotes to use in ShortCodes (Useful when using ShortCodes in other ShortCodes attributes, or in HTML attributes', '' );
 	?>

@@ -72,19 +72,30 @@ class Tkt_Shortcodes_Sanitizer {
 	private $debug_log;
 
 	/**
+	 * The Configuration object.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $declarations    All configurations and declarations of this plugin.
+	 */
+	private $declarations;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
 	 * @param      string $plugin_prefix          The unique prefix of this plugin.
 	 * @param      string $version          The version of this plugin.
+	 * @param      string $declarations    The Configuration object.
 	 */
-	public function __construct( $plugin_prefix, $version ) {
+	public function __construct( $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 		$this->sanitization_options = $this->sanitize_options();
 		$this->debug            = false;
 		$this->debug_log        = false;
+		$this->declarations     = $declarations;
 
 	}
 
@@ -323,8 +334,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 */
 	private function handle_operator_validation( $value ) {
 
-		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
-		$valid_operators = array_flip( $declarations->data_map( 'valid_operators' ) );
+		$valid_operators = array_flip( $this->declarations->data_map( 'valid_operators' ) );
 
 		if ( in_array( $value, $valid_operators ) ) {
 
