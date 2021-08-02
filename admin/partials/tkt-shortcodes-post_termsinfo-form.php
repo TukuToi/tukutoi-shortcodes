@@ -1,8 +1,8 @@
 <?php
 /**
- * Provide a admin area view for the plugin
+ * Provide a Form view for the Post Terms Info ShortCode.
  *
- * This file is used to markup the admin-facing aspects of the plugin.
+ * @pwpcs this is the only error in the plugin (filename not using - but _)
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0

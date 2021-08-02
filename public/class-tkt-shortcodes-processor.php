@@ -35,15 +35,6 @@
 class Tkt_Shortcodes_Processor {
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
 	 * The unique prefix of this plugin.
 	 *
 	 * @since    1.0.0
@@ -66,7 +57,7 @@ class Tkt_Shortcodes_Processor {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $declarations    All configurations and declarations of this plugin.
+	 * @var      array    $declarations    All configurations and declarations of this plugin.
 	 */
 	private $declarations;
 
@@ -76,7 +67,7 @@ class Tkt_Shortcodes_Processor {
 	 * @since    1.3.0
 	 * @param    string $plugin_prefix    The unique prefix of this plugin.
 	 * @param    string $version          The version of this plugin.
-	 * @param      string $declarations    The Configuration object.
+	 * @param    array $declarations    The Configuration object.
 	 */
 	public function __construct( $plugin_prefix, $version, $declarations ) {
 
@@ -101,7 +92,7 @@ class Tkt_Shortcodes_Processor {
 
 		$contet = $this->apply_resolver( $content );
 
-		return $contet;
+		return $content;
 
 	}
 

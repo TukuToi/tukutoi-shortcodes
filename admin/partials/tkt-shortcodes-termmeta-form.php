@@ -1,8 +1,6 @@
 <?php
 /**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
+ * Provide a Form view for the Term Meta ShortCode.
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0

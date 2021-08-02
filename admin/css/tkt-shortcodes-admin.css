@@ -48,3 +48,33 @@ form.tkt-shortcode-form small.tkt-shortcode-option-explanation em{
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
     width: 100%;
 }
+.ui-icon.ui-icon-triangle-1-s, 
+.ui-selectmenu-button {
+    float: right;
+}
+.ui-selectmenu-text{
+    padding: 3px;
+}
+.ui-icon.ui-icon-triangle-1-s{
+    top:  7px;
+}
+li.ui-menu-item{
+    padding: 6px;
+}
+.overflow { height: 200px; }
+.ui-menu{
+    height: 308px;
+}
+/* a subtle focus style for keyboard-input elements */
+body.user-is-tabbing *:focus {
+    border: none;
+    border-radius: 2pt;
+    box-shadow: 0 0 3pt 2pt #2e7ba5;
+    outline: none;
+    transition: .1s;
+}
+
+/* no outline for non-keyboard-inputs elements */
+body:not(.user-is-tabbing) *:focus {
+  outline: none;
+}

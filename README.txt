@@ -254,6 +254,15 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.14.5 =
+* [Changed] Completed comments in code, refactored some aspects
+* [Fixed] WPCS Complaints
+* [Added] i18n
+
+= 1.13.4 =
+* [Fixed] jQuery Selects where not loading
+* [Fixed] Ugly focus rings are now consistent on all browsers
+
 = 1.13.2 =
 * [Fixed] Typos in strings
 * [Fixed] Alignment of Checkbox Options in GUI

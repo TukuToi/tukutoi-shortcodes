@@ -54,7 +54,7 @@ class Tkt_Shortcodes_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $declarations    All configurations and declarations of this plugin.
+	 * @var      array    $declarations    All configurations and declarations of this plugin.
 	 */
 	private $declarations;
 
@@ -65,7 +65,7 @@ class Tkt_Shortcodes_Admin {
 	 * @param      string $plugin_name       The name of this plugin.
 	 * @param      string $plugin_prefix    The unique prefix of this plugin.
 	 * @param      string $version    The version of this plugin.
-	 * @param      string $declarations    The Configuration object.
+	 * @param      array  $declarations    The Configuration object.
 	 */
 	public function __construct( $plugin_name, $plugin_prefix, $version, $declarations ) {
 
@@ -85,7 +85,8 @@ class Tkt_Shortcodes_Admin {
 	public function enqueue_styles( $hook_suffix ) {
 
 		wp_enqueue_style( $this->plugin_name . 'jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.min.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . 'jquery-ui-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.min.css', array(), $this->version, 'all' );
+		// wp_enqueue_style( $this->plugin_name . 'jquery-ui-structure', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.structure.min.css', array( 'tkt_scs-jquery-ui' ), $this->version, 'all' );
+		// wp_enqueue_style( $this->plugin_name . 'jquery-ui-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.min.css', array( 'tkt_scs-jquery-ui', 'tkt_scs_jquery-ui-structure' ), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tkt-shortcodes-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -98,7 +99,7 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function enqueue_scripts( $hook_suffix ) {
 
-		wp_enqueue_script( 'jquery-ui-dialog' );
+		// wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-admin.js', array( 'jquery-ui-dialog', 'jquery-ui-selectmenu' ), $this->version, true );
 		wp_localize_script(
 			$this->plugin_name,
@@ -154,7 +155,7 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function insert_shortcodes_menu( $editor_id ) {
 
-		printf( '<button id="tkt-shortcodes-dialog-trigger" class="button">' . esc_html__( 'TukuToi ShortCodes', 'textdomain' ) . '</button>' );
+		printf( '<button id="tkt-shortcodes-dialog-trigger" class="button">' . esc_html__( 'TukuToi ShortCodes', 'tkt-shortcodes' ) . '</button>' );
 		$this->shortcodes_dialog();
 
 	}

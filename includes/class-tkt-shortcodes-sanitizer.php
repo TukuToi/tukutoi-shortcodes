@@ -1,9 +1,6 @@
 <?php
 /**
- * The file that defines Sanitization and Validations of this plugin.
- *
- * Registers all possible sanitization and validation options.
- * Registers all possible sanitization and validation methods.
+ * The file that contains the logic to sanitize, validate and handle errors.
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
@@ -13,12 +10,11 @@
  */
 
 /**
- * The ShortCode Sanitziation Class.
+ * The ShortCode Sanitization, Validation and error handling Class.
  *
- * This is used to sanitzie and validate input.
+ * Registers all methods for sanitization, validation and error handling.
  *
- * It registers a list of sanitization otopns and theyr callbacks
- *
+ * @uses Tkt_Shortcodes_Declarations()
  * @since      1.0.0
  * @package    Tkt_Shortcodes
  * @subpackage Tkt_Shortcodes/includes
@@ -45,15 +41,6 @@ class Tkt_Shortcodes_Sanitizer {
 	private $version;
 
 	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   public
-	 * @var      array    $sanitization_options    All the sanitization options of the plugin.
-	 */
-	public $sanitization_options;
-
-	/**
 	 * Debug mode.
 	 *
 	 * @since    1.0.0
@@ -76,6 +63,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @see class Tkt_Shortcodes_Declarations().
 	 * @var      string    $declarations    All configurations and declarations of this plugin.
 	 */
 	private $declarations;
@@ -86,119 +74,22 @@ class Tkt_Shortcodes_Sanitizer {
 	 * @since    1.0.0
 	 * @param      string $plugin_prefix          The unique prefix of this plugin.
 	 * @param      string $version          The version of this plugin.
-	 * @param      string $declarations    The Configuration object.
+	 * @param      array  $declarations    The Configuration object.
 	 */
 	public function __construct( $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
-		$this->sanitization_options = $this->sanitize_options();
-		$this->debug            = false;
-		$this->debug_log        = false;
 		$this->declarations     = $declarations;
 
-	}
-
-	/**
-	 * All Sanitization Options.
-	 *
-	 * @since 1.0.0
-	 * @return mixed $value sanitized value.
-	 */
-	private function sanitize_options() {
-
-		$sanitization_options = array(
-			'none' => array(
-				'label'     => esc_html__( 'No Sanitization', 'tkt-shortcodes' ),
-			),
-			'email' => array(
-				'label'     => esc_html__( 'Sanitize Email', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_email',
-			),
-			'file_name' => array(
-				'label'     => esc_html__( 'File Name', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_file_name',
-			),
-			'html_class' => array(
-				'label'     => esc_html__( 'HTML Class', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_html_class',
-			),
-			'key' => array(
-				'label'     => esc_html__( 'Key', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_key',
-			),
-			'meta' => array(
-				'label'     => esc_html__( 'Meta', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_meta',
-			),
-			'mime_type' => array(
-				'label'     => esc_html__( 'Mime Type', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_mime_type',
-			),
-			'option' => array(
-				'label'     => esc_html__( 'Option', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_option',
-			),
-			'sql_orderby' => array(
-				'label'     => esc_html__( 'SQL Orderby', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_sql_orderby',
-			),
-			'text_field' => array(
-				'label'     => esc_html__( 'Text Field', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_text_field',
-			),
-			'textarea_field' => array(
-				'label'     => esc_html__( 'Text Area', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_textarea_field',
-			),
-			'title' => array(
-				'label'     => esc_html__( 'Title', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title',
-			),
-			'title_for_query' => array(
-				'label'     => esc_html__( 'Title for Query', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title_for_query',
-			),
-			'title_with_dashes' => array(
-				'label'     => esc_html__( 'Title with Dashes', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title_with_dashes',
-			),
-			'user' => array(
-				'label'     => esc_html__( 'User', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_user',
-			),
-			'url_raw' => array(
-				'label'     => esc_html__( 'URL Raw', 'tkt-shortcodes' ),
-				'callback'  => 'esc_url_raw',
-			),
-			'post_kses' => array(
-				'label'     => esc_html__( 'Post KSES', 'tkt-shortcodes' ),
-				'callback'  => 'wp_filter_post_kses',
-			),
-			'nohtml_kses' => array(
-				'label'     => esc_html__( 'NoHTML KSES', 'tkt-shortcodes' ),
-				'callback'  => 'wp_filter_nohtml_kses',
-			),
-			'intval' => array(
-				'label'     => esc_html__( 'Integer', 'tkt-shortcodes' ),
-				'callback'  => 'intval',
-			),
-			'floatval' => array(
-				'label'     => esc_html__( 'Float', 'tkt-shortcodes' ),
-				'callback'  => 'floatval',
-			),
-			'is_bool' => array(
-				'label'     => esc_html__( 'Boolean', 'tkt-shortcodes' ),
-				'callback'  => 'is_bool',
-			),
-		);
-
-		return $sanitization_options;
+		$this->debug            = false;
+		$this->debug_log        = false;
 
 	}
 
 	/**
-	 * All Sanitization Callabacks.
+	 * Route the value through the correct sanitization callback.
+	 * Return the sanitized value or empty if all fails.
 	 *
 	 * @since 1.0.0
 	 * @param string $type The type of sanitization to apply.
@@ -210,12 +101,13 @@ class Tkt_Shortcodes_Sanitizer {
 		$value = '';
 
 		if ( ! empty( $type )
-			&& array_key_exists( $type, $this->sanitization_options )
+			&& array_key_exists( $type, $this->declarations->sanitization_options )
 			&& 'none' !== $type
 			&& ! empty( $args )
 		) {
-			// Sanitization should happen, and exist.
-			$value = call_user_func_array( $this->sanitization_options[ $type ]['callback'], $args );
+
+			// Sanitization should happen, and sanitization callback exist.
+			$value = call_user_func_array( $this->declarations->sanitization_options[ $type ]['callback'], $args );
 
 		} elseif ( ! empty( $type )
 			&& 'none' === $type
@@ -227,14 +119,14 @@ class Tkt_Shortcodes_Sanitizer {
 
 		} elseif ( empty( $type ) ||
 			( ! empty( $type )
-				&& ! array_key_exists( $type, $this->sanitization_options )
+				&& ! array_key_exists( $type, $this->declarations->sanitization_options )
 			)
 			&& ! empty( $args )
 		) {
 
 			// Either the sanitization argument is missing, invalid or malformed.
 			// Be safe and escape as it could be user error or else.
-			$value = call_user_func_array( $this->sanitization_options['text_field']['callback'], $args );
+			$value = call_user_func_array( $this->declarations->sanitization_options['text_field']['callback'], $args );
 
 		} else {
 
@@ -248,11 +140,11 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * Validate Object, then Validated requested property.
+	 * Validate Object.
 	 *
 	 * @since 1.0.0
 	 * @param mixed $value The value to validate.
-	 * @return mixed $value | wp_error validated object (NOT Sanitized) or wp_error on failure.
+	 * @return object $value | wp_error validated object (NOT Sanitized) or wp_error on failure.
 	 */
 	private function handle_object_validation( $value ) {
 
@@ -275,7 +167,7 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * Validate Object, then Validated requested property.
+	 * Validate Object, then validate requested property.
 	 *
 	 * @since 1.0.0
 	 * @param mixed  $value The value to validate.
@@ -288,6 +180,7 @@ class Tkt_Shortcodes_Sanitizer {
 			&& ! property_exists( $value, $prop )
 		) {
 
+			// Translators: "%s" stands for an object property. "%s" should not be translated.
 			return new WP_Error( 'no_property', sprintf( esc_html__( 'The property "%s" does not exist in the Object', 'tkt-shortcodes' ), $prop ) );
 
 		} elseif ( ! is_wp_error( $this->handle_object_validation( $value ) )
@@ -309,7 +202,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 *
 	 * @since 1.0.0
 	 * @param mixed $value The value to validate.
-	 * @return mixed $value | wp_error validated property value (NOT Sanitized) or wp_error on failure.
+	 * @return array $value | wp_error validated array (NOT Sanitized) or wp_error on failure.
 	 */
 	private function handle_array_validation( $value ) {
 
@@ -330,7 +223,7 @@ class Tkt_Shortcodes_Sanitizer {
 	 *
 	 * @since 1.0.0
 	 * @param mixed $value The value to validate.
-	 * @return mixed $value | wp_error validated property value (NOT Sanitized) or wp_error on failure.
+	 * @return string $value | wp_error validated opereator value (NOT Sanitized) or wp_error on failure.
 	 */
 	private function handle_operator_validation( $value ) {
 
@@ -349,7 +242,7 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * All Sanitization Callabacks.
+	 * Public facing Sanitization Callaback.
 	 *
 	 * @since 1.0.0
 	 * @param string $type The type of sanitization to apply.
@@ -361,9 +254,13 @@ class Tkt_Shortcodes_Sanitizer {
 	 */
 	public function sanitize( $type, $value, $item = '', $object_type = '', $object_subtype = '' ) {
 
+		// Get all arguments of this function with their values.
 		$args = func_get_args();
+
+		// Remove the first argument $type, since it is not a argument of the sanitization callback.
 		$real_args = array_slice( $args, 1 );
 
+		// Get sanitized return value.
 		$value = $this->handle_sanitizer( $type, $real_args );
 
 		return $value;
@@ -371,7 +268,7 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * All Sanitization Callabacks.
+	 * Public facing Validation Callback.
 	 *
 	 * @since 1.0.0
 	 * @param string $type The type of validation to apply.
@@ -386,6 +283,7 @@ class Tkt_Shortcodes_Sanitizer {
 			&& is_null( $prop )
 		) {
 
+			// An object validation is requested.
 			$value = $this->handle_object_validation( $value );
 
 		} elseif ( 'object' === $type
@@ -393,6 +291,7 @@ class Tkt_Shortcodes_Sanitizer {
 			&& ! is_null( $prop )
 		) {
 
+			// An object validation is requested with property validation.
 			$value = $this->handle_object_prop_validation( $value, $prop );
 
 		} elseif ( 'array' === $type
@@ -400,15 +299,17 @@ class Tkt_Shortcodes_Sanitizer {
 			&& is_null( $prop )
 		) {
 
+			// An array validation is requested.
 			$value = $this->handle_array_validation( $value );
 
 		} elseif ( 'operation' == $type ) {
 
+			// An operation validation is requested.
 			$value = $this->handle_operator_validation( $value );
 
 		} else {
 
-			return;// We can add more validation calls here, like for array, etc.
+			return;// We could add more validation calls here, like for array members, etc.
 
 		}
 
@@ -417,7 +318,7 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * Check if result has errors.
+	 * Check for WP Errors, null or false.
 	 *
 	 * @since 1.0.0
 	 * @param mixed $result The value to check.
@@ -437,29 +338,28 @@ class Tkt_Shortcodes_Sanitizer {
 	}
 
 	/**
-	 * Get errors if any.
+	 * Return Errors to debug log if active.
 	 *
 	 * @since 1.0.0
 	 * @param mixed  $result The value to get error of.
 	 * @param string $location The method where the error happened.
 	 * @param string $backtrace The Debug backtrace to the error.
-	 * @return mixed $out validated property value (NOT Sanitized).
+	 * @return array $errors Array of  (NOT Sanitized).
 	 */
 	public function get_errors( $result, $location, $backtrace ) {
 
 		$errors = array();
 
+		$errors['display'] = esc_html__( 'Something wrong. Enable Debug mode and check again.', 'tkt-shortcodes' );
+
 		if ( is_null( $result ) ) {
-			$errors['return'] = '';
 			$errors['debug']  = 'The response was null in ' . $location;
 		} elseif ( is_wp_error( $result ) ) {
-			$errors['return'] = '';
 			$errors['debug']  = 'The response was an instance of wp_error: ' . $result->get_error_message() . ' in ' . $location;
 		} elseif ( false === $result ) {
-			$errors['return'] = '';
 			$errors['debug']  = 'There was a failure in response in ' . $location;
 		} else {
-			$errors = 'Unknown type of error occurred in' . $location;
+			$errors['debug'] = 'Unknown type of error occurred in' . $location;
 		}
 
 		if ( true === $this->debug ) {
@@ -472,7 +372,7 @@ class Tkt_Shortcodes_Sanitizer {
 			error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
 		}
 
-		return $errors['return'];
+		return $errors['display'];
 
 	}
 

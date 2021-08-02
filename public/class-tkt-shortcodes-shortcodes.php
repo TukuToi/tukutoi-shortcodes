@@ -46,24 +46,6 @@ class Tkt_Shortcodes_Shortcodes {
 	private $meta_type;
 
 	/**
-	 * Wether simple debug is enabled.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $debug    boolean wether the Simple Debug mode is active (visible on front end).
-	 */
-	private $debug;
-
-	/**
-	 * Wether backtrace debug is enabled.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $debug    boolean wether the Debug Log of backrace is enabled.
-	 */
-	private $log_debug;
-
-	/**
 	 * The Configuration object.
 	 *
 	 * @since    1.0.0
@@ -85,8 +67,6 @@ class Tkt_Shortcodes_Shortcodes {
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 		$this->meta_type        = 'post';
-		$this->debug            = false;
-		$this->log_debug        = false;
 		$this->declarations     = $declarations;
 
 		$this->sanitizer        = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version, $this->declarations );
@@ -197,7 +177,7 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = $this->sanitizer->validate( 'object', $out, $atts['show'] );
 		}
 
-		// Get our data.
+		// Get post body data if requested.
 		if ( 'post_content' === $atts['show'] ) {
 
 			/**
@@ -272,6 +252,7 @@ class Tkt_Shortcodes_Shortcodes {
 		$value = ! empty( $atts['value'] ) ? $atts['value'] : $atts['item'];
 		$out = get_user_by( $atts['field'], $value );
 
+		// Validate our data.
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -355,6 +336,7 @@ class Tkt_Shortcodes_Shortcodes {
 		// Get our data.
 		$out = get_term( $atts['item'], $atts['taxonomy'], OBJECT, $atts['filter'] );
 
+		// Validate our data.
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -414,6 +396,7 @@ class Tkt_Shortcodes_Shortcodes {
 		// Get our data.
 		$out = get_the_terms( $atts['item'], $atts['taxonomy'] );
 
+		// Validate our data.
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -474,7 +457,14 @@ class Tkt_Shortcodes_Shortcodes {
 			}
 		}
 
-		// Get our data.
+		/**
+		 * Get our data
+		 *
+		 * We handle all three post, term and usermeta here.
+		 *
+		 * @see termmeta()
+		 * @see usermeta()
+		 */
 		if ( 'term' === $this->meta_type ) {
 			$out = get_term_meta( $atts['item'], $atts['key'], $atts['single'] );
 		} elseif ( 'user' === $this->meta_type ) {
@@ -483,11 +473,14 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = get_post_meta( $atts['item'], $atts['key'], $atts['single'] );
 		}
 
+		// Validate our data.
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} elseif ( ! is_array( $out ) ) {
+			// Validate single field values.
 			$out = $this->sanitizer->sanitize( 'meta', $atts['key'], $out, $this->meta_type );
 		} else {
+			// Validate array field values.
 			$out = $this->sanitizer->sanitize( 'meta', $atts['key'], implode( $atts['delimiter'], $out ), $this->meta_type );
 		}
 
@@ -536,7 +529,17 @@ class Tkt_Shortcodes_Shortcodes {
 			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
 		}
 
-		// Get our data. We sanitize Inputs in postmeta().
+		/**
+		 * Get our data.
+		 *
+		 * We sanitize and validate in postmeta().
+		 *
+		 * We set current meta_type to "term",
+		 * telling postmeta() to get term data.
+		 * The we set it back to default post.
+		 *
+		 * @see postmeta()
+		 */
 		$this->meta_type = 'term';
 		$out = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
@@ -576,7 +579,17 @@ class Tkt_Shortcodes_Shortcodes {
 			$atts['item'] = get_current_user_id();
 		}
 
-		// Get our data. We sanitize Inputs in postmeta().
+		/**
+		 * Get our data.
+		 *
+		 * We sanitize and validate in postmeta().
+		 *
+		 * We set current meta_type to "user",
+		 * telling postmeta() to get term data.
+		 * The we set it back to default post.
+		 *
+		 * @see postmeta()
+		 */
 		$this->meta_type = 'user';
 		$out = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
@@ -627,9 +640,14 @@ class Tkt_Shortcodes_Shortcodes {
 			}
 		}
 
+		/**
+		 * Compare the values according operator.
+		 *
+		 * Supports float numbers
+		 *
+		 * $true is the condition result, which is set to false by default.
+		 */
 		$true = false;
-
-		// Compare the values according operator.
 		switch ( $atts['operator'] ) {
 			case 'eqv':
 				if ( is_float( $atts['left'] ) || is_float( $atts['right'] ) ) {
@@ -685,8 +703,16 @@ class Tkt_Shortcodes_Shortcodes {
 				break;
 		}
 
-		// If condition passed, process the wrapped $content.
-		// @todo pass user variable for sanitize option here.
+		/**
+		 * If condition passed, process the wrapped $content.
+		 * We need to run the content thru ShortCodes Processor, otherwise ShortCodes are not expanded.
+		 *
+		 * We sanitize output directly here, so we can return later without sanitization.
+		 * $atts['else'] IS already sanitized, see "Sanitize the User input atts."
+		 *
+		 * @since 1.5.0
+		 * @todo pass user variable for sanitize option here.
+		 */
 		if ( true === $true ) {
 			$content = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $content );
 			$content = do_shortcode( $content, false );
@@ -704,8 +730,6 @@ class Tkt_Shortcodes_Shortcodes {
 	 * Calculation ShortCode
 	 *
 	 * Return mathematically calculated contents.
-	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -737,7 +761,7 @@ class Tkt_Shortcodes_Shortcodes {
 		// Validate the operator.
 		$operator = $this->sanitizer->validate( 'operation', $atts['operator'] );
 
-		// Calculate our result.
+		// Validate and Calculate our result.
 		if ( ! $this->sanitizer->invalid_or_error( $operator ) ) {
 			switch ( $operator ) {
 				case '+':
@@ -784,7 +808,8 @@ class Tkt_Shortcodes_Shortcodes {
 	 *
 	 * Return edit links to backend instances.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 * @see https://docs.classicpress.net/reference/functions/get_edit_post_link/
+	 * @see https://docs.classicpress.net/reference/functions/get_edit_term_link/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -813,7 +838,11 @@ class Tkt_Shortcodes_Shortcodes {
 
 		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
-			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+			if ( 'item' === $key ) {
+				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
+			} else {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+			}
 		}
 
 		// If several Term IDs are passed ot item (post_termsinfo).
@@ -834,6 +863,11 @@ class Tkt_Shortcodes_Shortcodes {
 
 		}
 
+		// Validate our data.
+		if ( $this->sanitizer->invalid_or_error( $out ) ) {
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+		}
+
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
 
@@ -846,7 +880,8 @@ class Tkt_Shortcodes_Shortcodes {
 	 *
 	 * Return archive links to instances.
 	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 * @see https://docs.classicpress.net/reference/functions/get_post_type_archive_link/
+	 * @see https://docs.classicpress.net/reference/functions/get_term_link/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -875,14 +910,21 @@ class Tkt_Shortcodes_Shortcodes {
 
 		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
-			$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+			if ( 'item' === $key ) {
+				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
+			} else {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
+			}
 		}
 
 		// If several Term IDs are passed ot item (post_termsinfo).
 		if ( strpos( $atts['item'], ',' ) !== false ) {
 			$atts['item'] = explode( ',', $atts['item'] );
+			// Sanitize.
+			$atts['item'] = array_map( 'intval', $atts['item'] );
 		}
 
+		// Get our data.
 		if ( post_type_exists( $atts['type'] ) ) {
 			$out = get_post_type_archive_link( $atts['type'] );
 		} elseif ( taxonomy_exists( $atts['type'] ) && ! is_array( $atts['item'] ) ) {
@@ -894,6 +936,11 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = join( $atts['delimiter'], $out );
 		}
 
+		// Validate our data.
+		if ( $this->sanitizer->invalid_or_error( $out ) ) {
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+		}
+
 		// Sanitize our data.
 		$out = $this->sanitizer->sanitize( $atts['sanitize'], $out );
 
@@ -902,11 +949,11 @@ class Tkt_Shortcodes_Shortcodes {
 	}
 
 	/**
-	 * Thumbnail ShortCode
+	 * Thumbnail ShortCode.
+	 * Return the URL to any Image or Featured Image.
 	 *
-	 * Return archive links to instances.
-	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
+	 * @see https://docs.classicpress.net/reference/functions/get_the_post_thumbnail_url/
+	 * @see https://docs.classicpress.net/reference/functions/wp_get_attachment_image_url/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -931,31 +978,59 @@ class Tkt_Shortcodes_Shortcodes {
 			$tag
 		);
 
+		/**
+		 * We do not default to current item
+		 * even if the item attr might be empty.
+		 *
+		 * This because we might want data from an URL.
+		 */
+
 		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
-			if ( 'url' === $key ) {
+			if ( 'item' === $key && ! empty( $atts['item'] ) ) {
+				$atts['item'] = $this->sanitizer->sanitize( 'intval', $value );
+			} elseif ( 'url' === $key ) {
 				$atts[ $key ] = $this->sanitizer->sanitize( 'esc_url_raw', $value );
 			} else {
 				$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
 			}
 		}
 
+		/**
+		 * Get our data.
+		 *
+		 * We first check if we have an URL and
+		 * get the ID of the attachment by that URL.
+		 *
+		 * Then we check if sizes are provided and build those.
+		 *
+		 * Later either get thumbnail URL or attachment URL with
+		 * dimensions attached.
+		 *
+		 * NOTE:
+		 * at first it might seem redundant to get attachment URL if we
+		 * already have attachment URL in the item attr, but dont forget
+		 * we do not have size, and those are user configurated...
+		 */
 		if ( empty( $atts['item'] ) && ! empty( $atts['url'] ) ) {
 			// We want ID from URL.
 			$atts['item'] = attachment_url_to_postid( $atts['url'] );
 		}
-
 		if ( empty( $atts['size'] ) ) {
 			$atts['size'] = array(
 				$atts['width'],
 				$atts['height'],
 			);
 		}
-
 		if ( 'featured_image' === $atts['show'] ) {
 			$out = get_the_post_thumbnail_url( $atts['item'], $atts['size'] );
 		} else {
 			$out = wp_get_attachment_image_url( $atts['item'], $atts['size'], $atts['icon'] );
+		}
+
+		// Validate our data.
+		if ( $this->sanitizer->invalid_or_error( $out ) ) {
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		}
 
 		// Sanitize our data.
@@ -966,11 +1041,9 @@ class Tkt_Shortcodes_Shortcodes {
 	}
 
 	/**
-	 * Round Floats ShortCode
+	 * Round Floats ShortCode.
 	 *
 	 * Return rounded float values.
-	 *
-	 * @see https://docs.classicpress.net/reference/functions/get_user_meta/
 	 *
 	 * @since    1.0.0
 	 * @param    array  $atts    ShortCode Attributes.
@@ -991,9 +1064,14 @@ class Tkt_Shortcodes_Shortcodes {
 
 		// Sanitize the User input atts.
 		foreach ( $atts as $key => $value ) {
-			$atts[ $key ] = $this->sanitizer->sanitize( 'intval', $value );
+			if ( 'sanitize' === $key ) {
+				$atts['sanitize'] = $this->sanitizer->sanitize( 'text_field', $value );
+			} else {
+				$atts[ $key ] = $this->sanitizer->sanitize( 'intval', $value );
+			}
 		}
 
+		// Get our data.
 		if ( ! is_numeric( $content ) ) {
 			$out = 'You are trying to round non-numeric values!';
 		} else {
