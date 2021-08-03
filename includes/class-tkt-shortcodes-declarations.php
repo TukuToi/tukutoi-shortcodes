@@ -82,10 +82,13 @@ class Tkt_Shortcodes_Declarations {
 	/**
 	 * Register an array of Shortcodes of this plugin
 	 *
-	 * Key is ShortCode name and method name, Value is label/name of shortcode
+	 * Multidimensional array keyed by ShortCode tagname,
+	 * each holding an array of ShortCode data:
+	 * - Label
+	 * - Type
 	 *
 	 * @since 1.0.0
-	 * @return array @shortcodes The ShortCodes array.
+	 * @return array $shortcodes The ShortCodes array.
 	 */
 	private function declare_shortcodes() {
 
@@ -149,24 +152,26 @@ class Tkt_Shortcodes_Declarations {
 		);
 
 		/**
-		 * Apply filter to allow other ShortCodesto be added.
+		 * Allow External ShortCodes to be added to the TukuToi ShortCodes GUI.
 		 *
 		 * Other plugins or users can add ShortCodes to the TukuToi ShortCodes GUI.
 		 * They will then be displaying inside the TukuToi ShortCodes GUI Dialogue.
 		 * It is up to the third party to provide valid Forms for those ShortCodes and source code.
 		 *
-		 * Note: Translations can NOT be done in this plugin because there litereally could be ANY string
+		 * Note: Translations can not be done in this plugin because there litereally could be any string
 		 * passed as the ShortCode label. Instead, 118n has to be done when adding the Shortcode using this filter,
 		 * on the "external" side.
 		 *
 		 * @since 1.12.2
 		 * @param array $external_shortcodes {
-		 *      An associative Array of ShortCode declarations.
+		 *      The array of new shortcodes keyed by their tagname. Default value array().
 		 *
-		 *      @type array $shortcode_tag {
-		 *          @param string $label The ShortCode Label, localised.
-		 *          @param string $type The ShortCode Type. Accepts: 'operational', 'informational', 'managerial'.
-		 *      }
+		 *     @type array  $tagname    {
+		 *          ShortCode Data.
+		 *
+		 *          @type   string  $label  The ShortCode Label (Used for GUI Buttons).
+		 *          @type   string  $type   The ShortCode Type. Accepts 'informational', 'operational', 'managerial'.
+		 *     }
 		 * }
 		 */
 		$external_shortcodes = apply_filters( 'tkt_scs_register_shortcode', $external_shortcodes = array() );
@@ -200,17 +205,17 @@ class Tkt_Shortcodes_Declarations {
 	/**
 	 * Register an array of object properties, array members to re-use as configurations.
 	 *
-	 * Adds maps for:
-	 * array site_infos Members and corresponding GUI labels of get_bloginfo.
-	 * array user_data  Keys of WP_User object property "data".
-	 * array valid_operators Members represent valid math operatiors and their GUI label.
-	 * array valid_comparison Members represent valid comparison operators and their GUI label.
-	 * array valid_round_constants Members represent valid PHP round() directions and their GUI label.
-	 * array shortcode_types Members represent valid ShortCode Types.
+	 * Adds Array Maps for:
+	 * - 'site_infos':              Members and corresponding GUI labels of get_bloginfo.
+	 * - 'user_data':               Keys of WP_User object property "data".
+	 * - 'valid_operators':         Members represent valid math operatiors and their GUI label.
+	 * - 'valid_comparison':        Members represent valid comparison operators and their GUI label.
+	 * - 'valid_round_constants':   Members represent valid PHP round() directions and their GUI label.
+	 * - 'shortcode_types':         Members represent valid ShortCode Types.
 	 *
 	 * @since 1.0.0
-	 * @param string $map the data map to retrieve.
-	 * @return array $$map The Map requested. Possible values 'site_infos', 'user_data', 'valid_operators', 'valid_comparison', 'valid_round_constants', 'shortcode_types'
+	 * @param string $map the data map to retrieve. Accepts: 'site_infos', 'user_data', 'valid_operators', 'valid_comparison', 'valid_round_constants', 'shortcode_types'.
+	 * @return array $$map The Array Map requested.
 	 */
 	public function data_map( $map ) {
 
@@ -302,7 +307,16 @@ class Tkt_Shortcodes_Declarations {
 	 * All Sanitization Options.
 	 *
 	 * @since 1.0.0
-	 * @return mixed $value sanitized value.
+	 * @return array {
+	 *      Multidimensional Array keyed by Sanitization options.
+	 *
+	 *      @type array $sanitization_option {
+	 *          Single sanitization option array, holding label and callback of sanitization option.
+	 *
+	 *          @type string $label Label of Sanitization option as used in GUI.
+	 *          @type string $callback The callback to the Sanitization function.
+	 *      }
+	 * }
 	 */
 	private function sanitize_options() {
 
