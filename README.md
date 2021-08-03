@@ -40,16 +40,33 @@ All valid Mathematical operations are possible. Even the weirdest Modulo.
 
 == Current ShortCodes: ==
 
-Blog Info [tkt_scs_bloginfo]
-Post Info [tkt_scs_postinfo]
-User Info [tkt_scs_userinfo]
-Term Info [tkt_scs_terminfo]
-Post Terms Info [tkt_scs_post_termsinfo]
-User Meta Data [tkt_scs_usermeta key="first_name"]
-Term Meta Data [tkt_scs_termmeta item="3" key="mikes"]
-Post Meta Data [tkt_scs_postmeta key="testing_the_field"]
-Conditional ShortCode [tkt_scs_conditional left="val" right="val" operator="eqv" else="val"]Anything[/tkt_scs_conditional]
-Math [tkt_scs_math operand_one="2" operand_two="3" operator="+" sanitize="intval"]
+- archivelinks — TukuToi `[archivelinks]` ShortCode.
+
+- attachmentimage — TukuToi `[attachmentimage]` ShortCode.
+
+- bloginfo — TukuToi `[bloginfo]` ShortCode.
+
+- conditional — TukuToi `[conditional]` ShortCode.
+
+- editlinks — TukuToi `[editlinks]` ShortCode.
+
+- math — TukuToi `[math]` ShortCode.
+
+- post_termsinfo — TukuToi `[post_termsinfo]` ShortCode.
+
+- postinfo — TukuToi `[postinfo]` ShortCode.
+
+- postmeta — TukuToi `[postmeta]` ShortCode.
+
+- round — TukuToi `[round]` ShortCode.
+
+- terminfo — TukuToi `[terminfo]` ShortCode.
+
+- termmeta — TukuToi `[termmeta]` ShortCode.
+
+- userinfo — TukuToi `[userinfo]` ShortCode.
+
+- usermeta — TukuToi `[usermeta]` ShortCode.
 
 All ShortCodes take pretty much the same arguments as the corresponding WP/CP functions and the display attributes generally follow the WP/CP naming of object props or array keys.
 
@@ -245,6 +262,20 @@ function mewnewcode(){
 Just like any other Plugin. 
 
 == Changelog ==
+
+= 1.15.0 =
+* [Added] Documentation Standards Complying Comments for most of the code
+* [Added] Proper Filter documentation
+* [Removed] Unused Files and Folders
+
+= 1.14.5 =
+* [Changed] Completed comments in code, refactored some aspects
+* [Fixed] WPCS Complaints
+* [Added] i18n
+
+= 1.13.4 =
+* [Fixed] jQuery Selects where not loading
+* [Fixed] Ugly focus rings are now consistent on all browsers
 
 = 1.13.2 =
 * [Fixed] Typos in strings
