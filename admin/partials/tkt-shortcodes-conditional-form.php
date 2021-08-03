@@ -1,8 +1,6 @@
 <?php
 /**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
+ * Provide a Form view for the Conditional ShortCode.
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
@@ -11,7 +9,14 @@
  * @subpackage Tkt_Shortcodes/admin/partials
  */
 
-$this->text_fieldset( 'left', 'Left', '', 'Compare this value...' );
-$this->text_fieldset( 'right', 'Right', '', '... with this value' );
-$this->text_fieldset( 'operator', 'Operator', 'eq', 'How to compare the values' );
-$this->text_fieldset( 'else', 'Else', '', 'What to output if the evaluation is false' );
+?>
+<form class="tkt-shortcode-form">
+	<?php
+	$this->text_fieldset( 'left', 'Left', '', 'Compare this value...' );
+	$this->text_fieldset( 'right', 'Right', '', '... with this value' );
+	$this->select_fieldset( 'operator', 'Comparison Operator', '==', 'conditional_options' );
+	$this->checkbox_fieldset( 'float', 'Float', '', 'Check to evaluate as Float Values', '' );
+	$this->text_fieldset( 'epsilon', 'Epsilon', '', 'Epsilon Precision Value to use when comparing Float Values' );
+	$this->text_fieldset( 'else', 'Else', '', 'What to output if the evaluation is false' );
+	?>
+</form>

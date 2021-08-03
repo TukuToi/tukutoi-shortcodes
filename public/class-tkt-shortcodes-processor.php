@@ -35,15 +35,6 @@
 class Tkt_Shortcodes_Processor {
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
 	 * The unique prefix of this plugin.
 	 *
 	 * @since    1.0.0
@@ -62,13 +53,13 @@ class Tkt_Shortcodes_Processor {
 	private $version;
 
 	/**
-	 * The ShortCodes of this plugin.
+	 * The Configuration object.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $shortcodes    All ShortCodes of this plugin.
+	 * @var      array    $declarations    All configurations and declarations of this plugin.
 	 */
-	private $shortcodes;
+	private $declarations;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -76,11 +67,13 @@ class Tkt_Shortcodes_Processor {
 	 * @since    1.3.0
 	 * @param    string $plugin_prefix    The unique prefix of this plugin.
 	 * @param    string $version          The version of this plugin.
+	 * @param    array $declarations    The Configuration object.
 	 */
-	public function __construct( $plugin_prefix, $version ) {
+	public function __construct( $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
+		$this->declarations 	= $declarations;
 
 	}
 
@@ -99,7 +92,7 @@ class Tkt_Shortcodes_Processor {
 
 		$contet = $this->apply_resolver( $content );
 
-		return $contet;
+		return $content;
 
 	}
 
@@ -246,9 +239,8 @@ class Tkt_Shortcodes_Processor {
 	public function get_inner_shortcodes_regex() {
 
 		$regex = '';
-		$declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
-		foreach ( $declarations->shortcodes as $shortcode => $name ) {
+		foreach ( $this->declarations->shortcodes as $shortcode => $name ) {
 			$regex .= $shortcode . '|';
 		}
 

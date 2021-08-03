@@ -1,7 +1,14 @@
 (function( $ ) {
 	'use strict';
 	
-	var texteditor, shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, shortcode_atts = [];
+	/**
+	 * Handle browser focus ring with consistency.
+	 * Browsers are not capable of this, so we need to 
+	 * do it for them.
+	 */
+	window.addEventListener('keydown', handle_focus_rings);
+
+	var texteditor, shortcode, shortcodes_trigger, shortcodes, shortcodes_form_trigger, shortcodes_form, label, inputs, generated_shortcode, quote, shortcode_atts = [];
 	var dialog_width = 625;
 	var dialog_height = dialog_width/1.6;
 
@@ -36,18 +43,33 @@
 				},
 				"Insert": function() {
 
-					shortcode_atts = []; // Reset the ShortCode atts.
-					$(".tkt-shortcode-form :input").each(function(index){
+					quote = '"'; // Reset the ShortCode atts.
 
-						shortcode_atts.push( this.id + '="' + this.value + '"' );
+					$( '[name="quotes"]' ).each(function(index){
+						if( $(this).prop("checked") ){
+							quote = '\'';
+						}
+					}); 
+
+					shortcode_atts = []; // Reset the ShortCode atts.
+					$(".tkt-shortcode-form :input:not([name='quotes'])").each(function(index){
+						if( this.checked ){
+							this.value = 'true';
+						}
+						shortcode_atts.push( this.id + '=' + quote + this.value + quote );
 
 					}); 
 
-					generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
+					if ( 'conditional' === shortcode || 'round' === shortcode ){
+						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + '][/tkt_scs_' + shortcode + ']';
+					} else{
+						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
+					}
 
 					texteditor = $( '#wp-content-editor-container' ).find( 'textarea' );
 					text_append( texteditor, generated_shortcode );
-			        if( typeof(tinyMCE.activeEditor) !== null ){
+
+			        if( null != tinyMCE.activeEditor && null != tinyMCE.activeEditor ){
 			         	tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, generated_shortcode );
 				    }
 
@@ -84,6 +106,12 @@
 				shortcodes_form.dialog("option", "title", label);
 				shortcodes_form.html(response['form']);
 
+				$( 'select' ).each(function(index){
+					$( this ).selectmenu({
+						
+					});
+				});
+				
 				hide_spinner();
 
 			});
@@ -112,4 +140,20 @@ function hide_spinner(){
 
 function text_append( instance, text ){
     $( instance ).val( $( instance ).val() + text );
+}
+
+function handle_focus_rings( e ) {
+	if ( e.keyCode === 9 ) {// The tab key.
+    	document.body.classList.add('user-is-tabbing');
+    
+    	window.removeEventListener('keydown', handle_focus_rings);
+    	window.addEventListener('mousedown', reset_focus_rings_handler);
+  	}
+}
+
+function reset_focus_rings_handler() {
+  	document.body.classList.remove('user-is-tabbing');
+  
+  	window.removeEventListener('mousedown', reset_focus_rings_handler);
+  	window.addEventListener('keydown', handle_focus_rings);
 }
