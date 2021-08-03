@@ -170,9 +170,9 @@ class Tkt_Shortcodes_Gui {
 	 * Create a Select Field set for the ShortCodes Forms.
 	 *
 	 * @since 1.4.0
-	 * @param string $attribute  		The ShortCode attribute.
-	 * @param string $label      		The ShortCode Attrbute Label.
-	 * @param string $value      		The ShortCode Attribute default value.
+	 * @param string       $attribute         The ShortCode attribute.
+	 * @param string       $label             The ShortCode Attrbute Label.
+	 * @param string       $value             The ShortCode Attribute default value.
 	 * @param string|array $callback    The user Callback to generate the select options. Default: ''. Accepts: 'callback', array( $object, 'method' ).
 	 */
 	private function select_fieldset( $attribute, $label, $value, $callback ) {
@@ -183,7 +183,7 @@ class Tkt_Shortcodes_Gui {
 			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
 			  <select name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" class="tkt-select ui-widget-content ui-corner-all">
 				<?php
-				call_user_func( $callback );
+				call_user_func( array( $this, $callback ) );
 				$explanation = apply_filters( 'tkt_scs_shortcodes_fieldset_explanation', 'This option has no description' );
 				?>
 			  </select>
