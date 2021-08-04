@@ -173,20 +173,22 @@ class Tkt_Shortcodes_Admin {
 		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
 			<?php
 			foreach ( $groups as $group => $label ) {
-				?>
-			<div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
-				<h4><?php echo esc_html( $label ); ?></h4>
-				<div class="tkt-sub-section-content">
-					<?php
-					foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
-						if ( $array['type'] === $group ) {
-							echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
-						}
-					}
+				if ( 'internal' !== $group ) {
 					?>
-				</div>
-			</div>
-				<?php
+					<div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
+						<h4><?php echo esc_html( $label ); ?></h4>
+						<div class="tkt-sub-section-content">
+							<?php
+							foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
+								if ( $array['type'] === $group ) {
+									echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
+								}
+							}
+							?>
+						</div>
+					</div>
+					<?php
+				}
 			}
 			?>
 		</div>
