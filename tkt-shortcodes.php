@@ -85,4 +85,4 @@ function tkt_shortcodes_run() {
 	$plugin->run();
 
 }
-add_action( 'after_setup_theme', 'tkt_shortcodes_run' );
+add_action( 'init', 'tkt_shortcodes_run' );

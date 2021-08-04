@@ -465,7 +465,7 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
-			$out = join( $atts['delimiter'], wp_list_pluck( $out, 'term_id' ) );
+			$out = join( $atts['delimiter'], wp_list_pluck( $out, $atts['show'] ) );
 		}
 
 		// Sanitize our data.
