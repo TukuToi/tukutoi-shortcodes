@@ -435,6 +435,7 @@ class Tkt_Shortcodes_Shortcodes {
 			array(
 				'item'      => '',
 				'taxonomy'  => 'category',
+				'show'      => 'term_id',
 				'delimiter' => ', ',
 				'sanitize'  => 'text_field',
 			),

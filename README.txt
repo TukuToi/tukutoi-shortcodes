@@ -271,6 +271,10 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.16.1 =
+* [Fixed] Post Terms Info did not feature `show` ShortCode attribute
+* [Fixed] Custom ShortCode Type Section of type `internal` are now hidden if any such type is added
+
 = 1.16.0 =
 * [Fixed] Post Terms Info was defaulting to Term ID
 * [Added] Filter to add custom ShortCode Types: `tkt_scs_register_shortcode_type`

@@ -10,16 +10,6 @@ Known issues.
 - was not tested on NGINX yet
 - was not tested for conflicts with other themes or plugins (specially important because of jQuery UI)
 
-== Known Issues ==
-
-This plugin is currently under development.
-Known issues.
-- in Excerpts the ShortCodes do not work, thus on archives they do not render.
-- shortcodes do not insert at mouse position, instead, append to text, when we edit in text mode
-- was not tested with PHP 8.x or lower than 7.4 yet
-- was not tested on NGINX yet
-- was not tested for conflicts with other themes or plugins (specially important because of jQuery UI)
-
 == Description == 
 
 TukuToi ShortCodes provides you with a bunch of ShortCodes useful for dynamic webdevelopment.
@@ -272,6 +262,10 @@ function mewnewcode(){
 Just like any other Plugin. 
 
 == Changelog ==
+
+= 1.16.1 =
+* [Fixed] Post Terms Info did not feature `show` ShortCode attribute
+* [Fixed] Custom ShortCode Type Section of type `internal` are now hidden if any such type is added
 
 = 1.16.0 =
 * [Fixed] Post Terms Info was defaulting to Term ID
