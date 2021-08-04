@@ -271,6 +271,11 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.16.0 =
+* [Fixed] Post Terms Info was defaulting to Term ID
+* [Added] Filter to add custom ShortCode Types: `tkt_scs_register_shortcode_type`
+* [Changed] Moved plugin to init from after_setup_theme to leave more room for hooks
+
 = 1.15.1 =
 * [Fixed] Error in the GUI when calling Select Inputs
 

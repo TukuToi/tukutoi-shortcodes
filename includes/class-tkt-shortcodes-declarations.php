@@ -299,6 +299,47 @@ class Tkt_Shortcodes_Declarations {
 			'operational'   => esc_html__( 'Operational', 'tkt-shortcodes' ),
 			'managerial'    => esc_html__( 'Managerial', 'tkt-shortcodes' ),
 		);
+		/**
+		 * Allow External ShortCodes to be added to the TukuToi ShortCodes GUI.
+		 *
+		 * Other plugins or users can add ShortCodes to the TukuToi ShortCodes GUI.
+		 * They will then be displaying inside the TukuToi ShortCodes GUI Dialogue.
+		 * It is up to the third party to provide valid Forms for those ShortCodes and source code.
+		 *
+		 * Note: Translations can not be done in this plugin because there litereally could be any string
+		 * passed as the ShortCode label. Instead, 118n has to be done when adding the Shortcode using this filter,
+		 * on the "external" side.
+		 *
+		 * @since 1.12.2
+		 * @param array $external_shortcodes {
+		 *      The array of new shortcodes keyed by their tagname. Default value array().
+		 *
+		 *     @type array  $tagname    {
+		 *          ShortCode Data.
+		 *
+		 *          @type   string  $label  The ShortCode Label (Used for GUI Buttons).
+		 *          @type   string  $type   The ShortCode Type. Accepts 'informational', 'operational', 'managerial'.
+		 *     }
+		 * }
+		 */
+		$external_shortcode_types = apply_filters( 'tkt_scs_register_shortcode_type', $external_shortcode_types = array() );
+		/**
+		 * Validate the external ShortCode Types
+		 */
+		if ( ! empty( $external_shortcode_types && is_array( $external_shortcode_types ) ) ) {
+			// We have some possibly valid external shortcode.
+			if ( empty( array_intersect_key( $external_shortcode_types, $shortcode_types ) ) ) {
+				// The ShortCode Tag is not already registered.
+				// Sanitize and validate because we do not trust the input.
+				foreach ( $external_shortcode_types as $tag => $label ) {
+					$tag = sanitize_text_field( $tag );
+					$label = sanitize_text_field( $label );
+					$external_shortcode_types[ $tag ] = $label;
+				}
+				// We have possibly still invalid input but at least safe.
+				$shortcode_types = array_merge( $shortcode_types, $external_shortcode_types );
+			}
+		}
 
 		return $$map;
 	}
