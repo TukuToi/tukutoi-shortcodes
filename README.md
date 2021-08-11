@@ -263,6 +263,9 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.17.1 =
+* [Fixed] Crazy typo can break everything without even a notice. Inner ShortCodes did not expand anymore.. because of a missing "n" in a variable :)
+
 = 1.17.0 =
 * [Changed] All Select Options of the GUI now accept a array as callback array($object,'method')
 

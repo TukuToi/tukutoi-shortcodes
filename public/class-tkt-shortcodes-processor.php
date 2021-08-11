@@ -67,13 +67,13 @@ class Tkt_Shortcodes_Processor {
 	 * @since    1.3.0
 	 * @param    string $plugin_prefix    The unique prefix of this plugin.
 	 * @param    string $version          The version of this plugin.
-	 * @param    array $declarations    The Configuration object.
+	 * @param    array  $declarations    The Configuration object.
 	 */
 	public function __construct( $plugin_prefix, $version, $declarations ) {
 
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
-		$this->declarations 	= $declarations;
+		$this->declarations     = $declarations;
 
 	}
 
@@ -90,7 +90,7 @@ class Tkt_Shortcodes_Processor {
 			return $content;
 		}
 
-		$contet = $this->apply_resolver( $content );
+		$content = $this->apply_resolver( $content );
 
 		return $content;
 
