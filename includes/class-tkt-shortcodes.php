@@ -149,6 +149,14 @@ class Tkt_Shortcodes {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-public.php';
 
+		/**
+		 * The class responsible to load all common code
+		 */
+		if ( ! defined( 'TKT_COMMON_LOADED' ) ) {
+			require_once( plugin_dir_path( dirname( __FILE__ ) ) . '/common/class-tkt-common.php' );
+		}
+
+		$this->common = Tkt_Common::get_instance();
 		$this->loader = new Tkt_Shortcodes_Loader();
 		$this->declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
@@ -225,19 +233,16 @@ class Tkt_Shortcodes {
 			/**
 			 * The class responsible for processing ShortCodes in ShortCodes or attributes.
 			 */
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-processor.php';
-
-			/**
-			 * The class responsible for processing ShortCodes in ShortCodes or attributes.
-			 */
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-shortcodes.php';
 
 			$plugin_public = new Tkt_Shortcodes_Public( $this->plugin_name, $this->plugin_prefix, $this->version, $this->declarations );
-			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
+
 			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version, $this->declarations );
 
+			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
+
 			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
-			$this->loader->add_filter( '{$this->plugin_prefix}pre_process_shortcodes', $processor, 'pre_process_shortcodes', 5 );
+			$this->loader->add_filter( 'tkt_pre_process_shortcodes', $processor, 'pre_process_shortcodes', 5 );
 
 			foreach ( $this->declarations->shortcodes as $shortcode => $label ) {
 
