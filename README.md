@@ -263,6 +263,10 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.18.0 =
+* [Added] Common Code files and logic
+* [Changed] Filter name to preprocess the shortcodes
+
 = 1.17.1 =
 * [Fixed] Crazy typo can break everything without even a notice. Inner ShortCodes did not expand anymore.. because of a missing "n" in a variable :)
 

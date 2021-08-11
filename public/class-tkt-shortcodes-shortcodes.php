@@ -210,7 +210,7 @@ class Tkt_Shortcodes_Shortcodes {
 			 *
 			 * @since 1.5.0
 			 */
-			$out = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $out );
+			$out = apply_filters( 'tkt_pre_process_shortcodes', $out );
 			$out = do_shortcode( $out, false );
 
 		}
@@ -835,7 +835,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * @todo pass user variable for sanitize option here.
 		 */
 		if ( true === $true ) {
-			$content = apply_filters( $this->plugin_prefix . 'pre_process_shortcodes', $content );
+			$content = apply_filters( 'tkt_pre_process_shortcodes', $content );
 			$content = do_shortcode( $content, false );
 			$content = $this->sanitizer->sanitize( 'post_kses', $content );
 		} else {
@@ -1190,6 +1190,8 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( empty( $atts['item'] ) && ! empty( $atts['url'] ) ) {
 			// We want ID from URL.
 			$atts['item'] = attachment_url_to_postid( $atts['url'] );
+		} elseif(empty( $atts['item'] ) && empty( $atts['url'] )){
+			$atts['item'] = get_the_ID();
 		}
 		if ( empty( $atts['size'] ) ) {
 			$atts['size'] = array(

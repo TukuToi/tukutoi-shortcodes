@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.17.1
+Stable tag: 1.18.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -270,6 +270,10 @@ function mewnewcode(){
 Just like any other Plugin. 
 
 == Changelog ==
+
+= 1.18.0 =
+* [Added] Common Code files and logic
+* [Changed] Filter name to preprocess the shortcodes
 
 = 1.17.1 =
 * [Fixed] Crazy typo can break everything without even a notice. Inner ShortCodes did not expand anymore.. because of a missing "n" in a variable :)
