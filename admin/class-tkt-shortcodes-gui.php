@@ -183,7 +183,7 @@ class Tkt_Shortcodes_Gui {
 			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
 			  <select name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" class="tkt-select ui-widget-content ui-corner-all">
 				<?php
-				call_user_func( array( $this, $callback ) );
+				call_user_func( $callback );
 				$explanation = apply_filters( 'tkt_scs_shortcodes_fieldset_explanation', 'This option has no description' );
 				?>
 			  </select>

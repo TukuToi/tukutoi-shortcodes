@@ -17,7 +17,7 @@
 	$this->checkbox_fieldset( 'single', 'Single', 'true' );
 	$this->text_fieldset( 'delimiter', 'Delimiter', '', 'Delimiter to use if single is false' );
 	$this->text_fieldset( 'filter', 'Filter', 'raw', 'What Filter to apply' );
-	$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', 'sanitize_options' );
+	$this->select_fieldset( 'sanitize', 'Sanitize', 'text_field', array( $this, 'sanitize_options' ) );
 	$this->checkbox_fieldset( 'quotes', 'Quotes', '"', 'What Quotes to use in ShortCodes (Useful when using ShortCodes in other ShortCodes attributes, or in HTML attributes', '' );
 	?>
 </form>

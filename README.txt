@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.15.1
+Stable tag: 1.17.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -271,9 +271,11 @@ Just like any other Plugin.
 
 == Changelog ==
 
-= 1.16.1 =
-* [Fixed] Post Terms Info did not feature `show` ShortCode attribute
-* [Fixed] Custom ShortCode Type Section of type `internal` are now hidden if any such type is added
+= 1.17.1 =
+* [Fixed] Crazy typo can break everything without even a notice. Inner ShortCodes did not expand anymore.. because of a missing "n" in a variable :)
+
+= 1.17.0 =
+* [Changed] All Select Options of the GUI now accept a array as callback array($object,'method')
 
 = 1.16.0 =
 * [Fixed] Post Terms Info was defaulting to Term ID
