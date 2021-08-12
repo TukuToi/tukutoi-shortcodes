@@ -1,16 +1,6 @@
-# tukutoi-shortcodes
+# TukuToi ShortCodes
 
-== Known Issues ==
-
-This plugin is currently under development.
-Known issues.
-- in Excerpts the ShortCodes do not work, thus on archives they do not render.
-- shortcodes do not insert at mouse position, instead, append to text, when we edit in text mode
-- was not tested with PHP 8.x or lower than 7.4 yet
-- was not tested on NGINX yet
-- was not tested for conflicts with other themes or plugins (specially important because of jQuery UI)
-
-== Description == 
+## Description
 
 TukuToi ShortCodes provides you with a bunch of ShortCodes useful for dynamic webdevelopment.
 Basically a bunch of WordPress methods and objects have been "ShortCode-ified" in this Plugin. 
@@ -38,7 +28,7 @@ And no, it does not use `eval()`. It uses a custom set of expressions, and does 
 Duh, did I mention you can do math with the plugin too?
 All valid Mathematical operations are possible. Even the weirdest Modulo.
 
-== Current ShortCodes: ==
+## Available ShortCodes:
 
 - archivelinks — TukuToi `[archivelinks]` ShortCode.
 
@@ -257,48 +247,45 @@ function mewnewcode(){
   return $out;
 }
 ```
-== Installation ==
 
-Just like any other Plugin. 
+## Changelog 
 
-== Changelog ==
-
-= 1.18.1 =
+### 1.18.1
 * [Fixed] Shenanigans with Nested and Attribute ShortCodeds in Loops
 
-= 1.18.0 =
+### 1.18.0
 * [Added] Common Code files and logic
 * [Changed] Filter name to preprocess the shortcodes
 
-= 1.17.1 =
+### 1.17.1
 * [Fixed] Crazy typo can break everything without even a notice. Inner ShortCodes did not expand anymore.. because of a missing "n" in a variable :)
 
-= 1.17.0 =
+### 1.17.0
 * [Changed] All Select Options of the GUI now accept a array as callback array($object,'method')
 
-= 1.16.0 =
+### 1.16.0
 * [Fixed] Post Terms Info was defaulting to Term ID
 * [Added] Filter to add custom ShortCode Types: `tkt_scs_register_shortcode_type`
 * [Changed] Moved plugin to init from after_setup_theme to leave more room for hooks
 
-= 1.15.1 =
+### 1.15.1
 * [Fixed] Error in the GUI when calling Select Inputs
 
-= 1.15.0 =
+### 1.15.0
 * [Added] Documentation Standards Complying Comments for most of the code
 * [Added] Proper Filter documentation
 * [Removed] Unused Files and Folders
 
-= 1.14.5 =
+### 1.14.5
 * [Changed] Completed comments in code, refactored some aspects
 * [Fixed] WPCS Complaints
 * [Added] i18n
 
-= 1.13.4 =
+### 1.13.4
 * [Fixed] jQuery Selects where not loading
 * [Fixed] Ugly focus rings are now consistent on all browsers
 
-= 1.13.2 =
+### 1.13.2
 * [Fixed] Typos in strings
 * [Fixed] Alignment of Checkbox Options in GUI
 * [Changed] Use Floats when Conditionals are numeric
@@ -316,12 +303,12 @@ Just like any other Plugin.
 * [Added] Support for Rounding Floats ShortCode
 * [Added] 2 new filters that let you add your own Custom ShortCode to the TukuToi Plugin GUI and use its API
 
-= 1.7.1 =
+### 1.7.1
 * [Added] Math ShortCode. Yep. People asked for this for 7 years in Toolset. Can't be that hard.
 * [Fixed] Console error when inserting in Text mode
 * [Fixed] Conditional ShortCode is now autoclosing on insertion
 
-= 1.6.0 =
+### 1.6.0
 * [Fixed] All Shortcode are now producing healthy and useful output
 * [Fixed] Added warnings when inserting Post Content Shortcode in a current post
 * [Fixed] Full handling of User Object now possible
@@ -332,28 +319,24 @@ Just like any other Plugin.
 * [Changed] Added custom jQuery UI Theme
  
 
-= 1.5.0 =
+### 1.5.0
 * [Added] Full class management for all GUI elements
 * [Fixed] Issue where shortcodes inserted with memorized attributes
 * [Changed] full class management for validation,sanitization,error handling, declarations
 * [Changed] Version number and readme
 * [Changed] Also did a full test round and refactor/code style polish.
 
-= 1.4.0 =
+### 1.4.0
 * [Added] Added ShortCodeGUI
 
-= 1.3.0 =
+### 1.3.0
 * [Added] Added Conditional ShortCode
 
-= 1.2.0 =
+### 1.2.0
 * [Added] Added Inner and Nested ShortCodes
 
-= 1.1.0 =
+### 1.1.0
 * [Added] Added Post, User and Term plus respective meta ShortCodes
 
-= 1.0.0 =
+### 1.0.0
 * Initial Commit
-
-== Bug repots ==
-
-Open a ticket in this Git Repo.
