@@ -74,6 +74,8 @@ class Tkt_Shortcodes_Processor {
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 		$this->declarations     = $declarations;
+		$this->shortcode_start  = '{tkt_shortcode{';
+		$this->shortcode_end    = '}tkt_shortcode}';
 
 	}
 
@@ -90,25 +92,235 @@ class Tkt_Shortcodes_Processor {
 			return $content;
 		}
 
-		$content = $this->apply_resolver( $content );
+		$content = $this->apply_encoder( $content );
 
 		return $content;
 
 	}
 
 	/**
-	 * Resolvers passed to the pre_process_shortcodes callback.
+	 * Public facing filter callback on the_content.
 	 *
 	 * @since    1.3.0
 	 * @param    string $content  The Post Content.
 	 */
-	private function apply_resolver( $content ) {
+	public function post_process_shortcodes( $content ) {
 
-		// This is separated because maybe we will need more resolver in future.
-		$content = $this->resolve_shortcodes( $content );
+		// No need to proceed if empty.
+		if ( empty( $content ) ) {
+			return $content;
+		}
+
+		$content = $this->apply_decoder( $content );
 
 		return $content;
 
+	}
+
+	/**
+	 * Encoders passed to the pre_process_shortcodes callback.
+	 *
+	 * @since    1.3.0
+	 * @param    string $content  The Post Content.
+	 */
+	private function apply_encoder( $content ) {
+
+		// This is separated because maybe we will need more resolver in future.
+		$content = $this->encode_inner_shortcodes( $content );
+		$content = $this->encode_html_attribute_shortcodes( $content );
+
+		return $content;
+
+	}
+
+	/**
+	 * Decoders passed to the post_process_shortcodes callback.
+	 *
+	 * @since    1.3.0
+	 * @param    string $content  The Post Content.
+	 */
+	private function apply_decoder( $content ) {
+
+		// This is separated because maybe we will need more resolver in future.
+		$content = $this->decode_shortcodes( $content );
+
+		return $content;
+
+	}
+
+	private function decode_shortcodes( $content ) {
+
+		$shortcodes = $this->get_all_encoded_matches( $content, $this->shortcode_start, $this->shortcode_end );
+		foreach ( $shortcodes as $key => $shortcode ) {
+			$executed = do_shortcode( '[' . $shortcode . ']' );
+			$content = str_replace( $this->shortcode_start . $shortcode . $this->shortcode_end, $executed, $content );
+		}
+
+		return $content;
+	}
+
+
+	public function get_all_encoded_matches( $str, $start, $end ) {
+
+		$contents = array();
+		$start_l = strlen( $start );
+		$end_l = strlen( $end );
+
+		$start_match = $match_start = $match_end = 0;
+		while ( false !== ( $match_start = strpos( $str, $start, $start_match ) ) ) {
+			$match_start += $start_l;
+			$match_end = strpos( $str, $end, $match_start );
+			if ( false === $match_end ) {
+				break;
+			}
+			$contents[] = substr( $str, $match_start, $match_end - $match_start );
+			$start_match = $match_end + $end_l;
+		}
+
+		return $contents;
+	}
+
+	private function encode_html_attribute_shortcodes( $content ) {
+		// Normalize entities.
+		$trans = array(
+			'&#91;' => '&#091;', // Encoded [.
+			'&#93;' => '&#093;', // Encoded ].
+		);
+		$content = strtr( $content, $trans );
+
+		$textarr = $this->html_split( $content );
+		$inner_expressions = $this->get_inner_html_expressions();
+
+		foreach ( $textarr as &$element ) {
+
+			if ( $this->should_skip_html_node( $element ) ) {
+				continue;
+			}
+
+			// Look for every valid shortcode inside the node, and expand it.
+			foreach ( $inner_expressions as $shortcode ) {
+				$counts = preg_match_all( $shortcode['regex'], $element, $matches );
+				if ( $counts > 0 ) {
+					foreach ( $matches[0] as $index => &$match ) {
+
+						$string_to_replace = $match;
+
+						$replacement = str_replace( '[', $this->shortcode_start, $match );
+						$replacement = str_replace( ']', $this->shortcode_end, $replacement );
+
+						$element = str_replace( $string_to_replace, $replacement, $element );
+
+					}
+				}
+			}
+		}
+
+		$content = implode( '', $textarr );
+
+		return $content;
+	}
+
+	/**
+	 *
+	 */
+	private function should_skip_html_node( $element ) {
+		if (
+			'' === $element
+			|| '<' !== $element[0]
+		) {
+			// This element is not an HTML tag.
+			return true;
+		}
+
+		$noopen = false === strpos( $element, '[' );
+		$noclose = false === strpos( $element, ']' );
+		if (
+			$noopen
+			|| $noclose
+		) {
+			// This element does not contain shortcodes.
+			return true;
+		}
+
+		if (
+			'<!--' === substr( $element, 0, 4 )
+			|| '<![CDATA[' === substr( $element, 0, 9 )
+		) {
+			// This element is a comment or a CDATA piece.
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Separate HTML elements and comments from the text.
+	 *
+	 * Heavily inspired in wp_html_split.
+	 *
+	 * @param string $input The text which has to be formatted.
+	 * @return array The formatted text.
+	 * @since 3.3.0
+	 */
+	private function html_split( $input ) {
+		$comments =
+				'!'           // Start of comment, after the <.
+			. '(?:'         // Unroll the loop: Consume everything until --> is found.
+				. '-(?!->)' // Dash not followed by end of comment.
+				. '[^\-]*+' // Consume non-dashes.
+			. ')*+'         // Loop possessively.
+			. '(?:-->)?';   // End of comment. If not found, match all input.
+
+		$cdata =
+				'!\[CDATA\['  // Start of comment, after the <.
+			. '[^\]]*+'     // Consume non-].
+			. '(?:'         // Unroll the loop: Consume everything until ]]> is found.
+				. '](?!]>)' // One ] not followed by end of comment.
+				. '[^\]]*+' // Consume non-].
+			. ')*+'         // Loop possessively.
+			. '(?:]]>)?';   // End of comment. If not found, match all input.
+
+		$regex =
+				'/('              // Capture the entire match.
+				. '<'           // Find start of element.
+				. '(?(?=!--)'   // Is this a comment?
+					. $comments // Find end of comment.
+				. '|'
+					. '(?(?=!\[CDATA\[)' // Is this a comment?
+						. $cdata // Find end of comment.
+					. '|'
+						. '[^>]*>?' // Find end of element. If not found, match all input.
+					. ')'
+				. ')'
+			. ')/s';
+
+		return preg_split( $regex, $input, -1, PREG_SPLIT_DELIM_CAPTURE );
+	}
+
+	private function get_inner_html_expressions() {
+		$inner_expressions = array();
+
+		$views_shortcodes_regex = $this->get_inner_shortcodes_regex();
+		$inner_expressions[] = array(
+			'regex' => '/\\[(' . $views_shortcodes_regex . ').*?\\]/i',
+			'has_content' => false,
+		);
+
+		$custom_inner_shortcodes = $this->get_custom_shortcodes();
+		if ( count( $custom_inner_shortcodes ) > 0 ) {
+			foreach ( $custom_inner_shortcodes as $custom_inner_shortcode ) {
+				$inner_expressions[] = array(
+					'regex' => '/\\[' . $custom_inner_shortcode . '.*?\\](.*?)\\[\\/' . $custom_inner_shortcode . '\\]/is',
+					'has_content' => true,
+				);
+			}
+			$inner_expressions[] = array(
+				'regex' => '/\\[(' . implode( '|', $custom_inner_shortcodes ) . ').*?\\]/i',
+				'has_content' => false,
+			);
+		}
+
+		return $inner_expressions;
 	}
 
 	/**
@@ -118,7 +330,7 @@ class Tkt_Shortcodes_Processor {
 	 * @param string $content The Post Content.
 	 * @return string
 	 */
-	private function resolve_shortcodes( $content ) {
+	private function encode_inner_shortcodes( $content ) {
 
 		// Search for outer shortcodes, to process their inner expressions.
 		$outer_shortcodes = array();
@@ -138,16 +350,15 @@ class Tkt_Shortcodes_Processor {
 					// Replace all inner shortcodes.
 					if ( 0 < $inner_counts ) {
 
-						foreach ( $inner_shortcodes[0] as $inner_shortcode ) {
-
-							$resolved_shortcode = do_shortcode( $inner_shortcode );
+						foreach ( $inner_shortcodes[0] as &$inner_shortcode ) {
 
 							// Minimum sanitization possible.
-							$resolved_shortcode = str_replace( '"', '&quot;', $resolved_shortcode );
-							$resolved_shortcode = str_replace( "'", '&#039;', $resolved_shortcode );
+							$replacement = str_replace( '[', $this->shortcode_start, $inner_shortcode );
+							$replacement = str_replace( ']', $this->shortcode_end, $replacement );
 
 							// Replace the nested ShortCodes so WP/CP does not strip them off.
-							$content = str_replace( $inner_shortcode, $resolved_shortcode, $content );
+							$content = str_replace( $inner_shortcode, $replacement, $content );
+							// $outer_shortcode = str_replace( $inner_shortcode, $resolved_shortcode, $outer_shortcode );
 
 						}
 					}
@@ -237,16 +448,16 @@ class Tkt_Shortcodes_Processor {
 	 * @return array
 	 */
 	public function get_inner_shortcodes_regex() {
-
-		$regex = '';
-
-		foreach ( $this->declarations->shortcodes as $shortcode => $name ) {
-			$regex .= $shortcode . '|';
-		}
-
+		$regex = 'tkt_scs_searchtemplate|tkt_scs_selectsearch|'
+			. 'tkt_scs_buttons|'
+			. 'tkt_scs_loop|'
+			. 'tkt_scs_attachmentimage|'
+			. 'tkt_scs_postinfo|'
+			. 'the_post_id|'
+			. 'the_post|';
 		return $regex;
-
 	}
+
 
 	/**
 	 * Make sure that a given content is indeed a shortcode without brackets:

@@ -242,7 +242,7 @@ class Tkt_Shortcodes {
 			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
 
 			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
-			$this->loader->add_filter( 'tkt_pre_process_shortcodes', $processor, 'pre_process_shortcodes', 5 );
+			$this->loader->add_filter( 'tkt_post_process_shortcodes', $processor, 'post_process_shortcodes', 12 );
 
 			foreach ( $this->declarations->shortcodes as $shortcode => $label ) {
 

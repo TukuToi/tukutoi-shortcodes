@@ -263,6 +263,9 @@ Just like any other Plugin.
 
 == Changelog ==
 
+= 1.18.1 =
+* [Fixed] Shenanigans with Nested and Attribute ShortCodeds in Loops
+
 = 1.18.0 =
 * [Added] Common Code files and logic
 * [Changed] Filter name to preprocess the shortcodes
