@@ -4,19 +4,9 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.18.1
+Stable tag: 1.19.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-
-== Known Issues ==
-
-This plugin is currently under development.
-Known issues.
-- in Excerpts the ShortCodes do not work, thus on archives they do not render.
-- shortcodes do not insert at mouse position, instead, append to text, when we edit in text mode
-- was not tested with PHP 8.x or lower than 7.4 yet
-- was not tested on NGINX yet
-- was not tested for conflicts with other themes or plugins (specially important because of jQuery UI)
 
 == Description == 
 
@@ -270,6 +260,10 @@ function mewnewcode(){
 Just like any other Plugin. 
 
 == Changelog ==
+
+= 1.19.0 =
+* [Added] Support Conditionals in Loops, and ShortCodes in attributes in loops, while retaining query capability
+* [Changed] ShortCode declarations now support a `inner` key, declaring whether ShortCodes is allowed inside attributes
 
 = 1.18.1 =
 * [Fixed] Shenanigans with Nested and Attribute ShortCodeds in Loops

@@ -239,10 +239,10 @@ class Tkt_Shortcodes {
 
 			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version, $this->declarations );
 
-			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
+			//$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
 
-			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
-			$this->loader->add_filter( 'tkt_post_process_shortcodes', $processor, 'post_process_shortcodes', 12 );
+			// $this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );
+			// $this->loader->add_filter( 'tkt_post_process_shortcodes', $processor, 'post_process_shortcodes' );
 
 			foreach ( $this->declarations->shortcodes as $shortcode => $label ) {
 

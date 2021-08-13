@@ -250,6 +250,10 @@ function mewnewcode(){
 
 ## Changelog 
 
+### 1.19.0
+* [Added] Support Conditionals in Loops, and ShortCodes in attributes in loops, while retaining query capability
+* [Changed] ShortCode declarations now support a `inner` key, declaring whether ShortCodes is allowed inside attributes
+
 ### 1.18.1
 * [Fixed] Shenanigans with Nested and Attribute ShortCodeds in Loops
 

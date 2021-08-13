@@ -96,58 +96,72 @@ class Tkt_Shortcodes_Declarations {
 			'bloginfo' => array(
 				'label' => esc_html__( 'Website Information', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'postinfo' => array(
 				'label' => esc_html__( 'Post Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'userinfo' => array(
 				'label' => esc_html__( 'User Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'terminfo' => array(
 				'label' => esc_html__( 'Term Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'post_termsinfo' => array(
 				'label' => esc_html__( 'Post Term Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'usermeta' => array(
 				'label' => esc_html__( 'User Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'termmeta' => array(
 				'label' => esc_html__( 'Term Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'postmeta' => array(
 				'label' => esc_html__( 'Post Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'conditional' => array(
 				'label' => esc_html__( 'Conditional ShortCode', 'tkt-shortcodes' ),
 				'type'  => 'operational',
+				'inner' => false,
 			),
 			'math' => array(
 				'label' => esc_html__( 'Mathematical Operation', 'tkt-shortcodes' ),
 				'type'  => 'operational',
+				'inner' => true,
 			),
 			'editlinks' => array(
 				'label' => esc_html__( 'Edit Links', 'tkt-shortcodes' ),
 				'type'  => 'managerial',
+				'inner' => true,
 			),
 			'archivelinks' => array(
 				'label' => esc_html__( 'Archive Links', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'attachmentimage' => array(
 				'label' => esc_html__( 'Images', 'tkt-shortcodes' ),
 				'type'  => 'informational',
+				'inner' => true,
 			),
 			'round' => array(
 				'label' => esc_html__( 'Round Floating Values', 'tkt-shortcodes' ),
 				'type'  => 'operational',
+				'inner' => true,
 			),
 		);
 

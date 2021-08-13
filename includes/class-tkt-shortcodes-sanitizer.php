@@ -363,12 +363,12 @@ class Tkt_Shortcodes_Sanitizer {
 		}
 
 		if ( true === $this->debug ) {
-			if ( true === $this->log_debug ) {
+			if ( true === $this->debug_log ) {
 				error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
 			}
 			return $errors['debug'];
 		}
-		if ( true === $this->log_debug ) {
+		if ( true === $this->debug_log ) {
 			error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
 		}
 
