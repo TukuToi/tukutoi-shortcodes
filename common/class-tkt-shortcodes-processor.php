@@ -74,8 +74,10 @@ class Tkt_Shortcodes_Processor {
 		$this->plugin_prefix    = $plugin_prefix;
 		$this->version          = $version;
 		$this->declarations     = $declarations;
-		$this->shortcode_start  = '{tkt_shortcode{';
-		$this->shortcode_end    = '}tkt_shortcode}';
+		$this->shortcode_start  = '{¡{';
+		$this->shortcode_end    = '}¡}';
+		$this->loop_shortcode   = 'tkt_scs_loop';
+		$this->base64_prefix    = 'tkt_base64_';
 
 	}
 
@@ -118,68 +120,54 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
-	 * Encoders passed to the pre_process_shortcodes callback.
+	 * Encoders and Resolvers passed to the pre_process_shortcodes callback.
 	 *
 	 * @since    1.3.0
 	 * @param    string $content  The Post Content.
+	 * @return   string $content The Post Content encoded and with first level of inner ShortCodes resolved.
 	 */
 	private function apply_encoder( $content ) {
 
-		// This is separated because maybe we will need more resolver in future.
-		$content = $this->encode_inner_shortcodes( $content );
+		// Encode ShortCodes inside HTML attributes to use {¡{shortcode}¡} format.
 		$content = $this->encode_html_attribute_shortcodes( $content );
+		// Encode repeating content (loop) to base 64.
+		$content = $this->encode_iterators( $content );
+		// Resolve all remaining inner ShortCodes ([shortcode attr="[inner_shortcode]"]).
+		$content = $this->resolve_inner_shortcodes( $content );
 
 		return $content;
 
 	}
 
 	/**
-	 * Decoders passed to the post_process_shortcodes callback.
+	 * Decoders and Resolvers passed to the post_process_shortcodes callback.
 	 *
 	 * @since    1.3.0
 	 * @param    string $content  The Post Content.
+	 * @return   string $content The Post Content Decoded and Resolved.
 	 */
 	private function apply_decoder( $content ) {
 
-		// This is separated because maybe we will need more resolver in future.
-		$content = $this->decode_shortcodes( $content );
+		// Decode base64 ShortCodes.
+		$content = $this->decode_iterators( $content );
+		// Resolve inner ShortCodes.
+		$content = $this->resolve_inner_shortcodes( $content );
+		// Decode ShortCodes inside HTML attributes back from {¡{shortcode}¡} format and resolve.
+		$content = $this->resolve_html_shortcodes( $content );
 
 		return $content;
 
 	}
 
-	private function decode_shortcodes( $content ) {
-
-		$shortcodes = $this->get_all_encoded_matches( $content, $this->shortcode_start, $this->shortcode_end );
-		foreach ( $shortcodes as $key => $shortcode ) {
-			$executed = do_shortcode( '[' . $shortcode . ']' );
-			$content = str_replace( $this->shortcode_start . $shortcode . $this->shortcode_end, $executed, $content );
-		}
-
-		return $content;
-	}
-
-
-	public function get_all_encoded_matches( $str, $start, $end ) {
-
-		$contents = array();
-		$start_l = strlen( $start );
-		$end_l = strlen( $end );
-
-		$start_match = $match_start = $match_end = 0;
-		while ( false !== ( $match_start = strpos( $str, $start, $start_match ) ) ) {
-			$match_start += $start_l;
-			$match_end = strpos( $str, $end, $match_start );
-			if ( false === $match_end ) {
-				break;
-			}
-			$contents[] = substr( $str, $match_start, $match_end - $match_start );
-			$start_match = $match_end + $end_l;
-		}
-
-		return $contents;
-	}
-
+	/**
+	 * WordPress does not like ShortCodes inside HTML attributes.
+	 *
+	 * Encode all [shortcodes] (the applicable ones) to use {¡{shortcode}¡} format.
+	 *
+	 * @since 2.17.0
+	 * @param    string $content  The Post Content.
+	 * @return string $content The Post Content with encoded HTML attribute ShortCodes.
+	 */
 	private function encode_html_attribute_shortcodes( $content ) {
 		// Normalize entities.
 		$trans = array(
@@ -189,27 +177,28 @@ class Tkt_Shortcodes_Processor {
 		$content = strtr( $content, $trans );
 
 		$textarr = $this->html_split( $content );
-		$inner_expressions = $this->get_inner_html_expressions();
+		$inner_expressions = $this->get_inner_expressions();
+		if ( ! empty( $inner_expressions && isset( $inner_expressions['regex'] ) ) ) {
+			foreach ( $textarr as &$element ) {
 
-		foreach ( $textarr as &$element ) {
+				if ( $this->should_skip_html_node( $element ) ) {
+					continue;
+				}
 
-			if ( $this->should_skip_html_node( $element ) ) {
-				continue;
-			}
+				// Look for every valid shortcode inside the node, and expand it.
+				foreach ( $inner_expressions as $shortcode ) {
+					$counts = preg_match_all( $shortcode, $element, $matches );
+					if ( $counts > 0 ) {
+						foreach ( $matches[0] as $index => &$match ) {
 
-			// Look for every valid shortcode inside the node, and expand it.
-			foreach ( $inner_expressions as $shortcode ) {
-				$counts = preg_match_all( $shortcode['regex'], $element, $matches );
-				if ( $counts > 0 ) {
-					foreach ( $matches[0] as $index => &$match ) {
+							$string_to_replace = $match;
 
-						$string_to_replace = $match;
+							$replacement = str_replace( '[', $this->shortcode_start, $match );
+							$replacement = str_replace( ']', $this->shortcode_end, $replacement );
 
-						$replacement = str_replace( '[', $this->shortcode_start, $match );
-						$replacement = str_replace( ']', $this->shortcode_end, $replacement );
+							$element = str_replace( $string_to_replace, $replacement, $element );
 
-						$element = str_replace( $string_to_replace, $replacement, $element );
-
+						}
 					}
 				}
 			}
@@ -221,7 +210,204 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
+	 * Encode loops to base64.
 	 *
+	 * Encode all `loop` ShortCodes contents to base64 so WordPress does
+	 * not attempt to resolve them until we explicitly want to.
+	 *
+	 * @since 2.17.0
+	 * @param    string $content  The Post Content.
+	 * @return string $content The Post Content with encoded loops.
+	 */
+	private function encode_iterators( $content ) {
+
+		if ( false === strpos( $content, '[' . $this->loop_shortcode ) ) {
+			return $content;
+		}
+
+		// Get only properly configured loops (enclosing).
+		$expression = '/\\[' . $this->loop_shortcode . '.*?\\](.*?)\\[\\/' . $this->loop_shortcode . '\\]/is';
+		$counts = preg_match_all( $expression, $content, $matches );
+
+		while ( $counts ) {
+			foreach ( $matches[0] as $index => $match ) {
+				// Encode the data to stop WP from trying to fix or parse it.
+				// The iterator shortcode will manage this on render.
+				$match_encoded = str_replace( $matches[1][ $index ], $this->base64_prefix . base64_encode( $matches[1][ $index ] ), $match );
+				$shortcode = do_shortcode( $match_encoded );
+				$content = str_replace( $match, $shortcode, $content );
+			}
+			$counts = preg_match_all( $expression, $content, $matches );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Resolve internal shortcodes.
+	 *
+	 * @since 1.3.0
+	 * @param string $content The Post Content.
+	 * @return string
+	 */
+	private function resolve_inner_shortcodes( $content ) {
+
+		// Search for outer shortcodes, to process their inner expressions.
+		$outer_shortcodes = array();
+		$counts = $this->find_outer_brackets( $content, $outer_shortcodes );
+
+		// Iterate shortcode elements and resolve their internal shortcodes, one by one.
+		if ( 0 < $counts ) {
+
+			$inner_expressions = $this->get_inner_expressions();
+			if ( ! empty( $inner_expressions && isset( $inner_expressions['regex'] ) ) ) {
+				foreach ( $outer_shortcodes as $outer_shortcode ) {
+
+					foreach ( $inner_expressions as $inner_expression ) {
+
+						$inner_counts = preg_match_all( $inner_expression, $outer_shortcode, $inner_shortcodes );
+
+						// Replace all inner shortcodes.
+						if ( 0 < $inner_counts ) {
+
+							foreach ( $inner_shortcodes[0] as &$inner_shortcode ) {
+								$replacement = do_shortcode( $inner_shortcode );
+								$content = str_replace( $inner_shortcode, $replacement, $content );
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Decode base64.
+	 *
+	 * If the Content has `loop` shortcodes, these are encoded to base64.
+	 * At this point we resolved surrouding shortcodes, and need to prepare the loops for resolution.
+	 *
+	 * @since 2.17.0
+	 * @param    string $content  The Post Content with base64 encoded loops.
+	 * @return   string $content  The Post Content with decoded (but not resolved) loops.
+	 */
+	private function decode_iterators( $content ) {
+
+		if ( 0 === strpos( $content, $this->base64_prefix ) ) {
+
+			$content = substr( $content, strlen( $this->base64_prefix ) );
+			$content = base64_decode( $content );
+
+		}
+
+		return $content;
+
+	}
+
+	/**
+	 * Decode and resolve ShortCodes in HTML attributes.
+	 *
+	 * If there are encoded {¡{shortcodes}¡} then it means they are used in HTML attributes.
+	 * Revert them to the native [shortcode] syntax, and resolve them.
+	 *
+	 * @since 2.17.0
+	 * @param    string $content  The Post Content with encoded HTML attribute ShortCodes.
+	 * @return   string $content  The Post Content with decoded and resolved HTML attribute ShortCodes.
+	 */
+	private function resolve_html_shortcodes( $content ) {
+
+		$shortcodes = $this->get_all_matches_between( $content, $this->shortcode_start, $this->shortcode_end );
+
+		foreach ( $shortcodes as $key => $shortcode ) {
+
+			$executed = do_shortcode( '[' . $shortcode . ']' );
+			$content = str_replace( $this->shortcode_start . $shortcode . $this->shortcode_end, $executed, $content );
+
+		}
+
+		return $content;
+
+	}
+
+	/**
+	 * Separate HTML elements and comments from the text.
+	 *
+	 * Heavily inspired in wp_html_split.
+	 *
+	 * @param string $input The text which has to be formatted.
+	 * @return array The formatted text.
+	 * @since 3.3.0
+	 */
+	private function html_split( $input ) {
+		$comments =
+				'!'         // Start of comment, after the <.
+			. '(?:'         // Unroll the loop: Consume everything until --> is found.
+				. '-(?!->)' // Dash not followed by end of comment.
+				. '[^\-]*+' // Consume non-dashes.
+			. ')*+'         // Loop possessively.
+			. '(?:-->)?';   // End of comment. If not found, match all input.
+
+		$cdata =
+				'!\[CDATA\['// Start of comment, after the <.
+			. '[^\]]*+'     // Consume non-].
+			. '(?:'         // Unroll the loop: Consume everything until ]]> is found.
+				. '](?!]>)' // One ] not followed by end of comment.
+				. '[^\]]*+' // Consume non-].
+			. ')*+'         // Loop possessively.
+			. '(?:]]>)?';   // End of comment. If not found, match all input.
+
+		$regex =
+				'/('                     // Capture the entire match.
+				. '<'                    // Find start of element.
+				. '(?(?=!--)'            // Is this a comment?
+					. $comments          // Find end of comment.
+				. '|'
+					. '(?(?=!\[CDATA\[)' // Is this a comment?
+						. $cdata         // Find end of comment.
+					. '|'
+						. '[^>]*>?'      // Find end of element. If not found, match all input.
+					. ')'
+				. ')'
+			. ')/s';
+
+		return preg_split( $regex, $input, -1, PREG_SPLIT_DELIM_CAPTURE );
+	}
+
+	/**
+	 * Get ShortCodes we accept as inner ShortCodes, or HTML attributes.
+	 *
+	 * Only registered, non-enclosing ShortCodes are allowed.
+	 * Users can add theyr Custom ShortCodes by using the filter tkt_scs_custom_inner_shortcodes
+	 *
+	 * @since 1.3.0
+	 * @return array $inner_expressions An array of registered shortcodes.
+	 */
+	private function get_inner_expressions() {
+
+		$inner_expressions = array();
+
+		$native_shortcodes = $this->get_native_inner_shortcodes();
+
+		$inner_expressions['regex'] = '/\\[(' . implode( '|', $native_shortcodes ) . ').*?\\]/i';
+
+		$custom_shortcodes = $this->get_custom_shortcodes();
+		if ( count( $custom_shortcodes ) > 0 ) {
+			$inner_expressions['regex'] = '/\\[(' . implode( '|', $custom_shortcodes ) . ').*?\\]/i';
+		}
+
+		return $inner_expressions;
+	}
+
+	/**
+	 * Check if HTML note should be skipped.
+	 *
+	 * It is not necessary to process all this in HTML comments, or CDATA items.
+	 *
+	 * @since 2.170
+	 * @param mixed $element The HTML node to check.
+	 * @return bool false|true Whether the Node should be skipped.
 	 */
 	private function should_skip_html_node( $element ) {
 		if (
@@ -254,129 +440,13 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
-	 * Separate HTML elements and comments from the text.
-	 *
-	 * Heavily inspired in wp_html_split.
-	 *
-	 * @param string $input The text which has to be formatted.
-	 * @return array The formatted text.
-	 * @since 3.3.0
-	 */
-	private function html_split( $input ) {
-		$comments =
-				'!'           // Start of comment, after the <.
-			. '(?:'         // Unroll the loop: Consume everything until --> is found.
-				. '-(?!->)' // Dash not followed by end of comment.
-				. '[^\-]*+' // Consume non-dashes.
-			. ')*+'         // Loop possessively.
-			. '(?:-->)?';   // End of comment. If not found, match all input.
-
-		$cdata =
-				'!\[CDATA\['  // Start of comment, after the <.
-			. '[^\]]*+'     // Consume non-].
-			. '(?:'         // Unroll the loop: Consume everything until ]]> is found.
-				. '](?!]>)' // One ] not followed by end of comment.
-				. '[^\]]*+' // Consume non-].
-			. ')*+'         // Loop possessively.
-			. '(?:]]>)?';   // End of comment. If not found, match all input.
-
-		$regex =
-				'/('              // Capture the entire match.
-				. '<'           // Find start of element.
-				. '(?(?=!--)'   // Is this a comment?
-					. $comments // Find end of comment.
-				. '|'
-					. '(?(?=!\[CDATA\[)' // Is this a comment?
-						. $cdata // Find end of comment.
-					. '|'
-						. '[^>]*>?' // Find end of element. If not found, match all input.
-					. ')'
-				. ')'
-			. ')/s';
-
-		return preg_split( $regex, $input, -1, PREG_SPLIT_DELIM_CAPTURE );
-	}
-
-	private function get_inner_html_expressions() {
-		$inner_expressions = array();
-
-		$views_shortcodes_regex = $this->get_inner_shortcodes_regex();
-		$inner_expressions[] = array(
-			'regex' => '/\\[(' . $views_shortcodes_regex . ').*?\\]/i',
-			'has_content' => false,
-		);
-
-		$custom_inner_shortcodes = $this->get_custom_shortcodes();
-		if ( count( $custom_inner_shortcodes ) > 0 ) {
-			foreach ( $custom_inner_shortcodes as $custom_inner_shortcode ) {
-				$inner_expressions[] = array(
-					'regex' => '/\\[' . $custom_inner_shortcode . '.*?\\](.*?)\\[\\/' . $custom_inner_shortcode . '\\]/is',
-					'has_content' => true,
-				);
-			}
-			$inner_expressions[] = array(
-				'regex' => '/\\[(' . implode( '|', $custom_inner_shortcodes ) . ').*?\\]/i',
-				'has_content' => false,
-			);
-		}
-
-		return $inner_expressions;
-	}
-
-	/**
-	 * Resolve internal shortcodes.
-	 *
-	 * @since 1.3.0
-	 * @param string $content The Post Content.
-	 * @return string
-	 */
-	private function encode_inner_shortcodes( $content ) {
-
-		// Search for outer shortcodes, to process their inner expressions.
-		$outer_shortcodes = array();
-		$counts = $this->find_outer_brackets( $content, $outer_shortcodes );
-
-		// Iterate shortcode elements and resolve their internal shortcodes, one by one.
-		if ( 0 < $counts ) {
-
-			$inner_expressions = $this->get_inner_expressions();
-
-			foreach ( $outer_shortcodes as $outer_shortcode ) {
-
-				foreach ( $inner_expressions as $inner_expression ) {
-
-					$inner_counts = preg_match_all( $inner_expression, $outer_shortcode, $inner_shortcodes );
-
-					// Replace all inner shortcodes.
-					if ( 0 < $inner_counts ) {
-
-						foreach ( $inner_shortcodes[0] as &$inner_shortcode ) {
-
-							// Minimum sanitization possible.
-							$replacement = str_replace( '[', $this->shortcode_start, $inner_shortcode );
-							$replacement = str_replace( ']', $this->shortcode_end, $replacement );
-
-							// Replace the nested ShortCodes so WP/CP does not strip them off.
-							$content = str_replace( $inner_shortcode, $replacement, $content );
-							// $outer_shortcode = str_replace( $inner_shortcode, $resolved_shortcode, $outer_shortcode );
-
-						}
-					}
-				}
-			}
-		}
-
-		return $content;
-	}
-
-	/**
 	 * Find shortcodes that contain other shortcodes as attribute values,
 	 * and populate a list of their opening tag, to process those internal shortcodes.
 	 *
 	 * @since 1.3.0
 	 * @param string $content The content to check.
 	 * @param array  $matches List of shortcodes: full shortcode without brackets.
-	 * @return int Number of top level shortcodes found.
+	 * @return int $count Number of top level shortcodes found.
 	 */
 	private function find_outer_brackets( $content, &$matches ) {
 		$count = 0;
@@ -416,48 +486,18 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
-	 * Get the inner ShortCodes
-	 *
-	 * Also get a list of custom registered ShortCodes.
-	 *
-	 * @since 1.3.0
-	 * @return array $inner_expressions An array of nested shortcodes.
-	 */
-	private function get_inner_expressions() {
-
-		$inner_expressions = array();
-
-		$shortcodes_regex = $this->get_inner_shortcodes_regex();
-		$inner_expressions[] = '/\\[(' . $shortcodes_regex . ').*?\\]/i';
-
-		$custom_shortcodes = $this->get_custom_shortcodes();
-		if ( count( $custom_shortcodes ) > 0 ) {
-			foreach ( $custom_shortcodes as $custom_inner_shortcode ) {
-				$inner_expressions[] = '/\\[' . $custom_inner_shortcode . '.*?\\].*?\\[\\/' . $custom_inner_shortcode . '\\]/i';
-			}
-			$inner_expressions[] = '/\\[(' . implode( '|', $custom_shortcodes ) . ').*?\\]/i';
-		}
-
-		return $inner_expressions;
-	}
-
-	/**
-	 * Get a list of regex compatible expressions to catch.
+	 * Make sure that a content which presumes to be a shortcode without brackets
+	 * does contain an inner shortcode.
 	 *
 	 * @since 1.3.0
-	 * @return array
+	 * @param string $unbracketed_shortcode The content to check.
+	 * @return bool Whether the Inner ShortCode is present.
 	 */
-	public function get_inner_shortcodes_regex() {
-		$regex = 'tkt_scs_searchtemplate|tkt_scs_selectsearch|'
-			. 'tkt_scs_buttons|'
-			. 'tkt_scs_loop|'
-			. 'tkt_scs_attachmentimage|'
-			. 'tkt_scs_postinfo|'
-			. 'the_post_id|'
-			. 'the_post|';
-		return $regex;
-	}
+	private function has_shortcode_as_attribute_value( $unbracketed_shortcode ) {
+		$has_inner_shortcode = strpos( $unbracketed_shortcode, '[' );
 
+		return ( false !== $has_inner_shortcode );
+	}
 
 	/**
 	 * Make sure that a given content is indeed a shortcode without brackets:
@@ -467,7 +507,7 @@ class Tkt_Shortcodes_Processor {
 	 *
 	 * @since 1.3.0
 	 * @param string $unbracketed_shortcode The content to check.
-	 * @return bool
+	 * @return bool Whether the ShortCode is without brackets.
 	 */
 	private function is_unbracketed_shortcode( $unbracketed_shortcode ) {
 		// Is this a closing shortcode perhaps?
@@ -491,17 +531,56 @@ class Tkt_Shortcodes_Processor {
 	}
 
 	/**
-	 * Make sure that a content which presumes to be a shortcode without brackets
-	 * does contain an inner shortcode.
+	 * Get all matches of between 2 delimiters.
+	 *
+	 * This generic helper function finds any string starting and ending with a flag.
+	 * It then returns an array where the values are the strings between each start and end flag.
+	 *
+	 * @since 2.17.0
+	 * @param    string $str   The string to check.
+	 * @param    string $start The start flag to check for.
+	 * @param    string $end   The end flag to check for.
+	 * @return   array $contents  The found occurrences of string betwen start and end.
+	 */
+	public function get_all_matches_between( $str, $start, $end ) {
+
+		$contents = array();
+		$start_l = strlen( $start );
+		$end_l = strlen( $end );
+
+		$start_match = $match_start = $match_end = 0;
+		while ( false !== ( $match_start = strpos( $str, $start, $start_match ) ) ) {
+			$match_start += $start_l;
+			$match_end = strpos( $str, $end, $match_start );
+			if ( false === $match_end ) {
+				break;
+			}
+			$contents[] = substr( $str, $match_start, $match_end - $match_start );
+			$start_match = $match_end + $end_l;
+		}
+
+		return $contents;
+	}
+
+	/**
+	 * Get a list of inbuilt ShortCodes allowed inside other Shortcodes or HTML.
 	 *
 	 * @since 1.3.0
-	 * @param string $unbracketed_shortcode The content to check.
-	 * @return bool
+	 * @return array
 	 */
-	private function has_shortcode_as_attribute_value( $unbracketed_shortcode ) {
-		$has_inner_shortcode = strpos( $unbracketed_shortcode, '[' );
+	public function get_native_inner_shortcodes() {
 
-		return ( false !== $has_inner_shortcode );
+		$native_shortcodes = array();
+
+		foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
+
+			if ( true === $array['inner'] ) {
+				$native_shortcodes[] = $shortcode;
+			}
+		}
+
+		return $native_shortcodes;
+
 	}
 
 	/**
@@ -520,7 +599,7 @@ class Tkt_Shortcodes_Processor {
 		 * @return array
 		 * @since 1.3.0
 		 */
-		$custom_shortcodes = apply_filters( $this->plugin_prefix . 'custom_shortcodes', $custom_shortcodes );
+		$custom_shortcodes = apply_filters( 'tkt_scs_custom_inner_shortcodes', $custom_shortcodes );
 
 		return array_unique( $custom_shortcodes );
 	}
