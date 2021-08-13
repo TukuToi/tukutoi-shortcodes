@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.19.0
+Stable tag: 1.20.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -255,11 +255,27 @@ function mewnewcode(){
   return $out;
 }
 ```
-== Installation ==
 
-Just like any other Plugin. 
+== Add your own shortcodes to supported inner ShortCodes ==
+
+When you want to use your own ShortCodes inside HTML or ShortCode attributes, 
+but do not register them with the TukuToi ShortCodes GUI, you can use this filter:
+```
+add_filter( 'tkt_scs_custom_inner_shortcodes', 'my_shortcodes', 10, 1 );
+function my_shortcodes( $shortcodes ) {
+
+  $shortcodes[] = 'my_shortcode_tag';
+
+  return $shortcodes;
+  
+}
+```
 
 == Changelog ==
+
+= 1.20.1 =
+* [Added] Support for Custom ShortCodes inside Attributes
+* [Fixed] Conditional was broken if only TukuToi ShortCode wihout Search and Filters was active
 
 = 1.19.0 =
 * [Added] Support Conditionals in Loops, and ShortCodes in attributes in loops, while retaining query capability
