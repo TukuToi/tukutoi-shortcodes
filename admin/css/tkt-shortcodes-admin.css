@@ -3,6 +3,11 @@
  * included in this file.
  */
 
+/**
+ * Overwrite a few jQuery UI styles.
+ * 
+ * Scope everything.
+ */
 [aria-describedby="tkt-shortcodes-dialog"],
 [aria-describedby="tkt-shortcode-form"] {
     z-index: 999999;
@@ -24,7 +29,6 @@ form.tkt-shortcode-form label{
     width:  16%;
 }
 form.tkt-shortcode-form input,
-form.tkt-shortcode-form select,
 form.tkt-shortcode-form .tkt-block-checkbox{
     width:  84%;
     float: right;
@@ -39,42 +43,160 @@ form.tkt-shortcode-form small.tkt-shortcode-option-explanation{
 form.tkt-shortcode-form small.tkt-shortcode-option-explanation em{
     float:  right;
 }
-.ui-dialog .ui-dialog-buttonpane button:last-of-type{
+.tkt-jquery-ui .ui-dialog-content{
+    border-bottom-color: transparent;
+}
+.tkt-jquery-ui .ui-dialog-buttonset{
+    width: 100%;
+}
+.tkt-jquery-ui .ui-dialog-buttonset button.ui-button:first-of-type{
+    float: left;
+}
+.tkt-jquery-ui .ui-dialog-buttonset button.ui-button:last-of-type{
     float: right;
 }
 #tkt-shortcodes-dialog.ui-dialog-content.ui-widget-content .tkt-shortcode-buttons{
     margin:  5px;
 }
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-    width: 100%;
-}
-.ui-icon.ui-icon-triangle-1-s, 
-.ui-selectmenu-button {
+.tkt-jquery-ui .ui-icon.ui-icon-triangle-1-s{
     float: right;
 }
-.ui-selectmenu-text{
-    padding: 3px;
-}
-.ui-icon.ui-icon-triangle-1-s{
+.tkt-jquery-ui .ui-icon.ui-icon-triangle-1-s{
     top:  7px;
 }
-li.ui-menu-item{
+.tkt-jquery-ui li.ui-menu-item{
     padding: 6px;
 }
-.overflow { height: 200px; }
-.ui-menu{
-    height: 308px;
-}
-/* a subtle focus style for keyboard-input elements */
-body.user-is-tabbing *:focus {
-    border: none;
-    border-radius: 2pt;
-    box-shadow: 0 0 3pt 2pt #2e7ba5;
+
+/**
+ * The focus outlines are an ugly thing.
+ * Accessibility is important, but since focus rings are not for visually impaired,
+ * as they are a visual thing the user must be able to see to take advantage of them.
+ * Thus, why show them an ugly focus ring when we can still grant accessibility with a 
+ * tad nicer look?
+ * Let's not discriminate people, let's try to give the same experience to everyone.
+ * 
+ * We thus use a JS Script to detect tabbing. If tabbing was done, we activate a usability mode.
+ * Currently, we apply the same styles on both tabbers and non-tabbers, but since this might change,
+ * we add both classes here. For example, if somene finds that the focus rings (truly a border) should
+ * be stronger for tabbers, we can easily change this below.
+ */
+/* Accessibility:  the user is tabbing, thus not using a mouse or trackpad*/
+body.user-is-tabbing .tkt-jquery-ui *:focus {
     outline: none;
+    border-color: #2e7ba5;
+    border-radius: 2px;
+    box-shadow: 0 0 2px #2e7ba5;
+    transition: .1s;
+}
+/* Accessibility:  the user is not tabbing or started using a mouse or trackpad*/
+body:not(.user-is-tabbing) .tkt-jquery-ui *:focus {
+    outline: none;
+    border-color: #2e7ba5;
+    border-radius: 2px;
+    box-shadow: 0 0 2px #2e7ba5;
     transition: .1s;
 }
 
-/* no outline for non-keyboard-inputs elements */
-body:not(.user-is-tabbing) *:focus {
-  outline: none;
+/**
+ * WordPress overwrites a ton of styles of custom jQuery UI Themes.
+ * WordPress also has a mess in what styles they include, and which you have to include yourself.
+ * 
+ * On top, Plugins like Toolset have the horrible habit to use !important to force their styles,
+ * apart of forcing their CSS classes on jQuery UI.
+ * 
+ * We neither want to nor plan to do any of this, but we are the victims here and need to fix it.
+ * We are left with adopting bad practices, to resolve it, but at least we scope it.
+ * 
+ * Scope: tkt-jquery-ui;
+ * !important is used only where not else possible.
+ */
+.tkt-jquery-ui.ui-dialog,
+.tkt-jquery-ui .ui-widget-shadow,
+.tkt-jquery-ui .ui-widget-shadow{
+    background-color: unset;
+    -webkit-box-shadow:0 0 5px #2e7ba5;
+    box-shadow:0 0 5px #2e7ba5
+}
+.tkt-jquery-ui.ui-widget-overlay.ui-front{
+    background: unset;
+    opacity: unset;
+    filter: unset;
+    background:#2e7ba5 !important; 
+    opacity:.61 !important;
+    filter:Alpha(Opacity=61) !important;
+}
+.tkt-shortcode-buttons:focus, 
+.tkt-shortcode-buttons:hover,
+.tkt-jquery-ui button:focus, 
+.tkt-jquery-ui button:hover{
+    border-color: unset;
+    box-shadow: unset; 
+    border-color: #2e7ba5 !important;
+    box-shadow: 0 0 5px #2e7ba5 !important;
+    cursor: pointer;
+}
+.tkt-jquery-ui button{
+    border-color: unset;
+    box-shadow: unset; 
+    border-color: #2e7ba5 !important;
+}
+.tkt-jquery-ui .ui-dialog-titlebar{
+    border-bottom-color: transparent;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    min-height: fit-content;
+    padding: 5px 16px 5px 16px;
+}
+.tkt-jquery-ui .ui-dialog-titlebar-close {
+    background-color: #f4e5bb !important;
+    float: right;
+    width: 36px;
+    height: 36px;
+}
+.tkt-jquery-ui .ui-widget-content a{
+    color: #2e7ba5 !important;
+}
+
+/**
+ * jQuery autosuggest Custom Combo Box (select and search)
+ */
+.tkt-jquery-ui .custom-combobox {
+    position: relative;
+    display: inline-block;
+    float: right;
+    width: 84%;
+}
+.tkt-jquery-ui .custom-combobox-toggle {
+    position: absolute;
+    cursor: pointer !important;
+    border: unset !important;
+    border-left: #2e7ba5 1px solid !important;
+    border-top: #2e7ba5 1px solid !important;
+    border-bottom: #2e7ba5 1px solid !important;
+    border-radius: 0;
+    height: 27px !important;
+    top: 0;
+    right: 0px;
+}
+.tkt-jquery-ui .custom-combobox-toggle:active,
+.tkt-jquery-ui .custom-combobox-toggle:focus,
+.tkt-jquery-ui .custom-combobox-toggle:hover{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: unset !important;
+    border-left: #2e7ba5 1px solid !important;
+    height: 26px !important;
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+.tkt-jquery-ui .custom-combobox-toggle  .ui-icon.ui-icon-triangle-1-s{
+    top:  12px;
+}
+.tkt-jquery-ui .custom-combobox-input {
+    margin: 0;
+    padding: 5px 10px;
+    width: 100%;
 }
