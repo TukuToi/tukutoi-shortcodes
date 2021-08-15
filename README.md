@@ -265,6 +265,12 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+### 1.22.3
+* [Fixed] Load jQuery UI with custo scope for compatibility
+* [Fixed] Loop and Search ShortCodes now insert with closing tags
+* [Added] jQuery Autosuggest instead of select for easier searching of options.
+* [Changed] Several improvements to GUI
+
 ### 1.20.1
 * [Added] Support for Custom ShortCodes inside Attributes
 * [Fixed] Conditional was broken if only TukuToi ShortCode wihout Search and Filters was active

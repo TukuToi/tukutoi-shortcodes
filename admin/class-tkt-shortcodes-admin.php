@@ -84,10 +84,8 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function enqueue_styles( $hook_suffix ) {
 
-		wp_enqueue_style( $this->plugin_name . 'jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.min.css', array(), $this->version, 'all' );
-		// wp_enqueue_style( $this->plugin_name . 'jquery-ui-structure', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.structure.min.css', array( 'tkt_scs-jquery-ui' ), $this->version, 'all' );
-		// wp_enqueue_style( $this->plugin_name . 'jquery-ui-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.min.css', array( 'tkt_scs-jquery-ui', 'tkt_scs_jquery-ui-structure' ), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tkt-shortcodes-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'tkt-jquery-ui', plugin_dir_url( __FILE__ ) . 'css/tkt-jquery-ui.min.css', array( 'wp-jquery-ui-dialog' ), $this->version, 'screen' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tkt-shortcodes-admin.css', array( 'tkt-jquery-ui' ), $this->version, 'screen' );
 
 	}
 
@@ -99,8 +97,7 @@ class Tkt_Shortcodes_Admin {
 	 */
 	public function enqueue_scripts( $hook_suffix ) {
 
-		// wp_enqueue_script( 'jquery-ui-dialog' );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-admin.js', array( 'jquery-ui-dialog', 'jquery-ui-selectmenu' ), $this->version, true );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tkt-shortcodes-admin.js', array( 'jquery-ui-dialog', 'jquery-ui-autocomplete' ), $this->version, true );
 		wp_localize_script(
 			$this->plugin_name,
 			$this->plugin_prefix . 'ajax_object',
@@ -122,14 +119,12 @@ class Tkt_Shortcodes_Admin {
 		if ( ! check_ajax_referer( $this->plugin_name . '-security-nonce', 'security', false ) ) {
 
 			wp_send_json_error( 'Invalid security token sent.' );
-			wp_die();
 
 		}
 
 		if ( ! isset( $_GET['shortcode'] ) ) {
 
 			wp_send_json_error( 'No ShortCode chosen.' );
-			wp_die();
 
 		}
 
@@ -141,9 +136,7 @@ class Tkt_Shortcodes_Admin {
 			'form' => $form->get_shortcode_gui(),
 		);
 
-		wp_send_json( $response );
-
-		wp_die();
+		wp_send_json_success( $response );
 
 	}
 
@@ -171,22 +164,22 @@ class Tkt_Shortcodes_Admin {
 
 		?>
 		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
-			<?php
+		   <?php
 			foreach ( $groups as $group => $label ) {
 				if ( 'internal' !== $group ) {
 					?>
-					<div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
-						<h4><?php echo esc_html( $label ); ?></h4>
-						<div class="tkt-sub-section-content">
-							<?php
-							foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
-								if ( $array['type'] === $group ) {
-									echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
-								}
-							}
-							?>
-						</div>
-					</div>
+		   <div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
+			  <h4><?php echo esc_html( $label ); ?></h4>
+			  <div class="tkt-sub-section-content">
+					<?php
+					foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
+						if ( $array['type'] === $group ) {
+							echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
+						}
+					}
+					?>
+			  </div>
+		   </div>
 					<?php
 				}
 			}

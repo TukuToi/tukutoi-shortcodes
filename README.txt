@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.20.1
+Stable tag: 1.22.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -272,6 +272,12 @@ function my_shortcodes( $shortcodes ) {
 ```
 
 == Changelog ==
+
+= 1.22.3 =
+* [Fixed] Load jQuery UI with custo scope for compatibility
+* [Fixed] Loop and Search ShortCodes now insert with closing tags
+* [Added] jQuery Autosuggest instead of select for easier searching of options.
+* [Changed] Several improvements to GUI
 
 = 1.20.1 =
 * [Added] Support for Custom ShortCodes inside Attributes
