@@ -265,6 +265,9 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+### 1.22.4 =
+* [Fixed] Combobox produced an unwanted value as ShortCode attributes when inserting
+
 ### 1.22.3
 * [Fixed] Load jQuery UI with custo scope for compatibility
 * [Fixed] Loop and Search ShortCodes now insert with closing tags

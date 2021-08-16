@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.22.3
+Stable tag: 1.22.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -272,6 +272,9 @@ function my_shortcodes( $shortcodes ) {
 ```
 
 == Changelog ==
+
+= 1.22.4 =
+* [Fixed] Combobox produced an unwanted value as ShortCode attributes when inserting
 
 = 1.22.3 =
 * [Fixed] Load jQuery UI with custo scope for compatibility
