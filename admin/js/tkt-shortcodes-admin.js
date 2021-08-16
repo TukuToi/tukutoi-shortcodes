@@ -68,12 +68,11 @@
 					}); 
 
 					shortcode_atts = []; // Reset the ShortCode atts.
-					$(".tkt-shortcode-form :input:not([name='quotes'])").each(function(index){
+					$(".tkt-shortcode-form :input:not([name='quotes']):not([name='combobox'])").each(function(index){
 						if( this.checked ){
 							this.value = 'true';
 						}
 						shortcode_atts.push( this.id + '=' + quote + this.value + quote );
-
 					}); 
 
 					if ( 'conditional' === shortcode || 'round' === shortcode || 'loop' === shortcode || 'searchtemplate' === shortcode ){
@@ -246,11 +245,11 @@ function combo($){
       	_createAutocomplete: function() {
         	var selected = this.element.children( ":selected" ),
         	value = selected.val() ? selected.text() : "";
- 
         	this.input = $( "<input>" )
         	.appendTo( this.wrapper )
           	.val( value )
           	.attr( "title", "" )
+          	.attr( "name", "combobox" )
           	.addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
           	.autocomplete({
           		delay: 0,
