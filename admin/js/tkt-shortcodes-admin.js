@@ -81,11 +81,21 @@
 						generated_shortcode = '[tkt_scs_' + shortcode + ' ' + shortcode_atts.join(' ') + ']';
 					}
 
+					// Insert to Text mode
 					texteditor = $( '#wp-content-editor-container' ).find( 'textarea' );
-					text_append( texteditor, generated_shortcode );
+					if( texteditor.is(':visible') ) {
+						text_append( texteditor, generated_shortcode );
+					}
 
-			        if( null != tinyMCE.activeEditor && null != tinyMCE.activeEditor ){
+					//Insert to Visual Mode
+			        if( 'undefined' !== typeof tinyMCE && null != tinyMCE.activeEditor && null != tinyMCE.activeEditor ){
 			         	tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, generated_shortcode );
+				    }
+
+					//Insert to CodeMirror
+				    if( 'undefined' !== typeof TKT_GLOBAL_NAMESPACE && null != TKT_GLOBAL_NAMESPACE.codemirror ){
+			         	var codemirror = TKT_GLOBAL_NAMESPACE.codemirror.getDoc();
+						codemirror.replaceSelection(generated_shortcode);
 				    }
 
 				}

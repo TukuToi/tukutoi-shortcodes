@@ -265,6 +265,17 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+### 1.24.1
+* [Fixed] Run plugin at init:20 so other (coming later in alphabet) Plugins can hook in
+
+### 1.24.0
+* [Added] Support to insert ShortCodes in Codemirror
+
+### 1.23.0
+* [Added] Custom Button Icon
+* [Fixed] Autosuggest was overflowing screen when lots of options where present
+* [Changed] Remove WP Autop on both excerpts and content, at priority 10
+
 ### 1.22.4 =
 * [Fixed] Combobox produced an unwanted value as ShortCode attributes when inserting
 

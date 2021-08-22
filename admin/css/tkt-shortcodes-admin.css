@@ -3,6 +3,14 @@
  * included in this file.
  */
 
+/** 
+ * Custom Button Icon
+ */
+#tkt-shortcodes-dialog-trigger > span > svg{
+    margin-top: 4px;
+    margin-bottom: -4px;
+}
+
 /**
  * Overwrite a few jQuery UI styles.
  * 
@@ -66,6 +74,10 @@ form.tkt-shortcode-form small.tkt-shortcode-option-explanation em{
 }
 .tkt-jquery-ui li.ui-menu-item{
     padding: 6px;
+}
+.tkt-jquery-ui .ui-autocomplete{
+    max-height: 150px;
+    overflow: auto;
 }
 
 /**
