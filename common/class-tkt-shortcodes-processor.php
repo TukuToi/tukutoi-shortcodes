@@ -94,6 +94,9 @@ class Tkt_Shortcodes_Processor {
 			return $content;
 		}
 
+		remove_filter( 'the_content', 'wpautop', 10 );
+		remove_filter( 'the_excerpt', 'wpautop', 10 );
+
 		$content = $this->apply_encoder( $content );
 
 		return $content;

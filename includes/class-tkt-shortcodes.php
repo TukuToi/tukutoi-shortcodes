@@ -240,7 +240,9 @@ class Tkt_Shortcodes {
 			$shortcodes = new Tkt_Shortcodes_Shortcodes( $this->plugin_prefix, $this->version, $this->declarations );
 
 			/**
-			 * The Processor that makes ShortCodes in Attributes work
+			 * The Processor that makes ShortCodes in Attributes work.
+			 *
+			 * Removes as well the content and excerpt autop filters.
 			 */
 			$processor = new Tkt_Shortcodes_Processor( $this->plugin_prefix, $this->version, $this->declarations );
 			$this->loader->add_filter( 'the_content', $processor, 'pre_process_shortcodes', 5 );

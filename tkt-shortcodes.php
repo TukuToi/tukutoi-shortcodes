@@ -15,7 +15,7 @@
  * Plugin Name:       TKT ShortCodes
  * Plugin URI:        https://www.tukutoi.com/program/tukutoi-shortcodes
  * Description:       A library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
- * Version:           1.22.4
+ * Version:           1.24.1
  * Author:            TukuToi
  * Author URI:        https://www.tukutoi.com//
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'TKT_SHORTCODES_VERSION', '1.22.4' );
+define( 'TKT_SHORTCODES_VERSION', '1.24.1' );
 
 /**
  * The code that runs during plugin activation.
@@ -85,4 +85,10 @@ function tkt_shortcodes_run() {
 	$plugin->run();
 
 }
-add_action( 'init', 'tkt_shortcodes_run' );
+/**
+ * TukuToi ShortCode runs a bit late because other plugins need to register ShortCodes with it.
+ * If we run at default 10, which most init hooks do, then it'll follow alphabetical order of plugin name.
+ * That means, whatever comes after `t` in the alphabet wouldn't be able to hook in.
+ * Thus temptatively run at 20.
+ */
+add_action( 'init', 'tkt_shortcodes_run', 20 );
