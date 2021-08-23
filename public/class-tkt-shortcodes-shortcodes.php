@@ -210,6 +210,7 @@ class Tkt_Shortcodes_Shortcodes {
 			 *
 			 * @since 1.5.0
 			 */
+			$out = apply_filters( 'the_content', $out );
 			$out = apply_filters( 'tkt_post_process_shortcodes', $out );
 			$out = do_shortcode( $out, false );
 
@@ -717,6 +718,7 @@ class Tkt_Shortcodes_Shortcodes {
 	 * For possible attributes see the Parameters > $atts section below or use the TukuToi ShortCodes GUI.
 	 *
 	 * @since    1.0.0
+	 * @since    1.25.0 Added fx and fx_args $atts (Custom PHP Function).
 	 * @param array  $atts {
 	 *      The ShortCode Attributes.
 	 *
@@ -726,6 +728,8 @@ class Tkt_Shortcodes_Shortcodes {
 	 *      @type string    $float      Whether the compared values are Float Values. Default: ''. Accepts: '', 'float'.
 	 *      @type string    $epsilon    The precision to use when comparing Float Values. Default: ''. Accepts: '', float value.
 	 *      @type string    $else       The value to show if the evaluation returns false. Default: ''. Accepts: any valid string or HTML.
+	 *      @type string    $fx         The Custom Function Name when operator is fx. Default: ''. Accepts: valid PHP function name.
+	 *      @type string    $fx_args    Arguments to pass to the Custom PHP Function. Default: ''. Accepts: comma-delimited argument:value pairs.
 	 * }
 	 * @param mixed  $content   ShortCode enclosed content. Any  Valid string, HTML or ShortCode(s).
 	 * @param string $tag       The Shortcode tag. Value: 'conditional'.
@@ -740,6 +744,8 @@ class Tkt_Shortcodes_Shortcodes {
 				'float'     => '',
 				'epsilon'   => '',
 				'else'      => '',
+				'fx'        => '',
+				'fx_args'   => '',
 			),
 			$atts,
 			$tag
@@ -749,6 +755,22 @@ class Tkt_Shortcodes_Shortcodes {
 		foreach ( $atts as $key => $value ) {
 			if ( 'epsilon' === $key ) {
 				$atts[ $key ] = $this->sanitizer->sanitize( 'floatval', $value );
+			} elseif ( 'fx_args' === $key ) {
+				$value = $this->sanitizer->sanitize( 'text_field', $value );
+				$args = array();
+				if ( ! empty( $value ) ) {
+					// If several args are passed.
+					if ( strpos( $value, ',' ) !== false ) {
+						$args_pre = explode( ',', $value );
+						foreach ( $args_pre as $key => $arrval ) {
+							list( $k, $v ) = explode( ':', $arrval );
+							$args[ $k ] = $v;
+						}
+					} else {
+						list( $k, $v ) = explode( ':', $value );
+						$args[ $k ] = $v;
+					}
+				}
 			} else {
 				if ( ! empty( $atts['float'] ) && ( 'left' === $key || 'right' === $key ) ) {
 					$float_value_left = (float) $atts['left'];
@@ -760,6 +782,17 @@ class Tkt_Shortcodes_Shortcodes {
 				}
 			}
 		}
+
+		/**
+		 * Prepare the function args
+		 * We support only plain strings ATM
+		 *
+		 * @since 1.25.0
+		 */
+		if ( is_array( $args ) ) {
+			$fx_args = implode( '\', \'', $args );
+		}
+		$fx_args = '\'' . $fx_args . '\'';
 
 		/**
 		 * Compare the values according operator.
@@ -817,6 +850,18 @@ class Tkt_Shortcodes_Shortcodes {
 					$true = true;
 				}
 				break;
+			case 'fx':
+				/**
+				 * The user function must `return` either true or false.
+				 * The left and right args are not used in this case.
+				 * The user can pass arguments to the Function by using
+				 * comma-delimited `arg_name:arg_value` in the fx_args $attr.
+				 *
+				 * @since 1.25.0
+				 * @todo probably nicer to allow operator and move Fx to a separate attribute.
+				 */
+				$true = true === call_user_func( $atts['fx'], $fx_args ) ? true : false;
+				break;
 			default:
 				if ( $atts['left'] == $atts['right'] ) {
 					$true = true;
@@ -837,7 +882,7 @@ class Tkt_Shortcodes_Shortcodes {
 		if ( true === $true ) {
 			$content = apply_filters( 'tkt_post_process_shortcodes', $content );
 			$content = do_shortcode( $content, false );
-			$content = stripslashes_deep( $this->sanitizer->sanitize( 'post_kses', $content ) );
+			$content = stripslashes_deep( $content );
 		} else {
 			$content = $atts['else'];
 		}

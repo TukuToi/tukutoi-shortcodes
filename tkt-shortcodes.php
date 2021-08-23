@@ -15,7 +15,7 @@
  * Plugin Name:       TKT ShortCodes
  * Plugin URI:        https://www.tukutoi.com/program/tukutoi-shortcodes
  * Description:       A library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
- * Version:           1.24.1
+ * Version:           1.25.0
  * Author:            TukuToi
  * Author URI:        https://www.tukutoi.com//
  * License:           GPL-2.0+
