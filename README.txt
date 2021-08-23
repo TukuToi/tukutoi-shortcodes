@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.24.1
+Stable tag: 1.25.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -272,6 +272,11 @@ function my_shortcodes( $shortcodes ) {
 ```
 
 == Changelog ==
+
+= 1.25.0  =
+* [Fixed] Pass the post content shortcode output thru the_content filter
+* [Added] fx and fx_args $atts (Custom PHP Function) to Conditional ShortCode
+* [Removed] wp_kses_post filter from Conditional ShortCode $content
 
 = 1.24.1 =
 * [Fixed] Run plugin at init:20 so other (coming later in alphabet) Plugins can hook in

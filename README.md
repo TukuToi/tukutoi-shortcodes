@@ -265,6 +265,11 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+### 1.25.0
+* [Fixed] Pass the post content shortcode output thru the_content filter
+* [Added] fx and fx_args $atts (Custom PHP Function) to Conditional ShortCode
+* [Removed] wp_kses_post filter from Conditional ShortCode $content
+
 ### 1.24.1
 * [Fixed] Run plugin at init:20 so other (coming later in alphabet) Plugins can hook in
 

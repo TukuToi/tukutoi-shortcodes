@@ -290,6 +290,11 @@ class Tkt_Shortcodes_Declarations {
 			'‰'     => esc_html__( '‰ (Permille)', 'tkt-shortcodes' ),
 		);
 
+		/**
+		 * Valid Comparisons
+		 *
+		 * @since 1.2.5.0 Added fx operator (Custom PHP Function).
+		 */
 		$valid_comparison = array(
 			'eqv'   => esc_html__( 'Equal', 'tkt-shortcodes' ),
 			'eqvt'  => esc_html__( 'Identical', 'tkt-shortcodes' ),
@@ -299,6 +304,7 @@ class Tkt_Shortcodes_Declarations {
 			'gt'    => esc_html__( 'Greater than', 'tkt-shortcodes' ),
 			'gte'   => esc_html__( 'Less than or equal to', 'tkt-shortcodes' ),
 			'lte'   => esc_html__( 'Greater than or equal to', 'tkt-shortcodes' ),
+			'fx'    => esc_html__( 'Custom PHP Function', 'tkt-shortcodes' ),
 		);
 
 		$valid_round_constants = array(
