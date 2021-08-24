@@ -265,6 +265,9 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+= 1.26.0  =
+* [Added] Added a JS method to show/hide items in the GUI conditionally
+
 ### 1.25.0
 * [Fixed] Pass the post content shortcode output thru the_content filter
 * [Added] fx and fx_args $atts (Custom PHP Function) to Conditional ShortCode
