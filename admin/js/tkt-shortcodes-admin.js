@@ -143,7 +143,19 @@
 
 				$( 'select' ).each(function(index){
 					combo($);// init Custom autosuggest.
-					$( this ).combobox();
+					$( this ).combobox({
+						/** 
+						 * Provide a method for all items to be shown conditionally.
+						 * 
+						 * To be shown/hidden, the conditional items must:
+						 * - have a class `tkt-conditional-gui-section` with default display:none
+						 * - have a class corresponding to the value of the select value that should trigger display:block
+						 */
+						select: function (event, ui) { 
+					        $( '.tkt-conditional-gui-section' ).hide();
+					        $( '.' + this.value ).show();
+					    }
+					});
 				});
 				
 				hide_spinner();

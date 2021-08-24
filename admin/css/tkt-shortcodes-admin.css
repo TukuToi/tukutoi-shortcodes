@@ -212,3 +212,6 @@ body:not(.user-is-tabbing) .tkt-jquery-ui *:focus {
     padding: 5px 10px;
     width: 100%;
 }
+.tkt-conditional-gui-section {
+    display: none;
+}
