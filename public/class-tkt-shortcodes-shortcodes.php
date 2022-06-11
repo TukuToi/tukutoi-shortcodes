@@ -308,7 +308,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		} else {
 			/**
 			 * The user object is a huge mess. Try to fix this as effectively as possible.
@@ -412,7 +412,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		} else {
 			$out = $this->sanitizer->validate( 'object', $out );
 		}
@@ -493,7 +493,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		} else {
 			$out = join( $atts['delimiter'], wp_list_pluck( $out, $atts['show'] ) );
 		}
@@ -591,7 +591,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		} elseif ( ! is_array( $out ) ) {
 			// Validate single field values.
 			$out = $this->sanitizer->sanitize( 'meta', $atts['key'], $out, $this->meta_type );
@@ -1099,7 +1099,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		}
 
 		// Sanitize our data.
@@ -1190,7 +1190,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		}
 
 		// Sanitize our data.
@@ -1308,7 +1308,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
 		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		}
 
 		// Sanitize our data.
