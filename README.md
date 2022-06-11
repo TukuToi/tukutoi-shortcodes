@@ -265,7 +265,10 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
-= 1.26.0  =
+### 1.26.1
+* [Fixed] Missing Text Domains and some Comments for CPCS Review.
+
+### 1.26.0
 * [Added] Added a JS method to show/hide items in the GUI conditionally
 
 ### 1.25.0

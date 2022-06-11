@@ -195,9 +195,16 @@ class Tkt_Shortcodes_Shortcodes {
 		// Get our data.
 		$out = get_post( $atts['item'], OBJECT, $atts['filter'] );
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
-			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
+			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );// @codingStandardsIgnoreLine
 		} else {
 			$out = $this->sanitizer->validate( 'object', $out, $atts['show'] );
 		}
@@ -292,7 +299,14 @@ class Tkt_Shortcodes_Shortcodes {
 		$value = ! empty( $atts['value'] ) ? $atts['value'] : $atts['item'];
 		$out = get_user_by( $atts['field'], $value );
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -374,7 +388,7 @@ class Tkt_Shortcodes_Shortcodes {
 		) {
 			$atts['item'] = get_queried_object_id();
 		} elseif ( empty( $atts['item'] ) ) {
-			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
+			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID', 'tkt-shortcodes' );
 		}
 
 		// Sanitize the User input atts.
@@ -389,7 +403,14 @@ class Tkt_Shortcodes_Shortcodes {
 		// Get our data.
 		$out = get_term( $atts['item'], $atts['taxonomy'], OBJECT, $atts['filter'] );
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -463,7 +484,14 @@ class Tkt_Shortcodes_Shortcodes {
 		// Get our data.
 		$out = get_the_terms( $atts['item'], $atts['taxonomy'] );
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} else {
@@ -554,7 +582,14 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = get_post_meta( $atts['item'], $atts['key'], $atts['single'] );
 		}
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		} elseif ( ! is_array( $out ) ) {
@@ -621,7 +656,7 @@ class Tkt_Shortcodes_Shortcodes {
 		) {
 			$atts['item'] = get_queried_object_id();
 		} elseif ( empty( $atts['item'] ) ) {
-			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID' );
+			return esc_html__( 'This is not a Taxonomy Archive, and you specified no Taxonomy Term ID', 'tkt-shortcodes' );
 		}
 
 		/**
@@ -1055,7 +1090,14 @@ class Tkt_Shortcodes_Shortcodes {
 
 		}
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		}
@@ -1139,7 +1181,14 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = join( $atts['delimiter'], $out );
 		}
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		}
@@ -1250,7 +1299,14 @@ class Tkt_Shortcodes_Shortcodes {
 			$out = wp_get_attachment_image_url( $atts['item'], $atts['size'], $atts['icon'] );
 		}
 
-		// Validate our data.
+		/**
+		 * Validate our data.
+		 *
+		 * Reviewers:
+		 * The debug_backtrace() is intended here and never shown to the user.
+		 * In fact, here maximally a string with value `Something wrong. Enable Debug mode and check again.` would be returned.
+		 * Only if the sanitizer class has debug log true, then a log is written with the backtrace.
+		 */
 		if ( $this->sanitizer->invalid_or_error( $out ) ) {
 			$out = $this->sanitizer->get_errors( $out, __METHOD__, debug_backtrace() );
 		}
