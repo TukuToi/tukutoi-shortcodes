@@ -12,7 +12,7 @@
  * @package           Tkt_Shortcodes
  *
  * @wordpress-plugin
- * Plugin Name:       TKT ShortCodes
+ * Plugin Name:       TukuToi ShortCodes
  * Plugin URI:        https://www.tukutoi.com/program/tukutoi-shortcodes
  * Description:       A library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
  * Version:           1.26.1
