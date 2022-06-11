@@ -206,7 +206,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'How to sanitize the data' );
+				$explanation = __( 'How to sanitize the data', 'tkt-shortcodes' );
 				return $explanation;
 
 			}
@@ -234,7 +234,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What Post Information to show. <strong>Careful, when inserting the Post Content in a Post, always make sure to pass an OTHER ID than the current!</strong>' );
+				$explanation = __( 'What Post Information to show. <strong>Careful, when inserting the Post Content in a Post, always make sure to pass an OTHER ID than the current!</strong>', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -260,7 +260,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What Term Information to show' );
+				$explanation = __( 'What Term Information to show', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -285,7 +285,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'Get Term from this Taxonomy' );
+				$explanation = __( 'Get Term from this Taxonomy', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -310,7 +310,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'The Post Type to which to link when Editing Terms' );
+				$explanation = __( 'The Post Type to which to link when Editing Terms', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -339,7 +339,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What User Information to show' );
+				$explanation = __( 'What User Information to show', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -368,7 +368,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'By what field to the the User' );
+				$explanation = __( 'By what field to the the User', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -392,7 +392,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What Operator to use' );
+				$explanation = __( 'What Operator to use', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -416,7 +416,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What Comparison Operator to use' );
+				$explanation = __( 'What Comparison Operator to use', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -441,7 +441,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What Site Information to show' );
+				$explanation = __( 'What Site Information to show', 'tkt-shortcodes' );
 				return $explanation;
 
 			}
@@ -470,7 +470,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'The content type of wich to get the edit link' );
+				$explanation = __( 'The content type of wich to get the edit link', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -497,7 +497,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'Whether to show a Featured Image or any Image' );
+				$explanation = __( 'Whether to show a Featured Image or any Image', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -521,7 +521,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'What registered Image size to use' );
+				$explanation = __( 'What registered Image size to use', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);
@@ -545,7 +545,7 @@ class Tkt_Shortcodes_Gui {
 		add_filter(
 			'tkt_scs_shortcodes_fieldset_explanation',
 			function( $explanation ) {
-				$explanation = __( 'How to round the Float Value' );
+				$explanation = __( 'How to round the Float Value', 'tkt-shortcodes' );
 				return $explanation;
 			}
 		);

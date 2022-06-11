@@ -363,13 +363,18 @@ class Tkt_Shortcodes_Sanitizer {
 		}
 
 		if ( true === $this->debug ) {
+			/**
+			 * Reviewers:
+			 * All debug logs are expected here.
+			 * They are only active if debug is enabled in this class, which by default is false.
+			 */
 			if ( true === $this->debug_log ) {
-				error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
+				error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );// @codingStandardsIgnoreLine
 			}
 			return $errors['debug'];
 		}
 		if ( true === $this->debug_log ) {
-			error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );
+			error_log( $errors['debug'] . ' This is the full backlog: ' . print_r( $backtrace, true ) );// @codingStandardsIgnoreLine
 		}
 
 		return $errors['display'];

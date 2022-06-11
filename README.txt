@@ -4,7 +4,7 @@ Donate link: https://www.tukutoi.com/
 Tags: shortcodes, classicpress
 Requires at least: 1.0.0
 Tested up to: 4.9.99
-Stable tag: 1.26.0
+Stable tag: 1.26.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -272,6 +272,9 @@ function my_shortcodes( $shortcodes ) {
 ```
 
 == Changelog ==
+
+= 1.26.1 =
+* [Fixed] Missing Text Domains and some Comments for CPCS Review.
 
 = 1.26.0  =
 * [Added] Added a JS method to show/hide elements in GUI conditionally
