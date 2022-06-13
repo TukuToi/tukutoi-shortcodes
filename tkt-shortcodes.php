@@ -13,11 +13,11 @@
  *
  * @wordpress-plugin
  * Plugin Name:       TukuToi ShortCodes
- * Plugin URI:        https://www.tukutoi.com/program/tukutoi-shortcodes
+ * Plugin URI:        https://www.tukutoi.com/
  * Description:       A library of indispensable ShortCodes for ClassicPress (and WordPress without Blocks) Websites.
  * Version:           1.26.1
  * Author:            TukuToi
- * Author URI:        https://www.tukutoi.com//
+ * Author URI:        https://www.tukutoi.com/
  * License:           GPL-2.0+
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       tkt-shortcodes
