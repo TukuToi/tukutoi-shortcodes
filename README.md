@@ -265,6 +265,9 @@ function my_shortcodes( $shortcodes ) {
 
 ## Changelog 
 
+### 1.26.2
+* [Fixed] Uninstall checked on wrong plugin slug
+
 ### 1.26.1
 * [Fixed] Missing Text Domains and some Comments for CPCS Review.
 
