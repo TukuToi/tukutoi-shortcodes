@@ -5,16 +5,15 @@
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
  *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/public
+ * @package    ShortCodes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
- * Defines all ShortCodes.
+ * Defines all ShortCodes of the TukuToi ShortCodes Plugin.
  *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/public
- * @author     Your Name <hello@tukutoi.com>
+ * @package    ShortCodes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes_Shortcodes {
 
@@ -64,12 +63,12 @@ class Tkt_Shortcodes_Shortcodes {
 	 */
 	public function __construct( $plugin_prefix, $version, $declarations ) {
 
-		$this->plugin_prefix    = $plugin_prefix;
-		$this->version          = $version;
-		$this->meta_type        = 'post';
-		$this->declarations     = $declarations;
+		$this->plugin_prefix = $plugin_prefix;
+		$this->version       = $version;
+		$this->meta_type     = 'post';
+		$this->declarations  = $declarations;
 
-		$this->sanitizer        = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version, $this->declarations );
+		$this->sanitizer = new Tkt_Shortcodes_Sanitizer( $this->plugin_prefix, $this->version, $this->declarations );
 
 	}
 
@@ -101,9 +100,9 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'show'      => 'name',
-				'filter'    => 'raw',
-				'sanitize'  => 'text_field',
+				'show'     => 'name',
+				'filter'   => 'raw',
+				'sanitize' => 'text_field',
 			),
 			$atts,
 			$tag
@@ -169,10 +168,10 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => '',
-				'show'      => 'post_title',
-				'filter'    => 'raw',
-				'sanitize'  => 'text_field',
+				'item'     => '',
+				'show'     => 'post_title',
+				'filter'   => 'raw',
+				'sanitize' => 'text_field',
 			),
 			$atts,
 			$tag
@@ -261,11 +260,11 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => '',
-				'field'     => 'ID',
-				'value'     => '',
-				'show'      => 'display_name',
-				'sanitize'  => 'text_field',
+				'item'     => '',
+				'field'    => 'ID',
+				'value'    => '',
+				'show'     => 'display_name',
+				'sanitize' => 'text_field',
 			),
 			$atts,
 			$tag
@@ -297,7 +296,7 @@ class Tkt_Shortcodes_Shortcodes {
 
 		// Get our data.
 		$value = ! empty( $atts['value'] ) ? $atts['value'] : $atts['item'];
-		$out = get_user_by( $atts['field'], $value );
+		$out   = get_user_by( $atts['field'], $value );
 
 		/**
 		 * Validate our data.
@@ -370,11 +369,11 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'          => '',
-				'taxonomy'      => '',
-				'show'          => 'name',
-				'filter'        => 'raw',
-				'sanitize'      => 'text_field',
+				'item'     => '',
+				'taxonomy' => '',
+				'show'     => 'name',
+				'filter'   => 'raw',
+				'sanitize' => 'text_field',
 			),
 			$atts,
 			$tag
@@ -671,7 +670,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * @see postmeta()
 		 */
 		$this->meta_type = 'term';
-		$out = $this->postmeta( $atts, $content = null, $tag );
+		$out             = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
 
 		return $out;
@@ -735,7 +734,7 @@ class Tkt_Shortcodes_Shortcodes {
 		 * @see postmeta()
 		 */
 		$this->meta_type = 'user';
-		$out = $this->postmeta( $atts, $content = null, $tag );
+		$out             = $this->postmeta( $atts, $content = null, $tag );
 		$this->meta_type = 'post';
 
 		// Return our data.
@@ -773,14 +772,14 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'left'      => '',
-				'right'     => '',
-				'operator'  => 'eqv',
-				'float'     => '',
-				'epsilon'   => '',
-				'else'      => '',
-				'fx'        => '',
-				'fx_args'   => '',
+				'left'     => '',
+				'right'    => '',
+				'operator' => 'eqv',
+				'float'    => '',
+				'epsilon'  => '',
+				'else'     => '',
+				'fx'       => '',
+				'fx_args'  => '',
 			),
 			$atts,
 			$tag
@@ -792,26 +791,26 @@ class Tkt_Shortcodes_Shortcodes {
 				$atts[ $key ] = $this->sanitizer->sanitize( 'floatval', $value );
 			} elseif ( 'fx_args' === $key ) {
 				$value = $this->sanitizer->sanitize( 'text_field', $value );
-				$args = array();
+				$args  = array();
 				if ( ! empty( $value ) ) {
 					// If several args are passed.
 					if ( strpos( $value, ',' ) !== false ) {
 						$args_pre = explode( ',', $value );
 						foreach ( $args_pre as $key => $arrval ) {
 							list( $k, $v ) = explode( ':', $arrval );
-							$args[ $k ] = $v;
+							$args[ $k ]    = $v;
 						}
 					} else {
 						list( $k, $v ) = explode( ':', $value );
-						$args[ $k ] = $v;
+						$args[ $k ]    = $v;
 					}
 				}
 			} else {
 				if ( ! empty( $atts['float'] ) && ( 'left' === $key || 'right' === $key ) ) {
-					$float_value_left = (float) $atts['left'];
-					$atts['left'] = strval( $float_value_left ) == $atts['left'] ? floatval( $atts['left'] ) : $atts['left'];
+					$float_value_left  = (float) $atts['left'];
+					$atts['left']      = strval( $float_value_left ) == $atts['left'] ? floatval( $atts['left'] ) : $atts['left'];
 					$float_value_right = (float) $atts['right'];
-					$atts['right'] = strval( $float_value_right ) == $atts['right'] ? floatval( $atts['right'] ) : $atts['right'];
+					$atts['right']     = strval( $float_value_right ) == $atts['right'] ? floatval( $atts['right'] ) : $atts['right'];
 				} else {
 					$atts[ $key ] = $this->sanitizer->sanitize( 'text_field', $value );
 				}
@@ -952,10 +951,10 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'operand_one'   => '',
-				'operand_two'   => '',
-				'operator'      => '',
-				'sanitize'      => 'intval',
+				'operand_one' => '',
+				'operand_two' => '',
+				'operator'    => '',
+				'sanitize'    => 'intval',
 			),
 			$atts,
 			$tag
@@ -1234,14 +1233,14 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'item'      => '',
-				'url'       => '',
-				'show'      => '',
-				'width'     => '',
-				'height'    => '',
-				'size'      => '',
-				'icon'      => '',
-				'sanitize'  => 'esc_url_raw',
+				'item'     => '',
+				'url'      => '',
+				'show'     => '',
+				'width'    => '',
+				'height'   => '',
+				'size'     => '',
+				'icon'     => '',
+				'sanitize' => 'esc_url_raw',
 			),
 			$atts,
 			$tag
@@ -1347,9 +1346,9 @@ class Tkt_Shortcodes_Shortcodes {
 
 		$atts = shortcode_atts(
 			array(
-				'round'     => '',
-				'dir'       => '',
-				'sanitize'  => '',
+				'round'    => '',
+				'dir'      => '',
+				'sanitize' => '',
 			),
 			$atts,
 			$tag

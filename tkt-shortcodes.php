@@ -9,7 +9,8 @@
  *
  * @link              https://www.tukutoi.com/
  * @since             1.0.0
- * @package           Tkt_Shortcodes
+ * @package    Plugins\ShortCodes
+ * @author     Beda Schmid <beda@tukutoi.com>
  *
  * @wordpress-plugin
  * Plugin Name:       TukuToi ShortCodes
@@ -31,16 +32,19 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Current plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ *
+ * Start at version 1.0.0 and use SemVer
  * Rename this for your plugin and update it as you release new versions.
+ *
+ * @link https://semver.org
+ * @var string $TKT_SHORTCODES_VERSION The Version of this plugin.
  */
 define( 'TKT_SHORTCODES_VERSION', '1.26.2' );
 
 /**
  * The code that runs during plugin activation.
  *
- * This action is documented in includes/class-tkt-shortcodes-activator.php
- * Full security checks are performed inside the class.
+ * @see Tkt_Shortcodes_Activator::activate()
  */
 function tkt_shortcodes_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-tkt-shortcodes-activator.php';
@@ -50,8 +54,7 @@ function tkt_shortcodes_activate() {
 /**
  * The code that runs during plugin deactivation.
  *
- * This action is documented in includes/class-tkt-shortcodes-deactivator.php
- * Full security checks are performed inside the class.
+ * @see Tkt_Shortcodes_Deactivator::deactivate()
  */
 function tkt_shortcodes_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-tkt-shortcodes-deactivator.php';

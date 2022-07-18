@@ -7,9 +7,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
@@ -22,9 +21,8 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
- * @author     Your Name <hello@tukutoi.com>
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes {
 
@@ -86,7 +84,7 @@ class Tkt_Shortcodes {
 
 		}
 
-		$this->plugin_name = 'tkt-shortcodes';
+		$this->plugin_name   = 'tkt-shortcodes';
 		$this->plugin_prefix = 'tkt_scs_';
 
 		$this->load_dependencies();
@@ -144,20 +142,14 @@ class Tkt_Shortcodes {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tkt-shortcodes-admin.php';
 
 		/**
-		 * The class responsible for registering all ShortCode definitions.
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tkt-shortcodes-public.php';
-
-		/**
 		 * The class responsible to load all common code
 		 */
 		if ( ! defined( 'TKT_COMMON_LOADED' ) ) {
-			require_once( plugin_dir_path( dirname( __FILE__ ) ) . '/common/class-tkt-common.php' );
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . '/common/class-tkt-common.php';
 		}
 
-		$this->common = Tkt_Common::get_instance();
-		$this->loader = new Tkt_Shortcodes_Loader();
+		$this->common       = Tkt_Common::get_instance();
+		$this->loader       = new Tkt_Shortcodes_Loader();
 		$this->declarations = new Tkt_Shortcodes_Declarations( $this->plugin_prefix, $this->version );
 
 	}

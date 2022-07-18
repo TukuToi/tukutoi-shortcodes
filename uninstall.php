@@ -20,7 +20,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- * @package    Tkt_Shortcodes
+ * @package    Plugins\ShortCodes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**

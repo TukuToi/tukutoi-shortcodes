@@ -8,9 +8,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
@@ -21,9 +20,8 @@
  * get it from the code (such as user object, which is a entangled mess, or get_bloginfo which is a case switcher).
  *
  * @since      1.0.0
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
- * @author     TukuToi <hello@tukutoi.com>
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes_Declarations {
 
@@ -72,9 +70,9 @@ class Tkt_Shortcodes_Declarations {
 	 */
 	public function __construct( $plugin_prefix, $version ) {
 
-		$this->plugin_prefix    = $plugin_prefix;
-		$this->version          = $version;
-		$this->shortcodes       = $this->declare_shortcodes();
+		$this->plugin_prefix        = $plugin_prefix;
+		$this->version              = $version;
+		$this->shortcodes           = $this->declare_shortcodes();
 		$this->sanitization_options = $this->sanitize_options();
 
 	}
@@ -93,62 +91,62 @@ class Tkt_Shortcodes_Declarations {
 	private function declare_shortcodes() {
 
 		$shortcodes = array(
-			'bloginfo' => array(
+			'bloginfo'        => array(
 				'label' => esc_html__( 'Website Information', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'postinfo' => array(
+			'postinfo'        => array(
 				'label' => esc_html__( 'Post Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'userinfo' => array(
+			'userinfo'        => array(
 				'label' => esc_html__( 'User Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'terminfo' => array(
+			'terminfo'        => array(
 				'label' => esc_html__( 'Term Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'post_termsinfo' => array(
+			'post_termsinfo'  => array(
 				'label' => esc_html__( 'Post Term Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'usermeta' => array(
+			'usermeta'        => array(
 				'label' => esc_html__( 'User Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'termmeta' => array(
+			'termmeta'        => array(
 				'label' => esc_html__( 'Term Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'postmeta' => array(
+			'postmeta'        => array(
 				'label' => esc_html__( 'Post Meta Data', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'conditional' => array(
+			'conditional'     => array(
 				'label' => esc_html__( 'Conditional ShortCode', 'tkt-shortcodes' ),
 				'type'  => 'operational',
 				'inner' => false,
 			),
-			'math' => array(
+			'math'            => array(
 				'label' => esc_html__( 'Mathematical Operation', 'tkt-shortcodes' ),
 				'type'  => 'operational',
 				'inner' => true,
 			),
-			'editlinks' => array(
+			'editlinks'       => array(
 				'label' => esc_html__( 'Edit Links', 'tkt-shortcodes' ),
 				'type'  => 'managerial',
 				'inner' => true,
 			),
-			'archivelinks' => array(
+			'archivelinks'    => array(
 				'label' => esc_html__( 'Archive Links', 'tkt-shortcodes' ),
 				'type'  => 'informational',
 				'inner' => true,
@@ -158,7 +156,7 @@ class Tkt_Shortcodes_Declarations {
 				'type'  => 'informational',
 				'inner' => true,
 			),
-			'round' => array(
+			'round'           => array(
 				'label' => esc_html__( 'Round Floating Values', 'tkt-shortcodes' ),
 				'type'  => 'operational',
 				'inner' => true,
@@ -201,8 +199,8 @@ class Tkt_Shortcodes_Declarations {
 				foreach ( $external_shortcodes as $tag => $array ) {
 					$tag = sanitize_text_field( $tag );
 					foreach ( $array as $key => $value ) {
-						$key = sanitize_text_field( $key );
-						$value = sanitize_text_field( $value );
+						$key           = sanitize_text_field( $key );
+						$value         = sanitize_text_field( $value );
 						$array[ $key ] = $value;
 					}
 					$external_shortcodes[ $tag ] = $array;
@@ -234,26 +232,26 @@ class Tkt_Shortcodes_Declarations {
 	public function data_map( $map ) {
 
 		$site_infos = array(
-			'name'                  => esc_html__( 'Website Name', 'tkt-shortcodes' ),
-			'url'                   => esc_html__( 'Home URL', 'tkt-shortcodes' ),
-			'wpurl'                 => esc_html__( 'Site URL', 'tkt-shortcodes' ),
-			'description'           => esc_html__( 'Site Tagline', 'tkt-shortcodes' ),
-			'rdf_url'               => esc_html__( 'RDF Feed URL', 'tkt-shortcodes' ),
-			'rss_url'               => esc_html__( 'RSS Feed URL', 'tkt-shortcodes' ),
-			'rss2_url'              => esc_html__( 'RSS2 Feed URL', 'tkt-shortcodes' ),
-			'atom_url'              => esc_html__( 'Atom Feed URL', 'tkt-shortcodes' ),
-			'comments_atom_url'     => esc_html__( 'Atom Comments Feed URL', 'tkt-shortcodes' ),
-			'comments_rss2_url'     => esc_html__( 'RSS2 Comments Feed URL', 'tkt-shortcodes' ),
-			'pingback_url'          => esc_html__( 'Pingback URL', 'tkt-shortcodes' ),
-			'stylesheet_url'        => esc_html__( 'Theme Stylesheet URL', 'tkt-shortcodes' ),
-			'stylesheet_directory'  => esc_html__( 'Theme Stylesheet Directory', 'tkt-shortcodes' ),
-			'template_url'          => esc_html__( 'Template Directory URL', 'tkt-shortcodes' ),
-			'admin_email'           => esc_html__( 'Site Admin Email', 'tkt-shortcodes' ),
-			'charset'               => esc_html__( 'Site Charset', 'tkt-shortcodes' ),
-			'html_type'             => esc_html__( 'HTML Type', 'tkt-shortcodes' ),
-			'version'               => esc_html__( 'ClassicPress Version', 'tkt-shortcodes' ),
-			'language'              => esc_html__( 'Site Language', 'tkt-shortcodes' ),
-			'is_rtl'                => esc_html__( 'Text Direction', 'tkt-shortcodes' ),
+			'name'                 => esc_html__( 'Website Name', 'tkt-shortcodes' ),
+			'url'                  => esc_html__( 'Home URL', 'tkt-shortcodes' ),
+			'wpurl'                => esc_html__( 'Site URL', 'tkt-shortcodes' ),
+			'description'          => esc_html__( 'Site Tagline', 'tkt-shortcodes' ),
+			'rdf_url'              => esc_html__( 'RDF Feed URL', 'tkt-shortcodes' ),
+			'rss_url'              => esc_html__( 'RSS Feed URL', 'tkt-shortcodes' ),
+			'rss2_url'             => esc_html__( 'RSS2 Feed URL', 'tkt-shortcodes' ),
+			'atom_url'             => esc_html__( 'Atom Feed URL', 'tkt-shortcodes' ),
+			'comments_atom_url'    => esc_html__( 'Atom Comments Feed URL', 'tkt-shortcodes' ),
+			'comments_rss2_url'    => esc_html__( 'RSS2 Comments Feed URL', 'tkt-shortcodes' ),
+			'pingback_url'         => esc_html__( 'Pingback URL', 'tkt-shortcodes' ),
+			'stylesheet_url'       => esc_html__( 'Theme Stylesheet URL', 'tkt-shortcodes' ),
+			'stylesheet_directory' => esc_html__( 'Theme Stylesheet Directory', 'tkt-shortcodes' ),
+			'template_url'         => esc_html__( 'Template Directory URL', 'tkt-shortcodes' ),
+			'admin_email'          => esc_html__( 'Site Admin Email', 'tkt-shortcodes' ),
+			'charset'              => esc_html__( 'Site Charset', 'tkt-shortcodes' ),
+			'html_type'            => esc_html__( 'HTML Type', 'tkt-shortcodes' ),
+			'version'              => esc_html__( 'ClassicPress Version', 'tkt-shortcodes' ),
+			'language'             => esc_html__( 'Site Language', 'tkt-shortcodes' ),
+			'is_rtl'               => esc_html__( 'Text Direction', 'tkt-shortcodes' ),
 		);
 
 		$user_data = array(
@@ -279,15 +277,15 @@ class Tkt_Shortcodes_Declarations {
 		 * @see https://www.php.net/manual/en/language.operators.arithmetic.php
 		 */
 		$valid_operators = array(
-			'+'     => esc_html__( 'Plus', 'tkt-shortcodes' ),
-			'-'     => esc_html__( 'Minus', 'tkt-shortcodes' ),
-			'*'     => esc_html__( 'Times', 'tkt-shortcodes' ),
-			'/'     => esc_html__( 'Divided', 'tkt-shortcodes' ),
-			'**'    => esc_html__( 'Exponentiation', 'tkt-shortcodes' ),
-			'mod'   => esc_html__( 'Modulo (weirdest stuff ever)', 'tkt-shortcodes' ),
-			'sqrt'  => esc_html__( '√ (nth Root)', 'tkt-shortcodes' ),
-			'%'     => esc_html__( '% (Percent)', 'tkt-shortcodes' ),
-			'‰'     => esc_html__( '‰ (Permille)', 'tkt-shortcodes' ),
+			'+'    => esc_html__( 'Plus', 'tkt-shortcodes' ),
+			'-'    => esc_html__( 'Minus', 'tkt-shortcodes' ),
+			'*'    => esc_html__( 'Times', 'tkt-shortcodes' ),
+			'/'    => esc_html__( 'Divided', 'tkt-shortcodes' ),
+			'**'   => esc_html__( 'Exponentiation', 'tkt-shortcodes' ),
+			'mod'  => esc_html__( 'Modulo (weirdest stuff ever)', 'tkt-shortcodes' ),
+			'sqrt' => esc_html__( '√ (nth Root)', 'tkt-shortcodes' ),
+			'%'    => esc_html__( '% (Percent)', 'tkt-shortcodes' ),
+			'‰'    => esc_html__( '‰ (Permille)', 'tkt-shortcodes' ),
 		);
 
 		/**
@@ -296,22 +294,22 @@ class Tkt_Shortcodes_Declarations {
 		 * @since 1.2.5.0 Added fx operator (Custom PHP Function).
 		 */
 		$valid_comparison = array(
-			'eqv'   => esc_html__( 'Equal', 'tkt-shortcodes' ),
-			'eqvt'  => esc_html__( 'Identical', 'tkt-shortcodes' ),
-			'nev'   => esc_html__( 'Not equal', 'tkt-shortcodes' ),
-			'nevt'  => esc_html__( 'Not identical', 'tkt-shortcodes' ),
-			'lt'    => esc_html__( 'Lesss than', 'tkt-shortcodes' ),
-			'gt'    => esc_html__( 'Greater than', 'tkt-shortcodes' ),
-			'gte'   => esc_html__( 'Less than or equal to', 'tkt-shortcodes' ),
-			'lte'   => esc_html__( 'Greater than or equal to', 'tkt-shortcodes' ),
-			'fx'    => esc_html__( 'Custom PHP Function', 'tkt-shortcodes' ),
+			'eqv'  => esc_html__( 'Equal', 'tkt-shortcodes' ),
+			'eqvt' => esc_html__( 'Identical', 'tkt-shortcodes' ),
+			'nev'  => esc_html__( 'Not equal', 'tkt-shortcodes' ),
+			'nevt' => esc_html__( 'Not identical', 'tkt-shortcodes' ),
+			'lt'   => esc_html__( 'Lesss than', 'tkt-shortcodes' ),
+			'gt'   => esc_html__( 'Greater than', 'tkt-shortcodes' ),
+			'gte'  => esc_html__( 'Less than or equal to', 'tkt-shortcodes' ),
+			'lte'  => esc_html__( 'Greater than or equal to', 'tkt-shortcodes' ),
+			'fx'   => esc_html__( 'Custom PHP Function', 'tkt-shortcodes' ),
 		);
 
 		$valid_round_constants = array(
-			'PHP_ROUND_HALF_UP'     => esc_html__( 'Round half up', 'tkt-shortcodes' ),
-			'PHP_ROUND_HALF_DOWN'   => esc_html__( 'Round half down', 'tkt-shortcodes' ),
-			'PHP_ROUND_HALF_EVEN'   => esc_html__( 'Round towards nearest even value', 'tkt-shortcodes' ),
-			'PHP_ROUND_HALF_ODD'    => esc_html__( 'Round towards nearest odd value', 'tkt-shortcodes' ),
+			'PHP_ROUND_HALF_UP'   => esc_html__( 'Round half up', 'tkt-shortcodes' ),
+			'PHP_ROUND_HALF_DOWN' => esc_html__( 'Round half down', 'tkt-shortcodes' ),
+			'PHP_ROUND_HALF_EVEN' => esc_html__( 'Round towards nearest even value', 'tkt-shortcodes' ),
+			'PHP_ROUND_HALF_ODD'  => esc_html__( 'Round towards nearest odd value', 'tkt-shortcodes' ),
 		);
 
 		$shortcode_types = array(
@@ -352,8 +350,8 @@ class Tkt_Shortcodes_Declarations {
 				// The ShortCode Tag is not already registered.
 				// Sanitize and validate because we do not trust the input.
 				foreach ( $external_shortcode_types as $tag => $label ) {
-					$tag = sanitize_text_field( $tag );
-					$label = sanitize_text_field( $label );
+					$tag                              = sanitize_text_field( $tag );
+					$label                            = sanitize_text_field( $label );
 					$external_shortcode_types[ $tag ] = $label;
 				}
 				// We have possibly still invalid input but at least safe.
@@ -382,88 +380,88 @@ class Tkt_Shortcodes_Declarations {
 	private function sanitize_options() {
 
 		$sanitization_options = array(
-			'none' => array(
-				'label'     => esc_html__( 'No Sanitization', 'tkt-shortcodes' ),
+			'none'              => array(
+				'label' => esc_html__( 'No Sanitization', 'tkt-shortcodes' ),
 			),
-			'email' => array(
-				'label'     => esc_html__( 'Sanitize Email', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_email',
+			'email'             => array(
+				'label'    => esc_html__( 'Sanitize Email', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_email',
 			),
-			'file_name' => array(
-				'label'     => esc_html__( 'File Name', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_file_name',
+			'file_name'         => array(
+				'label'    => esc_html__( 'File Name', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_file_name',
 			),
-			'html_class' => array(
-				'label'     => esc_html__( 'HTML Class', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_html_class',
+			'html_class'        => array(
+				'label'    => esc_html__( 'HTML Class', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_html_class',
 			),
-			'key' => array(
-				'label'     => esc_html__( 'Key', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_key',
+			'key'               => array(
+				'label'    => esc_html__( 'Key', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_key',
 			),
-			'meta' => array(
-				'label'     => esc_html__( 'Meta', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_meta',
+			'meta'              => array(
+				'label'    => esc_html__( 'Meta', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_meta',
 			),
-			'mime_type' => array(
-				'label'     => esc_html__( 'Mime Type', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_mime_type',
+			'mime_type'         => array(
+				'label'    => esc_html__( 'Mime Type', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_mime_type',
 			),
-			'option' => array(
-				'label'     => esc_html__( 'Option', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_option',
+			'option'            => array(
+				'label'    => esc_html__( 'Option', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_option',
 			),
-			'sql_orderby' => array(
-				'label'     => esc_html__( 'SQL Orderby', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_sql_orderby',
+			'sql_orderby'       => array(
+				'label'    => esc_html__( 'SQL Orderby', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_sql_orderby',
 			),
-			'text_field' => array(
-				'label'     => esc_html__( 'Text Field', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_text_field',
+			'text_field'        => array(
+				'label'    => esc_html__( 'Text Field', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_text_field',
 			),
-			'textarea_field' => array(
-				'label'     => esc_html__( 'Text Area', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_textarea_field',
+			'textarea_field'    => array(
+				'label'    => esc_html__( 'Text Area', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_textarea_field',
 			),
-			'title' => array(
-				'label'     => esc_html__( 'Title', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title',
+			'title'             => array(
+				'label'    => esc_html__( 'Title', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_title',
 			),
-			'title_for_query' => array(
-				'label'     => esc_html__( 'Title for Query', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title_for_query',
+			'title_for_query'   => array(
+				'label'    => esc_html__( 'Title for Query', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_title_for_query',
 			),
 			'title_with_dashes' => array(
-				'label'     => esc_html__( 'Title with Dashes', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_title_with_dashes',
+				'label'    => esc_html__( 'Title with Dashes', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_title_with_dashes',
 			),
-			'user' => array(
-				'label'     => esc_html__( 'User', 'tkt-shortcodes' ),
-				'callback'  => 'sanitize_user',
+			'user'              => array(
+				'label'    => esc_html__( 'User', 'tkt-shortcodes' ),
+				'callback' => 'sanitize_user',
 			),
-			'url_raw' => array(
-				'label'     => esc_html__( 'URL Raw', 'tkt-shortcodes' ),
-				'callback'  => 'esc_url_raw',
+			'url_raw'           => array(
+				'label'    => esc_html__( 'URL Raw', 'tkt-shortcodes' ),
+				'callback' => 'esc_url_raw',
 			),
-			'post_kses' => array(
-				'label'     => esc_html__( 'Post KSES', 'tkt-shortcodes' ),
-				'callback'  => 'wp_filter_post_kses',
+			'post_kses'         => array(
+				'label'    => esc_html__( 'Post KSES', 'tkt-shortcodes' ),
+				'callback' => 'wp_filter_post_kses',
 			),
-			'nohtml_kses' => array(
-				'label'     => esc_html__( 'NoHTML KSES', 'tkt-shortcodes' ),
-				'callback'  => 'wp_filter_nohtml_kses',
+			'nohtml_kses'       => array(
+				'label'    => esc_html__( 'NoHTML KSES', 'tkt-shortcodes' ),
+				'callback' => 'wp_filter_nohtml_kses',
 			),
-			'intval' => array(
-				'label'     => esc_html__( 'Integer', 'tkt-shortcodes' ),
-				'callback'  => 'intval',
+			'intval'            => array(
+				'label'    => esc_html__( 'Integer', 'tkt-shortcodes' ),
+				'callback' => 'intval',
 			),
-			'floatval' => array(
-				'label'     => esc_html__( 'Float', 'tkt-shortcodes' ),
-				'callback'  => 'floatval',
+			'floatval'          => array(
+				'label'    => esc_html__( 'Float', 'tkt-shortcodes' ),
+				'callback' => 'floatval',
 			),
-			'is_bool' => array(
-				'label'     => esc_html__( 'Boolean', 'tkt-shortcodes' ),
-				'callback'  => 'is_bool',
+			'is_bool'           => array(
+				'label'    => esc_html__( 'Boolean', 'tkt-shortcodes' ),
+				'callback' => 'is_bool',
 			),
 		);
 

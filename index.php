@@ -4,5 +4,6 @@
  *
  * It exists to stop directory listings on poorly configured servers.
  *
- * @package     Tkt_Shortcodes
+ * @package    Plugins\ShortCodes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */

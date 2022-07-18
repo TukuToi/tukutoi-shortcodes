@@ -4,9 +4,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/admin
+ * @package    Plugins\ShortCodes\Admin
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
@@ -16,9 +15,8 @@
  * enqueue the admin-facing stylesheet and JavaScript.
  * As you add hooks and methods, update this description.
  *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/admin
- * @author     Your Name <hello@tukutoi.com>
+ * @package    Plugins\ShortCodes\Admin
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes_Admin {
 
@@ -71,8 +69,8 @@ class Tkt_Shortcodes_Admin {
 
 		$this->plugin_name   = $plugin_name;
 		$this->plugin_prefix = $plugin_prefix;
-		$this->version = $version;
-		$this->declarations = $declarations;
+		$this->version       = $version;
+		$this->declarations  = $declarations;
 
 	}
 
@@ -102,8 +100,8 @@ class Tkt_Shortcodes_Admin {
 			$this->plugin_name,
 			$this->plugin_prefix . 'ajax_object',
 			array(
-				'ajax_url'  => admin_url( 'admin-ajax.php' ),
-				'security'  => wp_create_nonce( $this->plugin_name . '-security-nonce' ),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'security' => wp_create_nonce( $this->plugin_name . '-security-nonce' ),
 			)
 		);
 
@@ -164,22 +162,22 @@ class Tkt_Shortcodes_Admin {
 
 		?>
 		<div id="tkt-shortcodes-dialog" title="TukuToi ShortCodes">
-		   <?php
+			<?php
 			foreach ( $groups as $group => $label ) {
 				if ( 'internal' !== $group ) {
 					?>
-		   <div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
-			  <h4><?php echo esc_html( $label ); ?></h4>
-			  <div class="tkt-sub-section-content">
-					<?php
-					foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
-						if ( $array['type'] === $group ) {
-							echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
-						}
-					}
-					?>
-			  </div>
-		   </div>
+					<div class="tkt-shortcodes-sub-section" title="<?php echo esc_attr( $label ); ?>">
+						<h4><?php echo esc_html( $label ); ?></h4>
+						<div class="tkt-sub-section-content">
+							<?php
+							foreach ( $this->declarations->shortcodes as $shortcode => $array ) {
+								if ( $array['type'] === $group ) {
+									echo '<a href="#" id="' . esc_attr( $shortcode ) . '" title="' . esc_attr( $array['label'] ) . '" class="button tkt-shortcode-buttons">' . esc_html( $array['label'] ) . '</a>';
+								}
+							}
+							?>
+						</div>
+					</div>
 					<?php
 				}
 			}

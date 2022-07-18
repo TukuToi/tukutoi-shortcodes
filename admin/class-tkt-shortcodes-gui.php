@@ -3,7 +3,8 @@
  * This file includes the ShortCodes GUI interfaces.
  *
  * @since 1.4.0
- * @package Tkt_Shortcodes/admin
+ * @package    Plugins\ShortCodes\Admin
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
@@ -17,9 +18,8 @@
  * The almost to all the same thing, unless one or two. Thus use arguments, not new methods.
  *
  * @since      1.4.0
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/admin
- * @author     Your Name <hello@tukutoi.com>
+ * @package    Plugins\ShortCodes\Admin
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes_Gui {
 
@@ -65,10 +65,10 @@ class Tkt_Shortcodes_Gui {
 	 */
 	public function __construct( $plugin_prefix, $version, $shortcode, $declarations ) {
 
-		$this->plugin_prefix = $plugin_prefix;
+		$this->plugin_prefix  = $plugin_prefix;
 		$this->plugin_version = $version;
-		$this->shortcode = $shortcode;
-		$this->declarations = $declarations;
+		$this->shortcode      = $shortcode;
+		$this->declarations   = $declarations;
 
 	}
 
@@ -109,7 +109,7 @@ class Tkt_Shortcodes_Gui {
 		}
 
 		ob_start();
-		require_once( $file );
+		require_once $file;
 		$form = ob_get_contents();
 		ob_end_clean();
 
@@ -132,9 +132,9 @@ class Tkt_Shortcodes_Gui {
 
 		?>
 		<fieldset>
-			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
-			  <input type="text" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="text ui-widget-content ui-corner-all">
-			  <small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
+			<label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
+			<input type="text" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="text ui-widget-content ui-corner-all">
+			<small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
 		</fieldset>
 		<?php
 
@@ -157,10 +157,10 @@ class Tkt_Shortcodes_Gui {
 		?>
 		<fieldset>
 			<label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
-			  <div class="tkt-block-checkbox">
-				  <input type="checkbox" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="checkbox ui-widget-content ui-corner-all" <?php echo esc_attr( $checked ); ?>>
-			  </div>
-			  <small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
+			<div class="tkt-block-checkbox">
+				<input type="checkbox" name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" value="<?php echo esc_attr( $value ); ?>" class="checkbox ui-widget-content ui-corner-all" <?php echo esc_attr( $checked ); ?>>
+			</div>
+			<small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
 		</fieldset>
 		<?php
 
@@ -178,16 +178,16 @@ class Tkt_Shortcodes_Gui {
 	private function select_fieldset( $attribute, $label, $value, $callback ) {
 
 		?>
-		
+
 		<fieldset>
-			  <label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
-			  <select name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" class="tkt-select ui-widget-content ui-corner-all">
+			<label for="<?php echo esc_attr( $attribute ); ?>"><?php echo esc_html( $label ); ?></label>
+			<select name="<?php echo esc_attr( $attribute ); ?>" id="<?php echo esc_attr( $attribute ); ?>" class="tkt-select ui-widget-content ui-corner-all">
 				<?php
 				call_user_func( $callback );
 				$explanation = apply_filters( 'tkt_scs_shortcodes_fieldset_explanation', 'This option has no description' );
 				?>
-			  </select>
-			  <small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
+			</select>
+			<small class="tkt-shortcode-option-explanation"><em><?php echo esc_html( $explanation ); ?></em></small>
 		</fieldset>
 		<?php
 	}
@@ -226,7 +226,7 @@ class Tkt_Shortcodes_Gui {
 		$post_properties = get_object_vars( $post );
 
 		foreach ( $post_properties as $post_property => $value ) {
-			$label = implode( ' ', array_map( 'ucfirst', explode( '_', $post_property ) ) );
+			$label    = implode( ' ', array_map( 'ucfirst', explode( '_', $post_property ) ) );
 			$selected = 'post_name' === $post_property ? 'selected' : '';
 			printf( '<option value="%s" ' . esc_attr( $selected ) . '>%s</option>', esc_attr( $post_property ), esc_html( $label ) );
 		}
@@ -248,11 +248,11 @@ class Tkt_Shortcodes_Gui {
 	 */
 	private function termshow_options() {
 
-		$term = new WP_Term( new stdClass() );
+		$term            = new WP_Term( new stdClass() );
 		$term_properties = get_object_vars( $term );
 
 		foreach ( $term_properties as $term_property => $value ) {
-			$label = implode( ' ', array_map( 'ucfirst', explode( '_', $term_property ) ) );
+			$label    = implode( ' ', array_map( 'ucfirst', explode( '_', $term_property ) ) );
 			$selected = 'name' === $term_property ? 'selected' : '';
 			printf( '<option value="%s" ' . esc_attr( $selected ) . '>%s</option>', esc_attr( $term_property ), esc_html( $label ) );
 		}
@@ -324,14 +324,14 @@ class Tkt_Shortcodes_Gui {
 	 */
 	private function usershow_options() {
 
-		$user = new WP_User( 1 );// What if no user with role 1 exist?
+		$user            = new WP_User( 1 );// What if no user with role 1 exist?
 		$user_properties = get_object_vars( $user );
 		unset( $user_properties['data'] );
-		$user_data = get_object_vars( $user->data );
+		$user_data       = get_object_vars( $user->data );
 		$user_properties = array_merge( $user_data, $user_properties );
 
 		foreach ( $user_properties as $user_property => $value ) {
-			$label = implode( ' ', array_map( 'ucfirst', explode( '_', $user_property ) ) );
+			$label    = implode( ' ', array_map( 'ucfirst', explode( '_', $user_property ) ) );
 			$selected = 'display_name' === $user_property ? 'selected' : '';
 			printf( '<option value="%s" ' . esc_attr( $selected ) . '>%s</option>', esc_attr( $user_property ), esc_html( $label ) );
 		}
@@ -458,11 +458,11 @@ class Tkt_Shortcodes_Gui {
 
 		$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
-		$alltypes = array_merge( $taxonomies, $post_types );
+		$alltypes   = array_merge( $taxonomies, $post_types );
 
 		foreach ( $alltypes as $alltype => $object ) {
-			$label = $object->labels->menu_name;
-			$name  = $object->name;
+			$label    = $object->labels->menu_name;
+			$name     = $object->name;
 			$selected = 'post' === $alltype ? 'selected' : '';
 			printf( '<option value="%s" ' . esc_attr( $selected ) . '>%s</option>', esc_attr( $name ), esc_html( $label ) );
 		}
@@ -485,8 +485,8 @@ class Tkt_Shortcodes_Gui {
 	private function attachment_options() {
 
 		$attachment_options = array(
-			'featured_image'    => 'Featured Image',
-			'other'             => 'Other Image',
+			'featured_image' => 'Featured Image',
+			'other'          => 'Other Image',
 		);
 
 		foreach ( $attachment_options as $attachment_option => $label ) {

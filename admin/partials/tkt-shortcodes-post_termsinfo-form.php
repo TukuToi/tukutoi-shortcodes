@@ -6,9 +6,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/admin/partials
+ * @package    Plugins\ShortCodes\Admin\Partials
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 ?>

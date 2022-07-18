@@ -7,9 +7,8 @@
  *
  * @link       https://www.tukutoi.com/
  * @since      1.0.0
- *
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 
 /**
@@ -22,9 +21,8 @@
  *       This, if true, makes this class a total waste of code.
  *
  * @since      1.0.0
- * @package    Tkt_Shortcodes
- * @subpackage Tkt_Shortcodes/includes
- * @author     Your Name <hello@tukutoi.com>
+ * @package    Plugins\ShortCodes\Includes
+ * @author     Beda Schmid <beda@tukutoi.com>
  */
 class Tkt_Shortcodes_I18n {
 
